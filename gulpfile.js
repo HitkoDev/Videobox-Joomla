@@ -79,16 +79,16 @@ gulp.task('lib', function() {
     gulp.src('./src/lib/**/*.php')
         .pipe(gulp.dest('./dist/lib'));
 
-    gulp.src(['./node_modules/videobox-js/dist/*.css'])
+    gulp.src(['./node_modules/videobox/dist/*.css'])
         .pipe(gulp.dest('./dist/lib/css'));
 
-    gulp.src(['./node_modules/videobox-js/dist/*.js'])
+    gulp.src(['./node_modules/videobox/dist/*.js'])
         .pipe(gulp.dest('./dist/lib/js'));
 
     gulp.src(['./node_modules/web-animations-js/web-animations.min.js'])
         .pipe(gulp.dest('./dist/lib/js'));
 
-    gulp.src(['./node_modules/videobox-js/dist/video-js/**'])
+    gulp.src(['./node_modules/videobox/dist/video-js/**'])
         .pipe(gulp.dest('./dist/lib/video-js'));
 });
 
