@@ -75,15 +75,13 @@ class VideoboxVideobox {
 	}
 	
 	function setCache($key, $data){
-		return;
 		if(!$this->config['cache']) return;
-		$this->modx->cacheManager->set($key, $data, 0);
+		return;
 	}
 	
 	function getCache($key){
-		return '';
 		if(!$this->config['cache']) return '';
-		return $this->modx->cacheManager->get($key);
+		return '';
 	}
 	
 	function parseTemplate($tpl, $properties = array()){
@@ -412,28 +410,6 @@ class VideoboxVideobox {
 		}
 		
 		return $pages;
-		if($perPage < 1) return '';
-		if($total < $perPage) return '';
-		$pages = floor(($total - 1) / $perPage + 1);
-		$output = '';
-		$id = $this->modx->resource->get('id');
-		$que = $_GET;
-		$rq = trim($this->modx->getOption('request_param_id'));
-		$ra = trim($this->modx->getOption('request_param_alias'));
-		if($rq) unset($que[$rq]);
-		if($ra) unset($que[$ra]);
-		unset($que['vbpages']);
-		$pref = '';
-		$i = 0;
-		for(; $i < $this->gallery; $i++) $pref .= (isset($this->pages[$i]) ? $this->pages[$i] : 0) . ',';
-		$post = '';
-		$i++;
-		for(; $i < count($this->pages); $i++) $post .= ',' . (isset($this->pages[$i]) ? $this->pages[$i] : 0);
-		for($i = 0; $i < $pages; $i++){
-			$pg = preg_replace("/(^,)|((?<=,),+)|((?<=0)0+)|((,|,0)+$)/m", '', $pref . $i . $post);	//	clean 1) leading comas, 2) multiple comas, 3) multiple zeros, 4) trailing comas and zeros
-			$output .= '<li '.($i == $current ? 'class="active"' : '').'><a href="'.$this->modx->makeUrl($id, '', ($pg ? array_merge($que, array('vbpages' => $pg)) : $que)).'">'.($i+1).'</a></li>';
-		}
-		return '<ul class="pagination">'.$output.'</ul>';
 	}
 	
 	protected function _gdRGB($img, $x, $y){
