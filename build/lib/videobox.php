@@ -27,6 +27,8 @@ class VideoboxVideobox {
     public $config = array();
 	public $gallery = -1;
 	private $pages = array();
+	
+	private $cache = array();
 
 	function __construct(array &$config = array()){
 		$this->setConfig($config);
@@ -39,13 +41,24 @@ class VideoboxVideobox {
 		}
 	}
 	
+	public static function active($var) {
+		return ($var['expires'] == 0 || $var['expires'] > time());
+	}
+	
 	function setConfig(array &$config = array()){
 		$this->config = array_merge(array(
 			'assets_url' => rtrim(JURI::base(), '/') . '/libraries/videobox/',
 			'assets_path' => rtrim(JPATH_LIBRARIES, '/') . '/videobox/',
 			'core_path' => rtrim(JPATH_LIBRARIES, '/') . '/videobox/',
 		), $config);
-		$this->config['cache'] = false;
+		
+		$this->config['cache'] = true;
+		$this->config['cacheFile'] = rtrim(JPATH_CACHE, '/') . '/vb-cache';
+		
+		$this->cache = unserialize(file_get_contents($this->config['cacheFile']));
+		if(!$this->cache) $this->cache = array();
+		$this->cache = array_filter($this->cache, 'VideoboxVideobox::active');
+		
 		$this->processors = null;
 	}
 	
@@ -76,13 +89,24 @@ class VideoboxVideobox {
 	}
 	
 	function setCache($key, $data){
+		$key = md5($key);
 		if(!$this->config['cache']) return;
-		return;
+		if(!isset($this->cache[$key])){
+			$this->cache[$key] = array(
+				'time' => 0,
+				'data' => $data
+			);
+		} else {
+			$this->cache[$key]['time'] = 0;
+			$this->cache[$key]['data'] = $data;
+		}
+		file_put_contents($this->config['cacheFile'], serialize($this->cache));
 	}
 	
 	function getCache($key){
-		if(!$this->config['cache']) return '';
-		return '';
+		$key = md5($key);
+		if($this->config['cache'] && isset($this->cache[$key])) return $this->cache[$key]['data'];
+		return null;
 	}
 	
 	function parseTemplate($tpl, $properties = array()){
