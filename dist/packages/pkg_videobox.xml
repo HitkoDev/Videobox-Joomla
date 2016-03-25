@@ -17,6 +17,7 @@
 		<file type="plugin" id="videobox" group="system">plg_system_videobox.zip</file>
 		<file type="plugin" id="youtube" group="videobox">plg_videobox_youtube.zip</file>
 		<file type="plugin" id="vimeo" group="videobox">plg_videobox_vimeo.zip</file>
+		<file type="plugin" id="soundcloud" group="videobox">plg_videobox_soundcloud.zip</file>
 		<file type="plugin" id="twitch" group="videobox">plg_videobox_twitch.zip</file>
 	</files>
 </extension>

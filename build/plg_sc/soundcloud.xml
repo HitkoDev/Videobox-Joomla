@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="videobox" method="upgrade" version="3.0" >
-    <name>plg_videobox_soundcloud</name>
+    <name>Videobox - SoundCloud</name>
     <creationDate>April 2014</creationDate>
     <description>Video plugin for Joomla!</description>
     

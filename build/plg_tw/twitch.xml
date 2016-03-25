@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="videobox" method="upgrade" version="3.0" >
-    <name>plg_videobox_twitch</name>
+    <name>Videobox - Twitch</name>
     <creationDate>March 2016</creationDate>
     <description>Video plugin for Joomla!</description>
     
