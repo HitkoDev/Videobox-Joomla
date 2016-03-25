@@ -7,10 +7,11 @@ var cssnano = require('gulp-cssnano');
 var zip = require('gulp-zip');
 var merge = require('merge2');
 var template = require('gulp-template');
+var folders = require('gulp-recursive-folder');
 
 var manifestData = {
     joomlaVersion: '3.0',
-    license: 'GNU General Public License version 3 or later',
+    license: 'GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html',
     author: 'HitkoDev',
     copyright: 'Copyright (C) 2016 HtikoDev',
     mail: 'development@hitko.si',
@@ -24,11 +25,11 @@ gulp.task('default', function() {
 
 gulp.task('build', [
     'lib',
-    'plg',
-    'plg_yt',
-    'plg_vi',
-    'plg_sc',
-    'plg_tw'
+    'videobox',
+    'youtube',
+    'vimeo',
+    'soundcloud',
+    'twitch'
 ], function() {
 
     return merge([
@@ -48,7 +49,31 @@ gulp.task('build', [
             .pipe(rename({
                 suffix: '.min'
             }))
-            .pipe(gulp.dest('./build'))
+            .pipe(gulp.dest('./build')),
+        
+        // put index.html inside the folders
+        folders({
+            base: './build',
+            exclude: [
+                'definitions',
+                'language'
+            ]
+        }, function(folder) {
+            return gulp.src('./src/index.html')
+                .pipe(gulp.dest('./build/' + folder.pathTarget));
+        })(),
+        
+        // put data into the manifest files
+        folders({
+            base: './build',
+            exclude: [
+                'definitions'
+            ]
+        }, function(folder) {
+            return gulp.src('./build/' + folder.pathTarget + '/' + folder.name + '.xml')
+                .pipe(template(manifestData))
+                .pipe(gulp.dest('./build/' + folder.pathTarget));
+        })()
 
     ]);
 
@@ -61,35 +86,35 @@ gulp.task('install', [
     return merge([
 
         // install library
-        gulp.src('./build/lib/**')
+        gulp.src('./build/libraries/videobox/**')
             .pipe(gulp.dest('../libraries/videobox')),
 
 
         // install system plugin
-        gulp.src('./build/plg/language/**')
+        gulp.src('./build/plugins/videobox/language/**')
             .pipe(gulp.dest('../administrator/language')),
 
-        gulp.src(['./build/plg/**', '!./build/plg/language/**'])
+        gulp.src(['./build/plugins/videobox/**', '!./build/plugins/videobox/language/**'])
             .pipe(gulp.dest('../plugins/system/videobox')),
 
 
         // install YouTube plugin
-        gulp.src('./build/plg_yt/**')
+        gulp.src('./build/plugins/youtube/**')
             .pipe(gulp.dest('../plugins/videobox/youtube')),
 
 
         // install Vimeo plugin
-        gulp.src('./build/plg_vi/**')
+        gulp.src('./build/plugins/vimeo/**')
             .pipe(gulp.dest('../plugins/videobox/vimeo')),
 
 
         // install SoundCLoud plugin
-        gulp.src('./build/plg_sc/**')
+        gulp.src('./build/plugins/soundcloud/**')
             .pipe(gulp.dest('../plugins/videobox/soundcloud')),
 
 
         // install Twitch plugin
-        gulp.src('./build/plg_tw/**')
+        gulp.src('./build/plugins/twitch/**')
             .pipe(gulp.dest('../plugins/videobox/twitch'))
 
     ]);
@@ -103,40 +128,40 @@ gulp.task('pack-parts', [
     return merge([
 
         // pack library
-        gulp.src('./build/lib/**')
+        gulp.src('./build/libraries/videobox/**')
             .pipe(zip('lib_videobox.zip'))
             .pipe(gulp.dest('./dist/packages')),
 
         // pack system plugin
-        gulp.src('./build/plg/**')
+        gulp.src('./build/plugins/videobox/**')
             .pipe(zip('plg_system_videobox.zip'))
             .pipe(gulp.dest('./dist/packages')),
 
 
         // pack YouTube plugin
-        gulp.src('./build/plg_yt/**')
+        gulp.src('./build/plugins/youtube/**')
             .pipe(zip('plg_videobox_youtube.zip'))
             .pipe(gulp.dest('./dist/packages')),
 
 
         // pack Vimeo plugin
-        gulp.src('./build/plg_vi/**')
+        gulp.src('./build/plugins/vimeo/**')
             .pipe(zip('plg_videobox_vimeo.zip'))
             .pipe(gulp.dest('./dist/packages')),
 
 
         // pack SoundCloud plugin
-        gulp.src('./build/plg_sc/**')
+        gulp.src('./build/plugins/soundcloud/**')
             .pipe(zip('plg_videobox_soundcloud.zip'))
             .pipe(gulp.dest('./dist/packages')),
 
 
         // pack Twitch plugin
-        gulp.src('./build/plg_tw/**')
+        gulp.src('./build/plugins/twitch/**')
             .pipe(zip('plg_videobox_twitch.zip'))
             .pipe(gulp.dest('./dist/packages')),
-        
-        
+
+
         // copy package manifest
         gulp.src('./src/pkg_videobox.xml')
             .pipe(template(manifestData))
@@ -150,18 +175,14 @@ gulp.task('pack-all', [
     'pack-parts'
 ], function() {
 
-    return merge([
-
-        gulp.src('./dist/packages/**')
-            .pipe(zip('pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip'))
-            .pipe(gulp.dest('./dist')),
-
-    ]);
+    return gulp.src('./dist/packages/**')
+        .pipe(zip('pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip'))
+        .pipe(gulp.dest('./dist'));
 
 });
 
 gulp.task('lib', function() {
-    var tsResult = gulp.src('./src/lib/**/*.ts')
+    var tsResult = gulp.src('./src/libraries/videobox/**/*.ts')
         .pipe(typescript({
             declaration: true,
             noExternalResolve: true,
@@ -172,105 +193,58 @@ gulp.task('lib', function() {
     return merge([
 
         tsResult.dts.pipe(gulp.dest('./build/definitions')),
-        tsResult.js.pipe(gulp.dest('./build/lib')),
+        tsResult.js.pipe(gulp.dest('./build/libraries/videobox')),
 
-        gulp.src('./src/lib/sass/*.scss')
+        gulp.src('./src/libraries/videobox/sass/*.scss')
             .pipe(compass({
-                css: 'src/lib/css',
-                sass: 'src/lib/sass'
+                css: 'src/libraries/videobox/css',
+                sass: 'src/libraries/videobox/sass'
             }))
-            .pipe(gulp.dest('./build/lib/css')),
+            .pipe(gulp.dest('./build/libraries/videobox/css')),
 
-        gulp.src('./src/lib/**/*.php')
-            .pipe(gulp.dest('./build/lib')),
-
-        gulp.src('./src/lib/**/*.xml')
-            .pipe(template(manifestData))
-            .pipe(gulp.dest('./build/lib')),
+        gulp.src(['./src/libraries/videobox/**/*.php', './src/libraries/videobox/**/*.xml'])
+            .pipe(gulp.dest('./build/libraries/videobox')),
 
         gulp.src(['./node_modules/videobox/dist/*.css'])
-            .pipe(gulp.dest('./build/lib/css')),
+            .pipe(gulp.dest('./build/libraries/videobox/css')),
 
-        gulp.src(['./node_modules/videobox/dist/*.js'])
-            .pipe(gulp.dest('./build/lib/js')),
-
-        gulp.src(['./node_modules/web-animations-js/web-animations.min.js'])
-            .pipe(gulp.dest('./build/lib/js')),
+        gulp.src(['./node_modules/videobox/dist/*.js', './node_modules/web-animations-js/web-animations.min.js'])
+            .pipe(gulp.dest('./build/libraries/videobox/js')),
 
         gulp.src(['./node_modules/videobox/dist/video-js/**'])
-            .pipe(gulp.dest('./build/lib/video-js'))
+            .pipe(gulp.dest('./build/libraries/videobox/video-js'))
 
     ]);
 
 });
 
-gulp.task('plg', function() {
+gulp.task('videobox', function() {
 
-    return merge([
-
-        gulp.src(['./src/plg/**', '!./src/plg/**/*.xml'])
-            .pipe(gulp.dest('./build/plg')),
-
-        gulp.src('./src/plg/**/*.xml')
-            .pipe(template(manifestData))
-            .pipe(gulp.dest('./build/plg')),
-
-    ]);
+    return gulp.src('./src/plugins/videobox/**')
+        .pipe(gulp.dest('./build/plugins/videobox'));
 
 });
 
-gulp.task('plg_yt', function() {
+gulp.task('youtube', function() {
 
-    return merge([
-
-        gulp.src(['./src/plg_yt/**', '!./src/plg_yt/**/*.xml'])
-            .pipe(gulp.dest('./build/plg_yt')),
-
-        gulp.src('./src/plg_yt/**/*.xml')
-            .pipe(template(manifestData))
-            .pipe(gulp.dest('./build/plg_yt')),
-
-    ]);
+    return gulp.src('./src/plugins/youtube/**')
+        .pipe(gulp.dest('./build/plugins/youtube'));
 });
 
-gulp.task('plg_vi', function() {
+gulp.task('vimeo', function() {
 
-    return merge([
-
-        gulp.src(['./src/plg_vi/**', '!./src/plg_vi/**/*.xml'])
-            .pipe(gulp.dest('./build/plg_vi')),
-
-        gulp.src('./src/plg_vi/**/*.xml')
-            .pipe(template(manifestData))
-            .pipe(gulp.dest('./build/plg_vi')),
-
-    ]);
+    return gulp.src('./src/plugins/vimeo/**')
+        .pipe(gulp.dest('./build/plugins/vimeo'));
 });
 
-gulp.task('plg_sc', function() {
+gulp.task('soundcloud', function() {
 
-    return merge([
-
-        gulp.src(['./src/plg_sc/**', '!./src/plg_sc/**/*.xml'])
-            .pipe(gulp.dest('./build/plg_sc')),
-
-        gulp.src('./src/plg_sc/**/*.xml')
-            .pipe(template(manifestData))
-            .pipe(gulp.dest('./build/plg_sc')),
-
-    ]);
+    return gulp.src('./src/plugins/soundcloud/**')
+        .pipe(gulp.dest('./build/plugins/soundcloud'));
 });
 
-gulp.task('plg_tw', function() {
+gulp.task('twitch', function() {
 
-    return merge([
-
-        gulp.src(['./src/plg_tw/**', '!./src/plg_tw/**/*.xml'])
-            .pipe(gulp.dest('./build/plg_tw')),
-
-        gulp.src('./src/plg_tw/**/*.xml')
-            .pipe(template(manifestData))
-            .pipe(gulp.dest('./build/plg_tw')),
-
-    ]);
+    return gulp.src('./src/plugins/twitch/**')
+        .pipe(gulp.dest('./build/plugins/twitch'));
 });

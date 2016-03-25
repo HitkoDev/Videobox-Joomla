@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade" version="3.0" >
+    <name>Videobox library</name>
+	<libraryname>videobox</libraryname>
+    <creationDate>April 2014</creationDate>
+    <description>Library containint core Videobox features</description>
+    
+	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
+    <author>HitkoDev</author>
+    <copyright>Copyright (C) 2016 HtikoDev</copyright>
+    <authorEmail>development@hitko.si</authorEmail>
+    <authorUrl>https://hitko.eu/videobox/</authorUrl>
+    <version>5.0.0 beta-1</version>
+	
+	<files>
+		<filename>adapter.php</filename>
+		<filename>videobox.php</filename>
+		<folder>css</folder>
+		<folder>fields</folder>
+		<folder>js</folder>
+	</files>
+</extension>

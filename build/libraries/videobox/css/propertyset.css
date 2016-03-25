@@ -1,0 +1,71 @@
+/*!	
+ *	@author		HitkoDev http://hitko.eu/videobox
+ *	@copyright	Copyright (C) 2016 HitkoDev All Rights Reserved.
+ *	@license	http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
+.prop-set-items {
+  max-width: 220px;
+  margin: 0 0 24px;
+}
+.prop-set-items .icon-cancel:before {
+  color: #942a25;
+}
+.prop-set-items .icon-new:before {
+  color: #378137;
+}
+.prop-set-items li {
+  line-height: 26px;
+  min-height: 26px;
+  padding: 3px;
+  padding-left: 12px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+.prop-set-items li span {
+  display: inline-block;
+}
+.prop-set-items li span.set-name {
+  cursor: pointer;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+}
+.prop-set-items li:hover, .prop-set-items li.set-active {
+  background-color: #eee;
+}
+.prop-set-items li:last-child {
+  padding: 6px;
+  min-height: 0;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+}
+.prop-set-items li:last-child:hover {
+  background: none;
+}
+
+.prop-set-content-label label {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.3em;
+}
+
+textarea.vb-tpl {
+  width: auto;
+  max-width: calc(100% - 14px);
+}

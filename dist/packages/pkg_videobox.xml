@@ -5,7 +5,7 @@
     <creationDate>April 2014</creationDate>
     <description>Package containing standard Videobox plugins and libraries</description>
     
-	<license>GNU General Public License version 3 or later</license>
+	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
     <author>HitkoDev</author>
     <copyright>Copyright (C) 2016 HtikoDev</copyright>
     <authorEmail>development@hitko.si</authorEmail>
