@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="videobox" method="upgrade" version="<%= joomlaVersion %>" >
-    <name>plg_videobox_youtube</name>
+    <name>plg_videobox_vimeo</name>
     <creationDate>April 2014</creationDate>
     <description>Video plugin for Joomla!</description>
     
@@ -12,7 +12,7 @@
     <version><%= version %></version>
     
     <files>
-        <filename plugin="youtube">youtube.php</filename>
+        <filename plugin="vimeo">vimeo.php</filename>
     </files>
     <config>
         <fields name="params">

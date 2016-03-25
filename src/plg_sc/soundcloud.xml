@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="videobox" method="upgrade" version="<%= joomlaVersion %>" >
-    <name>plg_videobox_youtube</name>
+    <name>plg_videobox_soundcloud</name>
     <creationDate>April 2014</creationDate>
     <description>Video plugin for Joomla!</description>
     
@@ -12,11 +12,16 @@
     <version><%= version %></version>
     
     <files>
-        <filename plugin="youtube">youtube.php</filename>
+        <filename plugin="soundcloud">soundcloud.php</filename>
     </files>
     <config>
         <fields name="params">
-		
+            <fieldset name="basic">
+                <field name="scVisual" type="radio" default="1" size="5" label="Visual player" description="Turn visual player on (better for large players) or off (better for small players)" class="btn-group" >
+					<option value="1" >JON</option>
+					<option value="0" >JOFF</option>
+				</field>
+            </fieldset>
         </fields>
     </config>
 </extension>

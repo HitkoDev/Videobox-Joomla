@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="videobox" method="upgrade" version="3.0" >
+    <name>plg_videobox_vimeo</name>
+    <creationDate>April 2014</creationDate>
+    <description>Video plugin for Joomla!</description>
+    
+	<license>GNU General Public License version 3 or later</license>
+    <author>HitkoDev</author>
+    <copyright>Copyright (C) 2016 HtikoDev</copyright>
+    <authorEmail>development@hitko.si</authorEmail>
+    <authorUrl>https://hitko.eu/videobox/</authorUrl>
+    <version>5.0.0 beta-1</version>
+    
+    <files>
+        <filename plugin="vimeo">vimeo.php</filename>
+    </files>
+    <config>
+        <fields name="params">
+		
+        </fields>
+    </config>
+</extension>

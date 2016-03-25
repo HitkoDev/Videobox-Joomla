@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.1" type="plugin" group="system">
+<extension type="plugin" group="system" method="upgrade" version="<%= joomlaVersion %>" >
     <name>plg_system_videobox</name>
-    <author>HitkoDev</author>
     <creationDate>August 2012</creationDate>
-    <copyright>Copyright (C) 2016 HtikoDev</copyright>
-    <license>GNU General Public License version 3 or later</license>
-    <authorEmail>development@hitko.si</authorEmail>
-    <authorUrl>hitko.eu</authorUrl>
-    <version>5.0.0</version>
     <description>Video plugin for Joomla!</description>
+    
+	<license><%= license %></license>
+    <author><%= author %></author>
+    <copyright><%= copyright %></copyright>
+    <authorEmail><%= mail %></authorEmail>
+    <authorUrl><%= url %></authorUrl>
+    <version><%= version %></version>
+    
     <files>
         <filename plugin="videobox">videobox.php</filename>
     </files>
+    
     <languages>
         <language tag="en-GB">language/en-GB/en-GB.plg_system_videobox.ini</language>
         <language tag="en-GB">language/en-GB/en-GB.plg_system_videobox.sys.ini</language>
     </languages>
+    
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="/libraries/videobox/fields">

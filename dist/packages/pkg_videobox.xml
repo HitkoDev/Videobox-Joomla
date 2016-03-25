@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" method="upgrade" version="3.0" >
+    <name>Videobox package</name>
+	<packagename>videobox</packagename>
+    <creationDate>April 2014</creationDate>
+    <description>Package containing standard Videobox plugins and libraries</description>
+    
+	<license>GNU General Public License version 3 or later</license>
+    <author>HitkoDev</author>
+    <copyright>Copyright (C) 2016 HtikoDev</copyright>
+    <authorEmail>development@hitko.si</authorEmail>
+    <authorUrl>https://hitko.eu/videobox/</authorUrl>
+    <version>5.0.0 beta-1</version>
+	
+	<files>
+		<file type="library" id="videobox">lib_videobox.zip</file>
+		<file type="plugin" id="videobox" group="system">plg_system_videobox.zip</file>
+		<file type="plugin" id="youtube" group="videobox">plg_videobox_youtube.zip</file>
+		<file type="plugin" id="vimeo" group="videobox">plg_videobox_vimeo.zip</file>
+		<file type="plugin" id="twitch" group="videobox">plg_videobox_twitch.zip</file>
+	</files>
+</extension>

@@ -45,6 +45,7 @@ class VideoboxVideobox {
 			'assets_path' => rtrim(JPATH_LIBRARIES, '/') . '/videobox/',
 			'core_path' => rtrim(JPATH_LIBRARIES, '/') . '/videobox/',
 		), $config);
+		$this->config['cache'] = false;
 		$this->processors = null;
 	}
 	
@@ -369,7 +370,7 @@ class VideoboxVideobox {
 		}
 		rename($target.'__', $target);
 		$ret = array($this->config['assets_url'] . 'cache/'.$hash.'.jpg', $tWidth, $tHeight);
-		$this->aetCache($img_hash, $ret);
+		$this->setCache($img_hash, $ret);
         unlink($tmpn);
 		return $ret;
 	}

@@ -119,13 +119,13 @@ class plgSystemVideobox extends JPlugin {
             $end = 0;
             if(count($video) > 1){
                 $video = explode('-', trim($video[count($video) - 1]));
-                if(is_numeric(str_replace(':', '', trim($video[0])))){
+                if(count($video) > 0 && is_numeric(str_replace(':', '', trim($video[0])))){
                     $off = explode (':', trim($video[0]));
                     foreach($off as $off1){
                         $start = $start*60 + $off1;
                     }
                 }
-                if(is_numeric(str_replace(':', '', trim($video[1])))){
+                if(count($video) > 1 && is_numeric(str_replace(':', '', trim($video[1])))){
                     $off = explode (':', trim($video[1]));
                     foreach($off as $off1){
                         $end = $end*60 + $off1;
@@ -142,19 +142,19 @@ class plgSystemVideobox extends JPlugin {
 
         if(count($videos) < 1) return;
 
-        if(!isset($display) || !$display) $display = count($videos) > 1 ? $scriptProperties['multipleDisplay'] : $scriptProperties['singleDisplay'];
-        if($display == 'link') $display = 'links';
-        if($display == 'links' && $scriptProperties['player'] == 'vbinline') $scriptProperties['player'] = 'videobox';
-        $scriptProperties['display'] = $display;
+        if(!isset($scriptProperties['display']) || !$scriptProperties['display']) $scriptProperties['display'] = count($videos) > 1 ? $scriptProperties['multipleDisplay'] : $scriptProperties['singleDisplay'];
+        if($scriptProperties['display'] == 'link') $scriptProperties['display'] = 'links';
+        if($scriptProperties['display'] == 'links' && $scriptProperties['player'] == 'vbinline') $scriptProperties['player'] = 'videobox';
+        $scriptProperties['display'] = $scriptProperties['display'];
         unset($scriptProperties['multipleDisplay']);
         unset($scriptProperties['singleDisplay']);
 
         if(count($videos) > 1){
-            $tpl = $display == 'links' ? $scriptProperties['linkTpl'] : $scriptProperties['thumbTpl'];
+            $tpl = $scriptProperties['display'] == 'links' ? $scriptProperties['linkTpl'] : $scriptProperties['thumbTpl'];
             $start = 0;
             $pagination = '';
             
-            if($display == 'gallery'){
+            if($scriptProperties['display'] == 'gallery'){
                 $videobox->gallery++;
                 $start = $videobox->getPage();
                 $scriptProperties['gallery_number'] = $videobox->gallery;
@@ -163,7 +163,7 @@ class plgSystemVideobox extends JPlugin {
                 $start = $start*$scriptProperties['perPage'];
             }
             
-            if($scriptProperties['player'] == 'vbinline' && ($display == 'gallery' || $display == 'slider')){
+            if($scriptProperties['player'] == 'vbinline' && ($scriptProperties['display'] == 'gallery' || $scriptProperties['display'] == 'slider')){
                 $scriptProperties['pWidth'] = $scriptProperties['tWidth'];
                 $scriptProperties['pHeight'] = $scriptProperties['tHeight'];
             }
@@ -183,9 +183,9 @@ class plgSystemVideobox extends JPlugin {
                         'title' => $video->getTitle(), 
                         'linkText' => $video->getTitle(true), 
                         'link' => $video->getPlayerLink(true), 
-                        'thumb' => $videobox->videoThumbnail($video, $display == 'flow'),
+                        'thumb' => $videobox->videoThumbnail($video, $scriptProperties['display'] == 'flow'),
                     );
-                    if($display == 'gallery' && $n == ($start + $scriptProperties['perPage'])) break;
+                    if($scriptProperties['display'] == 'gallery' && $n == ($start + $scriptProperties['perPage'])) break;
                 }
                 $maxR = 0;
                 $maxW = $scriptProperties['tWidth'];
@@ -202,7 +202,7 @@ class plgSystemVideobox extends JPlugin {
                 $n = 0;
                 foreach($filtered as $video){
                     $v = $videobox->parseTemplate($tpl, array_merge($props, $video, array('thumb' => $video['thumb'][0], 'tWidth' => $video['thumb'][1], 'tHeight' => $video['thumb'][2])));
-                    switch($display){
+                    switch($scriptProperties['display']){
                         case 'links':
                             $v = ($n == 0 ? '' : $scriptProperties['delimiter']) . $v;
                             break;
@@ -221,13 +221,13 @@ class plgSystemVideobox extends JPlugin {
                     $content .= $v;
                 }
                 $b = 0.25*$maxW*$minR;
-                if($display == 'gallery') for(; $n < $scriptProperties['perPage']; $n++){
+                if($scriptProperties['display'] == 'gallery') for(; $n < $scriptProperties['perPage']; $n++){
                     $v = $videobox->parseTemplate($scriptProperties['galleryItemTpl'], array('ratio' => 1, 'basis' => $b));
                     $content .= $v;
                 }
                 $videobox->setCache($propHash, $content);
             }
-            switch($display){
+            switch($scriptProperties['display']){
                 case 'links':
                     return $content;
                 case 'slider':
@@ -236,7 +236,7 @@ class plgSystemVideobox extends JPlugin {
                     return $videobox->parseTemplate($scriptProperties['galleryTpl'], array('content' => $content, 'pagination' => $pagination));
             }
         } else {
-            $autoPlay = isset($autoPlay) && $autoPlay && $display == 'player' && (!isset($videobox->autoPlay) || !$videobox->autoPlay);
+            $autoPlay = isset($autoPlay) && $autoPlay && $scriptProperties['display'] == 'player' && (!isset($videobox->autoPlay) || !$videobox->autoPlay);
             $scriptProperties['autoPlay'] = $autoPlay;
             if($autoPlay) $videobox->autoPlay = true;
             ksort($scriptProperties);
@@ -244,8 +244,8 @@ class plgSystemVideobox extends JPlugin {
             $data = $videobox->getCache($propHash);
             if($data) return $data;
             $video = $videos[0];
-            $props = array_merge(array('rel' => $scriptProperties['player'], 'pWidth' => $scriptProperties['pWidth'], 'pHeight' => $scriptProperties['pHeight'], 'tWidth' => $scriptProperties['tWidth'], 'tHeight' => $scriptProperties['tHeight']), array('title' => $video->getTitle(), 'link' => $video->getPlayerLink($display != 'player' || $autoPlay), 'ratio' => (100*$scriptProperties['pHeight']/$scriptProperties['pWidth'])));
-            switch($display){
+            $props = array_merge(array('rel' => $scriptProperties['player'], 'pWidth' => $scriptProperties['pWidth'], 'pHeight' => $scriptProperties['pHeight'], 'tWidth' => $scriptProperties['tWidth'], 'tHeight' => $scriptProperties['tHeight']), array('title' => $video->getTitle(), 'link' => $video->getPlayerLink($scriptProperties['display'] != 'player' || $autoPlay), 'ratio' => (100*$scriptProperties['pHeight']/$scriptProperties['pWidth'])));
+            switch($scriptProperties['display']){
                 case 'links':
                     $props['linkText'] = isset($linkText) ? trim($linkText) : $video->getTitle(true);
                     $v = $videobox->parseTemplate($scriptProperties['linkTpl'], $props);

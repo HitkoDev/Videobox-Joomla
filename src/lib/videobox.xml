@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade" version="<%= joomlaVersion %>" >
+    <name>Videobox library</name>
+	<libraryname>videobox</libraryname>
+    <creationDate>April 2014</creationDate>
+    <description>Library containint core Videobox features</description>
+    
+	<license><%= license %></license>
+    <author><%= author %></author>
+    <copyright><%= copyright %></copyright>
+    <authorEmail><%= mail %></authorEmail>
+    <authorUrl><%= url %></authorUrl>
+    <version><%= version %></version>
+	
+	<files>
+		<filename>adapter.php</filename>
+		<filename>videobox.php</filename>
+		<folder>css</folder>
+		<folder>fields</folder>
+		<folder>js</folder>
+	</files>
+</extension>
