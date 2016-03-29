@@ -20,6 +20,7 @@
     "gulp-uglify": "^1.5.3",
     "gulp-zip": "^3.2.0",
     "merge2": "^1.0.1",
+    "video.js": "^5.8.6",
     "videobox": "git+https://github.com/HitkoDev/Videobox.git"
   }
 }

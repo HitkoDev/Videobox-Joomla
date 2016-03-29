@@ -50,7 +50,7 @@ gulp.task('build', [
                 suffix: '.min'
             }))
             .pipe(gulp.dest('./build')),
-        
+
         // put index.html inside the folders
         folders({
             base: './build',
@@ -62,7 +62,7 @@ gulp.task('build', [
             return gulp.src('./src/index.html')
                 .pipe(gulp.dest('./build/' + folder.pathTarget));
         })(),
-        
+
         // put data into the manifest files
         folders({
             base: './build',
@@ -202,16 +202,25 @@ gulp.task('lib', function() {
             }))
             .pipe(gulp.dest('./build/libraries/videobox/css')),
 
-        gulp.src(['./src/libraries/videobox/**/*.php', './src/libraries/videobox/**/*.xml'])
+        gulp.src([
+            './src/libraries/videobox/**/*.php',
+            './src/libraries/videobox/**/*.xml'
+        ])
             .pipe(gulp.dest('./build/libraries/videobox')),
 
         gulp.src(['./node_modules/videobox/dist/*.css'])
             .pipe(gulp.dest('./build/libraries/videobox/css')),
 
-        gulp.src(['./node_modules/videobox/dist/*.js', './node_modules/web-animations-js/web-animations.min.js'])
+        gulp.src([
+            './node_modules/videobox/dist/*.js',
+            './node_modules/web-animations-js/web-animations.min.js'
+        ])
             .pipe(gulp.dest('./build/libraries/videobox/js')),
 
-        gulp.src(['./node_modules/videobox/dist/video-js/**'])
+        gulp.src([
+            './node_modules/video.js/dist/*.js',
+            './node_modules/video.js/dist/*.swf'
+        ])
             .pipe(gulp.dest('./build/libraries/videobox/video-js'))
 
     ]);
