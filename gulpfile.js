@@ -16,7 +16,7 @@ var manifestData = {
     copyright: 'Copyright (C) 2016 HtikoDev',
     mail: 'development@hitko.si',
     url: 'https://hitko.eu/videobox/',
-    version: '5.0.0 beta-1'
+    version: '5.0.0 beta-2'
 };
 
 gulp.task('default', function() {
