@@ -47,13 +47,13 @@ class JFormFieldPropertySet extends JFormFieldText {
 		$value = json_decode($this->value, true);
 		if(!$value) $value = array();
 		$value['__keymap'] = $keymap;
-		if(!$value['default']) $value['default'] = array_merge($fields, array(
+		if(!isset($value['default']) || !$value['default']) $value['default'] = array_merge($fields, array(
 			'property_set' => 'default'
 		));
 		
 		$data = array_merge($fields, isset($value[$set]) ? $value[$set] : array());
 		foreach($data as $key => $val){
-			if($keymap[$key]) $this->form->setValue($keymap[$key], $this->group, $val);
+			if(isset($keymap[$key]) && $keymap[$key]) $this->form->setValue($keymap[$key], $this->group, $val);
 		}
 		if($set == 'default') $value[$set] = $data;
 		

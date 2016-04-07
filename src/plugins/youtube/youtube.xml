@@ -13,6 +13,7 @@
     
     <files>
         <filename plugin="youtube">youtube.php</filename>
+        <filename plugin="youtube">index.html</filename>
     </files>
     <config>
         <fields name="params">

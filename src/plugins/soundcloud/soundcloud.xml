@@ -13,6 +13,7 @@
     
     <files>
         <filename plugin="soundcloud">soundcloud.php</filename>
+        <filename plugin="soundcloud">index.html</filename>
     </files>
     <config>
         <fields name="params">

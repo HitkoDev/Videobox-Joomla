@@ -13,6 +13,7 @@
     
     <files>
         <filename plugin="vimeo">vimeo.php</filename>
+        <filename plugin="vimeo">index.html</filename>
     </files>
     <config>
         <fields name="params">

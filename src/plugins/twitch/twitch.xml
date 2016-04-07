@@ -13,6 +13,7 @@
     
     <files>
         <filename plugin="twitch">twitch.php</filename>
+        <filename plugin="twitch">index.html</filename>
     </files>
     <config>
         <fields name="params">

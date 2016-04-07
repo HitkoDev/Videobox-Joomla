@@ -59,6 +59,12 @@ class plgSystemVideobox extends JPlugin {
 	public function onAfterRender(){
 		$app = JFactory::getApplication();
 		$document = JFactory::getDocument();
+            
+        $instances = array(
+            'tags' => array(),
+            'outputs' => array()
+        );
+        
 		if($app->isSite() && method_exists($document, 'addCustomTag')){
             $videobox = new VideoboxVideobox();
             
@@ -66,11 +72,6 @@ class plgSystemVideobox extends JPlugin {
             preg_match_all("/\{\s*videobox\s*([\@\?]?\s*[^`\}]*([^`\}]*`[^`]*?`)*)\s*\}(.*?){\s*\/\s*videobox\s*\}/ism", $content, $matches, PREG_SET_ORDER);
             
             $sets = $this->getSets();
-            
-            $instances = array(
-                'tags' => array(),
-                'outputs' => array()
-            );
             
             foreach($matches as $match){
                 
@@ -116,7 +117,7 @@ class plgSystemVideobox extends JPlugin {
         if(count($instances['tags']) > 0) JResponse::setBody(str_replace($instances['tags'], $instances['outputs'], JResponse::getBody()));
 	}
     
-    private function generateOutput($videobox, &$scriptProperties){
+    private function generateOutput($videobox, $scriptProperties){
         $scriptProperties['color'] = trim(str_replace('#', '', $scriptProperties['color']));
         if(strlen($scriptProperties['color']) != 6) $scriptProperties['color'] = '';
         if(!$scriptProperties['color']) $scriptProperties['color'] = '00a645';

@@ -8,6 +8,9 @@ var zip = require('gulp-zip');
 var merge = require('merge2');
 var template = require('gulp-template');
 var folders = require('gulp-recursive-folder');
+var fs = require('fs');
+
+var package = JSON.parse(fs.readFileSync('./package.json'));
 
 var manifestData = {
     joomlaVersion: '3.0',
@@ -15,8 +18,8 @@ var manifestData = {
     author: 'HitkoDev',
     copyright: 'Copyright (C) 2016 HtikoDev',
     mail: 'development@hitko.si',
-    url: 'https://hitko.eu/videobox/',
-    version: '5.0.0 beta-2'
+    url: package['homepage'],
+    version: package['version']
 };
 
 gulp.task('default', function() {

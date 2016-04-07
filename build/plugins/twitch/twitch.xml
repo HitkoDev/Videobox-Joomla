@@ -9,10 +9,11 @@
     <copyright>Copyright (C) 2016 HtikoDev</copyright>
     <authorEmail>development@hitko.si</authorEmail>
     <authorUrl>https://hitko.eu/videobox/</authorUrl>
-    <version>5.0.0 beta-2</version>
+    <version>5.0.0-beta2</version>
     
     <files>
         <filename plugin="twitch">twitch.php</filename>
+        <filename plugin="twitch">index.html</filename>
     </files>
     <config>
         <fields name="params">

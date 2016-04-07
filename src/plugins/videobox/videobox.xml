@@ -13,6 +13,7 @@
     
     <files>
         <filename plugin="videobox">videobox.php</filename>
+        <filename plugin="videobox">index.html</filename>
     </files>
     
     <languages>

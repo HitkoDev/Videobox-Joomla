@@ -22,6 +22,8 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted Access' );
 
+define('DS', DIRECTORY_SEPARATOR);
+
 jimport('joomla.html.pagination'); 
 
 class VideoboxVideobox {
@@ -44,20 +46,20 @@ class VideoboxVideobox {
 	}
 	
 	public static function active($var) {
-		return ($var['expires'] == 0 || $var['expires'] > time());
+		return $var && is_array($var) && isset($var['expires']) && ($var['expires'] == 0 || $var['expires'] > time());
 	}
 	
 	function setConfig(array &$config = array()){
 		$this->config = array_merge(array(
 			'assets_url' => rtrim(JURI::base(), '/') . '/libraries/videobox/',
-			'assets_path' => rtrim(JPATH_LIBRARIES, '/') . '/videobox/',
-			'core_path' => rtrim(JPATH_LIBRARIES, '/') . '/videobox/',
+			'assets_path' => rtrim(JPATH_LIBRARIES, DS) . DS . 'videobox' . DS,
+			'core_path' => rtrim(JPATH_LIBRARIES, DS) . DS . 'videobox' . DS,
 		), $config);
 		
 		$this->config['cache'] = true;
-		$this->config['cacheFile'] = rtrim(JPATH_CACHE, '/') . '/vb-cache';
+		$this->config['cacheFile'] = rtrim(JPATH_CACHE, DS) . DS . 'vb-cache';
 		
-		$this->cache = unserialize(file_get_contents($this->config['cacheFile']));
+		$this->cache = file_exists($this->config['cacheFile']) ? unserialize(file_get_contents($this->config['cacheFile'])) : false;
 		if(!$this->cache) $this->cache = array();
 		$this->cache = array_filter($this->cache, 'VideoboxVideobox::active');
 		
@@ -170,12 +172,12 @@ class VideoboxVideobox {
 		} else {
 			$nobg = $video;
 			$hash = md5($video . $name);
-			$img = array($this->config['assets_path'] . 'images/'.$nobg.'.png', IMAGETYPE_PNG);
+			$img = array($this->config['assets_path'] . 'images'. DS . $nobg.'.png', IMAGETYPE_PNG);
 		}
 		
 		if(!is_dir($this->config['assets_path'] . 'cache')) mkdir($this->config['assets_path'] . 'cache');
 		
-		$target = $this->config['assets_path'] . 'cache/'.$hash.'.jpg';
+		$target = $this->config['assets_path'] . 'cache'. DS . $hash.'.jpg';
 		
 		$img_hash = md5($target);
 		
@@ -183,7 +185,7 @@ class VideoboxVideobox {
 		if($ret) return $ret;
 		
 		try{
-            $target_info = getimagesize($target);
+            $target_info = @getimagesize($target);
         } catch (Exception $ex){
             
         }
@@ -233,28 +235,28 @@ class VideoboxVideobox {
 				
 					for($y = 3; $y < $imagedata[1]; $y++) {
 						for($x = 3; $x < $imagedata[0]; $x++) {
-							if($this->_chkB(_gdRGB($src_img, $x, $y))) break 2;
+							if($this->_chkB($this->_gdRGB($src_img, $x, $y))) break 2;
 						}
 						$b_t = $y;
 					}
 
 					for($y = $imagedata[1]-4; $y >= 0; $y--) {
 						for($x = 3; $x < $imagedata[0] - 3; $x++) {
-							if($this->_chkB(_gdRGB($src_img, $x, $y))) break 2;
+							if($this->_chkB($this->_gdRGB($src_img, $x, $y))) break 2;
 						}
 						$b_b = $imagedata[1] - 1 - $y;
 					}
 
 					for($x = 3; $x < $imagedata[0]; $x++) {
 						for($y = 3; $y < $imagedata[1]; $y++) {
-							if($this->_chkB(_gdRGB($src_img, $x, $y))) break 2;
+							if($this->_chkB($this->_gdRGB($src_img, $x, $y))) break 2;
 						}
 						$b_l = $x;
 					}
 
 					for($x = $imagedata[0]-4; $x >= 0; $x--) {
 						for($y = 3; $y < $imagedata[1]; $y++) {
-							if($this->_chkB(_gdRGB($src_img, $x, $y))) break 2;
+							if($this->_chkB($this->_gdRGB($src_img, $x, $y))) break 2;
 						}
 						$b_r = $imagedata[0] - 1 - $x;
 					}
