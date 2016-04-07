@@ -52,6 +52,8 @@ class plgSystemVideobox extends JPlugin {
 		$document = JFactory::getDocument();
 		if($app->isSite() && method_exists($document, 'addCustomTag')){
             $videobox = new VideoboxVideobox();
+            $sets = $this->getSets();
+            $videobox->setConfig($sets['default']);
             $videobox->loadAssets();
         }   
     }

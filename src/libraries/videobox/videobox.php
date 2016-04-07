@@ -86,10 +86,25 @@ class VideoboxVideobox {
 	}
 	
 	function loadAssets(){
+        
+        $this->config['tColor'] = trim(str_replace('#', '', $this->config['tColor']));
+        if(strlen($this->config['tColor']) != 6) $this->config['tColor'] = '';
+        if(!$this->config['tColor']) $this->config['tColor'] = '005723';
+        
+        $this->config['hColor'] = trim(str_replace('#', '', $this->config['hColor']));
+        if(strlen($this->config['hColor']) != 6) $this->config['hColor'] = '';
+        if(!$this->config['hColor']) $this->config['hColor'] = '84d1a4';
+        
 		JHtml::stylesheet('libraries/videobox/css/videobox.min.css');
 		JHtml::_('jquery.framework');
 		JHtml::script('libraries/videobox/js/web-animations.min.js');
 		JHtml::script('libraries/videobox/js/videobox.min.js');
+        
+        $styleOverride = str_replace(array('#005723', '#84d1a4'), array('#' . $this->config['tColor'], '#' . $this->config['hColor']), file_get_contents($this->config['assets_path'] . 'css' . DS . 'overrides.min.css'));
+        
+        $document = JFactory::getDocument();
+        $document->addStyleDeclaration($styleOverride);
+        
 	}
 	
 	function setCache($key, $data){

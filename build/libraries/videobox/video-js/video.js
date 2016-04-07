@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 5.8.6 <http://videojs.com/>
+ * Video.js 5.9.0 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -2786,6 +2786,16 @@ var Button = (function (_ClickableComponent) {
 
     if (tag !== 'button') {
       _utilsLogJs2['default'].warn('Creating a Button with an HTML element of ' + tag + ' is deprecated; use ClickableComponent instead.');
+
+      // Add properties for clickable element which is not a native HTML button
+      props = _objectAssign2['default']({
+        tabIndex: 0
+      }, props);
+
+      // Add ARIA attributes for clickable element which is not a native HTML button
+      attributes = _objectAssign2['default']({
+        role: 'button'
+      }, attributes);
     }
 
     // Add attributes for button element
@@ -2841,7 +2851,7 @@ _component2['default'].registerComponent('Button', Button);
 exports['default'] = Button;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":65,"./component":67,"./utils/events.js":133,"./utils/fn.js":134,"./utils/log.js":137,"global/document":1,"object.assign":45}],65:[function(_dereq_,module,exports){
+},{"./clickable-component.js":65,"./component":67,"./utils/events.js":135,"./utils/fn.js":136,"./utils/log.js":139,"global/document":1,"object.assign":45}],65:[function(_dereq_,module,exports){
 /**
  * @file button.js
  */
@@ -3021,6 +3031,32 @@ var ClickableComponent = (function (_Component) {
   };
 
   /**
+   * Enable the component element
+   *
+   * @return {Component}
+   * @method enable
+   */
+
+  ClickableComponent.prototype.enable = function enable() {
+    this.removeClass('vjs-disabled');
+    this.el_.setAttribute('aria-disabled', 'false');
+    return this;
+  };
+
+  /**
+   * Disable the component element
+   *
+   * @return {Component}
+   * @method disable
+   */
+
+  ClickableComponent.prototype.disable = function disable() {
+    this.addClass('vjs-disabled');
+    this.el_.setAttribute('aria-disabled', 'true');
+    return this;
+  };
+
+  /**
    * Handle Click - Override with specific functionality for component
    *
    * @method handleClick
@@ -3071,7 +3107,7 @@ _component2['default'].registerComponent('ClickableComponent', ClickableComponen
 exports['default'] = ClickableComponent;
 module.exports = exports['default'];
 
-},{"./component":67,"./utils/dom.js":132,"./utils/events.js":133,"./utils/fn.js":134,"./utils/log.js":137,"global/document":1,"object.assign":45}],66:[function(_dereq_,module,exports){
+},{"./component":67,"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/log.js":139,"global/document":1,"object.assign":45}],66:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4307,6 +4343,68 @@ var Component = (function () {
   };
 
   /**
+   * Get width or height of computed style
+   * @param  {String} widthOrHeight  'width' or 'height'
+   * @return {Number|Boolean} The bolean false if nothing was set
+   * @method currentDimension
+   */
+
+  Component.prototype.currentDimension = function currentDimension(widthOrHeight) {
+    var computedWidthOrHeight = 0;
+
+    if (widthOrHeight !== 'width' && widthOrHeight !== 'height') {
+      throw new Error('currentDimension only accepts width or height value');
+    }
+
+    if (typeof _globalWindow2['default'].getComputedStyle === 'function') {
+      var computedStyle = _globalWindow2['default'].getComputedStyle(this.el_);
+      computedWidthOrHeight = computedStyle.getPropertyValue(widthOrHeight) || computedStyle[widthOrHeight];
+    } else if (this.el_.currentStyle) {
+      // ie 8 doesn't support computed style, shim it
+      // return clientWidth or clientHeight instead for better accuracy
+      var rule = 'offset' + _utilsToTitleCaseJs2['default'](widthOrHeight);
+      computedWidthOrHeight = this.el_[rule];
+    }
+
+    // remove 'px' from variable and parse as integer
+    computedWidthOrHeight = parseFloat(computedWidthOrHeight);
+    return computedWidthOrHeight;
+  };
+
+  /**
+   * Get an object which contains width and height values of computed style
+   * @return {Object} The dimensions of element
+   * @method currentDimensions
+   */
+
+  Component.prototype.currentDimensions = function currentDimensions() {
+    return {
+      width: this.currentDimension('width'),
+      height: this.currentDimension('height')
+    };
+  };
+
+  /**
+   * Get width of computed style
+   * @return {Integer}
+   * @method currentWidth
+   */
+
+  Component.prototype.currentWidth = function currentWidth() {
+    return this.currentDimension('width');
+  };
+
+  /**
+   * Get height of computed style
+   * @return {Integer}
+   * @method currentHeight
+   */
+
+  Component.prototype.currentHeight = function currentHeight() {
+    return this.currentDimension('height');
+  };
+
+  /**
    * Emit 'tap' events when touch events are supported
    * This is used to support toggling the controls through a tap on the video.
    * We're requiring them to be enabled because otherwise every component would
@@ -4631,7 +4729,7 @@ Component.registerComponent('Component', Component);
 exports['default'] = Component;
 module.exports = exports['default'];
 
-},{"./utils/dom.js":132,"./utils/events.js":133,"./utils/fn.js":134,"./utils/guid.js":136,"./utils/log.js":137,"./utils/merge-options.js":138,"./utils/to-title-case.js":141,"global/window":2,"object.assign":45}],68:[function(_dereq_,module,exports){
+},{"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/guid.js":138,"./utils/log.js":139,"./utils/merge-options.js":140,"./utils/to-title-case.js":143,"global/window":2,"object.assign":45}],68:[function(_dereq_,module,exports){
 /**
  * @file control-bar.js
  */
@@ -4699,6 +4797,10 @@ var _textTrackControlsChaptersButtonJs = _dereq_('./text-track-controls/chapters
 
 var _textTrackControlsChaptersButtonJs2 = _interopRequireDefault(_textTrackControlsChaptersButtonJs);
 
+var _textTrackControlsDescriptionsButtonJs = _dereq_('./text-track-controls/descriptions-button.js');
+
+var _textTrackControlsDescriptionsButtonJs2 = _interopRequireDefault(_textTrackControlsDescriptionsButtonJs);
+
 var _textTrackControlsSubtitlesButtonJs = _dereq_('./text-track-controls/subtitles-button.js');
 
 var _textTrackControlsSubtitlesButtonJs2 = _interopRequireDefault(_textTrackControlsSubtitlesButtonJs);
@@ -4740,7 +4842,8 @@ var ControlBar = (function (_Component) {
 
   ControlBar.prototype.createEl = function createEl() {
     return _Component.prototype.createEl.call(this, 'div', {
-      className: 'vjs-control-bar'
+      className: 'vjs-control-bar',
+      dir: 'ltr'
     }, {
       'role': 'group' // The control bar is a group, so it can contain menuitems
     });
@@ -4751,14 +4854,14 @@ var ControlBar = (function (_Component) {
 
 ControlBar.prototype.options_ = {
   loadEvent: 'play',
-  children: ['playToggle', 'volumeMenuButton', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'subtitlesButton', 'captionsButton', 'fullscreenToggle']
+  children: ['playToggle', 'volumeMenuButton', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subtitlesButton', 'captionsButton', 'fullscreenToggle']
 };
 
 _componentJs2['default'].registerComponent('ControlBar', ControlBar);
 exports['default'] = ControlBar;
 module.exports = exports['default'];
 
-},{"../component.js":67,"./fullscreen-toggle.js":69,"./live-display.js":70,"./mute-toggle.js":71,"./play-toggle.js":72,"./playback-rate-menu/playback-rate-menu-button.js":73,"./progress-control/progress-control.js":78,"./spacer-controls/custom-control-spacer.js":80,"./text-track-controls/captions-button.js":83,"./text-track-controls/chapters-button.js":84,"./text-track-controls/subtitles-button.js":87,"./time-controls/current-time-display.js":90,"./time-controls/duration-display.js":91,"./time-controls/remaining-time-display.js":92,"./time-controls/time-divider.js":93,"./volume-control/volume-control.js":95,"./volume-menu-button.js":97}],69:[function(_dereq_,module,exports){
+},{"../component.js":67,"./fullscreen-toggle.js":69,"./live-display.js":70,"./mute-toggle.js":71,"./play-toggle.js":72,"./playback-rate-menu/playback-rate-menu-button.js":73,"./progress-control/progress-control.js":78,"./spacer-controls/custom-control-spacer.js":81,"./text-track-controls/captions-button.js":84,"./text-track-controls/chapters-button.js":85,"./text-track-controls/descriptions-button.js":87,"./text-track-controls/subtitles-button.js":89,"./time-controls/current-time-display.js":92,"./time-controls/duration-display.js":93,"./time-controls/remaining-time-display.js":94,"./time-controls/time-divider.js":95,"./volume-control/volume-control.js":97,"./volume-menu-button.js":99}],69:[function(_dereq_,module,exports){
 /**
  * @file fullscreen-toggle.js
  */
@@ -4914,7 +5017,7 @@ _component2['default'].registerComponent('LiveDisplay', LiveDisplay);
 exports['default'] = LiveDisplay;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/dom.js":132}],71:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/dom.js":134}],71:[function(_dereq_,module,exports){
 /**
  * @file mute-toggle.js
  */
@@ -5040,7 +5143,7 @@ _component2['default'].registerComponent('MuteToggle', MuteToggle);
 exports['default'] = MuteToggle;
 module.exports = exports['default'];
 
-},{"../button":64,"../component":67,"../utils/dom.js":132}],72:[function(_dereq_,module,exports){
+},{"../button":64,"../component":67,"../utils/dom.js":134}],72:[function(_dereq_,module,exports){
 /**
  * @file play-toggle.js
  */
@@ -5342,7 +5445,7 @@ _componentJs2['default'].registerComponent('PlaybackRateMenuButton', PlaybackRat
 exports['default'] = PlaybackRateMenuButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-button.js":104,"../../menu/menu.js":106,"../../utils/dom.js":132,"./playback-rate-menu-item.js":74}],74:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-button.js":106,"../../menu/menu.js":108,"../../utils/dom.js":134,"./playback-rate-menu-item.js":74}],74:[function(_dereq_,module,exports){
 /**
  * @file playback-rate-menu-item.js
  */
@@ -5423,7 +5526,7 @@ _componentJs2['default'].registerComponent('PlaybackRateMenuItem', PlaybackRateM
 exports['default'] = PlaybackRateMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-item.js":105}],75:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-item.js":107}],75:[function(_dereq_,module,exports){
 /**
  * @file load-progress-bar.js
  */
@@ -5529,7 +5632,7 @@ _componentJs2['default'].registerComponent('LoadProgressBar', LoadProgressBar);
 exports['default'] = LoadProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":132}],76:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":134}],76:[function(_dereq_,module,exports){
 /**
  * @file mouse-time-display.js
  */
@@ -5544,6 +5647,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _globalWindow = _dereq_('global/window');
+
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
 
 var _componentJs = _dereq_('../../component.js');
 
@@ -5585,6 +5692,16 @@ var MouseTimeDisplay = (function (_Component) {
 
     _Component.call(this, player, options);
 
+    if (options.playerOptions && options.playerOptions.controlBar && options.playerOptions.controlBar.progressControl && options.playerOptions.controlBar.progressControl.keepTooltipsInside) {
+      this.keepTooltipsInside = options.playerOptions.controlBar.progressControl.keepTooltipsInside;
+    }
+
+    if (this.keepTooltipsInside) {
+      this.tooltip = Dom.createEl('div', { className: 'vjs-time-tooltip' });
+      this.el().appendChild(this.tooltip);
+      this.addClass('vjs-keep-tooltips-inside');
+    }
+
     this.update(0, 0);
 
     player.on('ready', function () {
@@ -5618,10 +5735,50 @@ var MouseTimeDisplay = (function (_Component) {
 
     this.el().style.left = position + 'px';
     this.el().setAttribute('data-current-time', time);
+
+    if (this.keepTooltipsInside) {
+      var clampedPosition = this.clampPosition_(position);
+      var difference = position - clampedPosition + 1;
+      var tooltipWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.tooltip).width);
+      var tooltipWidthHalf = tooltipWidth / 2;
+
+      this.tooltip.innerHTML = time;
+      this.tooltip.style.right = '-' + (tooltipWidthHalf - difference) + 'px';
+    }
   };
 
   MouseTimeDisplay.prototype.calculateDistance = function calculateDistance(event) {
     return Dom.getPointerPosition(this.el().parentNode, event).x;
+  };
+
+  /**
+   * This takes in a horizontal position for the bar and returns a clamped position.
+   * Clamped position means that it will keep the position greater than half the width
+   * of the tooltip and smaller than the player width minus half the width o the tooltip.
+   * It will only clamp the position if `keepTooltipsInside` option is set.
+   *
+   * @param {Number} position the position the bar wants to be
+   * @return {Number} newPosition the (potentially) clamped position
+   * @method clampPosition_
+   */
+
+  MouseTimeDisplay.prototype.clampPosition_ = function clampPosition_(position) {
+    if (!this.keepTooltipsInside) {
+      return position;
+    }
+
+    var playerWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.player().el()).width);
+    var tooltipWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.tooltip).width);
+    var tooltipWidthHalf = tooltipWidth / 2;
+    var actualPosition = position;
+
+    if (position < tooltipWidthHalf) {
+      actualPosition = Math.ceil(tooltipWidthHalf);
+    } else if (position > playerWidth - tooltipWidthHalf) {
+      actualPosition = Math.floor(playerWidth - tooltipWidthHalf);
+    }
+
+    return actualPosition;
   };
 
   return MouseTimeDisplay;
@@ -5631,7 +5788,7 @@ _componentJs2['default'].registerComponent('MouseTimeDisplay', MouseTimeDisplay)
 exports['default'] = MouseTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":132,"../../utils/fn.js":134,"../../utils/format-time.js":135,"lodash-compat/function/throttle":7}],77:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/format-time.js":137,"global/window":2,"lodash-compat/function/throttle":7}],77:[function(_dereq_,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -5654,6 +5811,10 @@ var _componentJs2 = _interopRequireDefault(_componentJs);
 var _utilsFnJs = _dereq_('../../utils/fn.js');
 
 var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsDomJs = _dereq_('../../utils/dom.js');
+
+var Dom = _interopRequireWildcard(_utilsDomJs);
 
 var _utilsFormatTimeJs = _dereq_('../../utils/format-time.js');
 
@@ -5678,6 +5839,14 @@ var PlayProgressBar = (function (_Component) {
     this.updateDataAttr();
     this.on(player, 'timeupdate', this.updateDataAttr);
     player.ready(Fn.bind(this, this.updateDataAttr));
+
+    if (options.playerOptions && options.playerOptions.controlBar && options.playerOptions.controlBar.progressControl && options.playerOptions.controlBar.progressControl.keepTooltipsInside) {
+      this.keepTooltipsInside = options.playerOptions.controlBar.progressControl.keepTooltipsInside;
+    }
+
+    if (this.keepTooltipsInside) {
+      this.addClass('vjs-keep-tooltips-inside');
+    }
   }
 
   /**
@@ -5706,7 +5875,7 @@ _componentJs2['default'].registerComponent('PlayProgressBar', PlayProgressBar);
 exports['default'] = PlayProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/fn.js":134,"../../utils/format-time.js":135}],78:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/format-time.js":137}],78:[function(_dereq_,module,exports){
 /**
  * @file progress-control.js
  */
@@ -5791,6 +5960,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _globalWindow = _dereq_('global/window');
+
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
+
 var _sliderSliderJs = _dereq_('../../slider/slider.js');
 
 var _sliderSliderJs2 = _interopRequireDefault(_sliderSliderJs);
@@ -5806,6 +5979,10 @@ var _loadProgressBarJs2 = _interopRequireDefault(_loadProgressBarJs);
 var _playProgressBarJs = _dereq_('./play-progress-bar.js');
 
 var _playProgressBarJs2 = _interopRequireDefault(_playProgressBarJs);
+
+var _tooltipProgressBarJs = _dereq_('./tooltip-progress-bar.js');
+
+var _tooltipProgressBarJs2 = _interopRequireDefault(_tooltipProgressBarJs);
 
 var _utilsFnJs = _dereq_('../../utils/fn.js');
 
@@ -5835,8 +6012,17 @@ var SeekBar = (function (_Slider) {
     _classCallCheck(this, SeekBar);
 
     _Slider.call(this, player, options);
-    this.on(player, 'timeupdate', this.updateARIAAttributes);
-    player.ready(Fn.bind(this, this.updateARIAAttributes));
+    this.on(player, 'timeupdate', this.updateProgress);
+    this.on(player, 'ended', this.updateProgress);
+    player.ready(Fn.bind(this, this.updateProgress));
+
+    if (options.playerOptions && options.playerOptions.controlBar && options.playerOptions.controlBar.progressControl && options.playerOptions.controlBar.progressControl.keepTooltipsInside) {
+      this.keepTooltipsInside = options.playerOptions.controlBar.progressControl.keepTooltipsInside;
+    }
+
+    if (this.keepTooltipsInside) {
+      this.tooltipProgressBar = this.addChild('TooltipProgressBar');
+    }
   }
 
   /**
@@ -5850,7 +6036,7 @@ var SeekBar = (function (_Slider) {
     return _Slider.prototype.createEl.call(this, 'div', {
       className: 'vjs-progress-holder'
     }, {
-      'aria-label': 'video progress bar'
+      'aria-label': 'progress bar'
     });
   };
 
@@ -5860,11 +6046,27 @@ var SeekBar = (function (_Slider) {
    * @method updateARIAAttributes
    */
 
-  SeekBar.prototype.updateARIAAttributes = function updateARIAAttributes() {
+  SeekBar.prototype.updateProgress = function updateProgress() {
+    this.updateAriaAttributes(this.el_);
+
+    if (this.keepTooltipsInside) {
+      this.updateAriaAttributes(this.tooltipProgressBar.el_);
+      this.tooltipProgressBar.el_.style.width = this.bar.el_.style.width;
+
+      var playerWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.player().el()).width);
+      var tooltipWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.tooltipProgressBar.tooltip).width);
+      var tooltipStyle = this.tooltipProgressBar.el().style;
+      tooltipStyle.maxWidth = Math.floor(playerWidth - tooltipWidth / 2) + 'px';
+      tooltipStyle.minWidth = Math.ceil(tooltipWidth / 2) + 'px';
+      tooltipStyle.right = '-' + tooltipWidth / 2 + 'px';
+    }
+  };
+
+  SeekBar.prototype.updateAriaAttributes = function updateAriaAttributes(el) {
     // Allows for smooth scrubbing, when player can't keep up.
     var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
-    this.el_.setAttribute('aria-valuenow', (this.getPercent() * 100).toFixed(2)); // machine readable value of progress bar (percentage complete)
-    this.el_.setAttribute('aria-valuetext', _utilsFormatTimeJs2['default'](time, this.player_.duration())); // human readable value of progress bar (time complete)
+    el.setAttribute('aria-valuenow', (this.getPercent() * 100).toFixed(2)); // machine readable value of progress bar (percentage complete)
+    el.setAttribute('aria-valuetext', _utilsFormatTimeJs2['default'](time, this.player_.duration())); // human readable value of progress bar (time complete)
   };
 
   /**
@@ -5961,7 +6163,92 @@ _componentJs2['default'].registerComponent('SeekBar', SeekBar);
 exports['default'] = SeekBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../slider/slider.js":114,"../../utils/fn.js":134,"../../utils/format-time.js":135,"./load-progress-bar.js":75,"./play-progress-bar.js":77,"object.assign":45}],80:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../slider/slider.js":116,"../../utils/fn.js":136,"../../utils/format-time.js":137,"./load-progress-bar.js":75,"./play-progress-bar.js":77,"./tooltip-progress-bar.js":80,"global/window":2,"object.assign":45}],80:[function(_dereq_,module,exports){
+/**
+ * @file play-progress-bar.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = _dereq_('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = _dereq_('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsDomJs = _dereq_('../../utils/dom.js');
+
+var Dom = _interopRequireWildcard(_utilsDomJs);
+
+var _utilsFormatTimeJs = _dereq_('../../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
+
+/**
+ * Shows play progress
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class PlayProgressBar
+ */
+
+var TooltipProgressBar = (function (_Component) {
+  _inherits(TooltipProgressBar, _Component);
+
+  function TooltipProgressBar(player, options) {
+    _classCallCheck(this, TooltipProgressBar);
+
+    _Component.call(this, player, options);
+    this.updateDataAttr();
+    this.on(player, 'timeupdate', this.updateDataAttr);
+    player.ready(Fn.bind(this, this.updateDataAttr));
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  TooltipProgressBar.prototype.createEl = function createEl() {
+    var el = _Component.prototype.createEl.call(this, 'div', {
+      className: 'vjs-tooltip-progress-bar vjs-slider-bar',
+      innerHTML: '<div class="vjs-time-tooltip"></div>\n        <span class="vjs-control-text"><span>' + this.localize('Progress') + '</span>: 0%</span>'
+    });
+
+    this.tooltip = el.querySelector('.vjs-time-tooltip');
+
+    return el;
+  };
+
+  TooltipProgressBar.prototype.updateDataAttr = function updateDataAttr() {
+    var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+    var formattedTime = _utilsFormatTimeJs2['default'](time, this.player_.duration());
+    this.el_.setAttribute('data-current-time', formattedTime);
+    this.tooltip.innerHTML = formattedTime;
+  };
+
+  return TooltipProgressBar;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('TooltipProgressBar', TooltipProgressBar);
+exports['default'] = TooltipProgressBar;
+module.exports = exports['default'];
+
+},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/format-time.js":137}],81:[function(_dereq_,module,exports){
 /**
  * @file custom-control-spacer.js
  */
@@ -6035,7 +6322,7 @@ _componentJs2['default'].registerComponent('CustomControlSpacer', CustomControlS
 exports['default'] = CustomControlSpacer;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./spacer.js":81}],81:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./spacer.js":82}],82:[function(_dereq_,module,exports){
 /**
  * @file spacer.js
  */
@@ -6102,7 +6389,7 @@ _componentJs2['default'].registerComponent('Spacer', Spacer);
 exports['default'] = Spacer;
 module.exports = exports['default'];
 
-},{"../../component.js":67}],82:[function(_dereq_,module,exports){
+},{"../../component.js":67}],83:[function(_dereq_,module,exports){
 /**
  * @file caption-settings-menu-item.js
  */
@@ -6174,7 +6461,7 @@ _componentJs2['default'].registerComponent('CaptionSettingsMenuItem', CaptionSet
 exports['default'] = CaptionSettingsMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./text-track-menu-item.js":89}],83:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./text-track-menu-item.js":91}],84:[function(_dereq_,module,exports){
 /**
  * @file captions-button.js
  */
@@ -6280,7 +6567,7 @@ _componentJs2['default'].registerComponent('CaptionsButton', CaptionsButton);
 exports['default'] = CaptionsButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./caption-settings-menu-item.js":82,"./text-track-button.js":88}],84:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./caption-settings-menu-item.js":83,"./text-track-button.js":90}],85:[function(_dereq_,module,exports){
 /**
  * @file chapters-button.js
  */
@@ -6478,7 +6765,7 @@ _componentJs2['default'].registerComponent('ChaptersButton', ChaptersButton);
 exports['default'] = ChaptersButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu.js":106,"../../utils/dom.js":132,"../../utils/fn.js":134,"../../utils/to-title-case.js":141,"./chapters-track-menu-item.js":85,"./text-track-button.js":88,"./text-track-menu-item.js":89,"global/window":2}],85:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu.js":108,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/to-title-case.js":143,"./chapters-track-menu-item.js":86,"./text-track-button.js":90,"./text-track-menu-item.js":91,"global/window":2}],86:[function(_dereq_,module,exports){
 /**
  * @file chapters-track-menu-item.js
  */
@@ -6568,7 +6855,118 @@ _componentJs2['default'].registerComponent('ChaptersTrackMenuItem', ChaptersTrac
 exports['default'] = ChaptersTrackMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-item.js":105,"../../utils/fn.js":134}],86:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-item.js":107,"../../utils/fn.js":136}],87:[function(_dereq_,module,exports){
+/**
+ * @file descriptions-button.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _textTrackButtonJs = _dereq_('./text-track-button.js');
+
+var _textTrackButtonJs2 = _interopRequireDefault(_textTrackButtonJs);
+
+var _componentJs = _dereq_('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = _dereq_('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+/**
+ * The button component for toggling and selecting descriptions
+ *
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends TextTrackButton
+ * @class DescriptionsButton
+ */
+
+var DescriptionsButton = (function (_TextTrackButton) {
+  _inherits(DescriptionsButton, _TextTrackButton);
+
+  function DescriptionsButton(player, options, ready) {
+    var _this = this;
+
+    _classCallCheck(this, DescriptionsButton);
+
+    _TextTrackButton.call(this, player, options, ready);
+    this.el_.setAttribute('aria-label', 'Descriptions Menu');
+
+    var tracks = player.textTracks();
+
+    if (tracks) {
+      (function () {
+        var changeHandler = Fn.bind(_this, _this.handleTracksChange);
+
+        tracks.addEventListener('change', changeHandler);
+        _this.on('dispose', function () {
+          tracks.removeEventListener('change', changeHandler);
+        });
+      })();
+    }
+  }
+
+  /**
+   * Handle text track change
+   *
+   * @method handleTracksChange
+   */
+
+  DescriptionsButton.prototype.handleTracksChange = function handleTracksChange(event) {
+    var tracks = this.player().textTracks();
+    var disabled = false;
+
+    // Check whether a track of a different kind is showing
+    for (var i = 0, l = tracks.length; i < l; i++) {
+      var track = tracks[i];
+      if (track['kind'] !== this.kind_ && track['mode'] === 'showing') {
+        disabled = true;
+        break;
+      }
+    }
+
+    // If another track is showing, disable this menu button
+    if (disabled) {
+      this.disable();
+    } else {
+      this.enable();
+    }
+  };
+
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+  DescriptionsButton.prototype.buildCSSClass = function buildCSSClass() {
+    return 'vjs-descriptions-button ' + _TextTrackButton.prototype.buildCSSClass.call(this);
+  };
+
+  return DescriptionsButton;
+})(_textTrackButtonJs2['default']);
+
+DescriptionsButton.prototype.kind_ = 'descriptions';
+DescriptionsButton.prototype.controlText_ = 'Descriptions';
+
+_componentJs2['default'].registerComponent('DescriptionsButton', DescriptionsButton);
+exports['default'] = DescriptionsButton;
+module.exports = exports['default'];
+
+},{"../../component.js":67,"../../utils/fn.js":136,"./text-track-button.js":90}],88:[function(_dereq_,module,exports){
 /**
  * @file off-text-track-menu-item.js
  */
@@ -6651,7 +7049,7 @@ _componentJs2['default'].registerComponent('OffTextTrackMenuItem', OffTextTrackM
 exports['default'] = OffTextTrackMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./text-track-menu-item.js":89}],87:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./text-track-menu-item.js":91}],89:[function(_dereq_,module,exports){
 /**
  * @file subtitles-button.js
  */
@@ -6714,7 +7112,7 @@ _componentJs2['default'].registerComponent('SubtitlesButton', SubtitlesButton);
 exports['default'] = SubtitlesButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./text-track-button.js":88}],88:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./text-track-button.js":90}],90:[function(_dereq_,module,exports){
 /**
  * @file text-track-button.js
  */
@@ -6824,7 +7222,7 @@ _componentJs2['default'].registerComponent('TextTrackButton', TextTrackButton);
 exports['default'] = TextTrackButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-button.js":104,"../../utils/fn.js":134,"./off-text-track-menu-item.js":86,"./text-track-menu-item.js":89}],89:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-button.js":106,"../../utils/fn.js":136,"./off-text-track-menu-item.js":88,"./text-track-menu-item.js":91}],91:[function(_dereq_,module,exports){
 /**
  * @file text-track-menu-item.js
  */
@@ -6974,7 +7372,7 @@ _componentJs2['default'].registerComponent('TextTrackMenuItem', TextTrackMenuIte
 exports['default'] = TextTrackMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-item.js":105,"../../utils/fn.js":134,"global/document":1,"global/window":2}],90:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-item.js":107,"../../utils/fn.js":136,"global/document":1,"global/window":2}],92:[function(_dereq_,module,exports){
 /**
  * @file current-time-display.js
  */
@@ -7071,7 +7469,7 @@ _componentJs2['default'].registerComponent('CurrentTimeDisplay', CurrentTimeDisp
 exports['default'] = CurrentTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":132,"../../utils/format-time.js":135}],91:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/format-time.js":137}],93:[function(_dereq_,module,exports){
 /**
  * @file duration-display.js
  */
@@ -7173,7 +7571,7 @@ _componentJs2['default'].registerComponent('DurationDisplay', DurationDisplay);
 exports['default'] = DurationDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":132,"../../utils/format-time.js":135}],92:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/format-time.js":137}],94:[function(_dereq_,module,exports){
 /**
  * @file remaining-time-display.js
  */
@@ -7274,7 +7672,7 @@ _componentJs2['default'].registerComponent('RemainingTimeDisplay', RemainingTime
 exports['default'] = RemainingTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":132,"../../utils/format-time.js":135}],93:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/format-time.js":137}],95:[function(_dereq_,module,exports){
 /**
  * @file time-divider.js
  */
@@ -7332,7 +7730,7 @@ _componentJs2['default'].registerComponent('TimeDivider', TimeDivider);
 exports['default'] = TimeDivider;
 module.exports = exports['default'];
 
-},{"../../component.js":67}],94:[function(_dereq_,module,exports){
+},{"../../component.js":67}],96:[function(_dereq_,module,exports){
 /**
  * @file volume-bar.js
  */
@@ -7482,7 +7880,7 @@ _componentJs2['default'].registerComponent('VolumeBar', VolumeBar);
 exports['default'] = VolumeBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../slider/slider.js":114,"../../utils/fn.js":134,"./volume-level.js":96}],95:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../slider/slider.js":116,"../../utils/fn.js":136,"./volume-level.js":98}],97:[function(_dereq_,module,exports){
 /**
  * @file volume-control.js
  */
@@ -7560,7 +7958,7 @@ _componentJs2['default'].registerComponent('VolumeControl', VolumeControl);
 exports['default'] = VolumeControl;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./volume-bar.js":94}],96:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./volume-bar.js":96}],98:[function(_dereq_,module,exports){
 /**
  * @file volume-level.js
  */
@@ -7617,7 +8015,7 @@ _componentJs2['default'].registerComponent('VolumeLevel', VolumeLevel);
 exports['default'] = VolumeLevel;
 module.exports = exports['default'];
 
-},{"../../component.js":67}],97:[function(_dereq_,module,exports){
+},{"../../component.js":67}],99:[function(_dereq_,module,exports){
 /**
  * @file volume-menu-button.js
  */
@@ -7656,10 +8054,6 @@ var _muteToggleJs2 = _interopRequireDefault(_muteToggleJs);
 var _volumeControlVolumeBarJs = _dereq_('./volume-control/volume-bar.js');
 
 var _volumeControlVolumeBarJs2 = _interopRequireDefault(_volumeControlVolumeBarJs);
-
-var _globalDocument = _dereq_('global/document');
-
-var _globalDocument2 = _interopRequireDefault(_globalDocument);
 
 /**
  * Button for volume popup
@@ -7768,6 +8162,7 @@ var VolumeMenuButton = (function (_PopupButton) {
 
     popup.addChild(vb);
 
+    this.menuContent = popup;
     this.volumeBar = vb;
 
     this.attachVolumeBarEvents();
@@ -7787,12 +8182,12 @@ var VolumeMenuButton = (function (_PopupButton) {
   };
 
   VolumeMenuButton.prototype.attachVolumeBarEvents = function attachVolumeBarEvents() {
-    this.on(['mousedown', 'touchdown'], this.handleMouseDown);
+    this.menuContent.on(['mousedown', 'touchdown'], Fn.bind(this, this.handleMouseDown));
   };
 
   VolumeMenuButton.prototype.handleMouseDown = function handleMouseDown(event) {
     this.on(['mousemove', 'touchmove'], Fn.bind(this.volumeBar, this.volumeBar.handleMouseMove));
-    this.on(_globalDocument2['default'], ['mouseup', 'touchend'], this.handleMouseUp);
+    this.on(this.el_.ownerDocument, ['mouseup', 'touchend'], this.handleMouseUp);
   };
 
   VolumeMenuButton.prototype.handleMouseUp = function handleMouseUp(event) {
@@ -7809,7 +8204,7 @@ _componentJs2['default'].registerComponent('VolumeMenuButton', VolumeMenuButton)
 exports['default'] = VolumeMenuButton;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../popup/popup-button.js":110,"../popup/popup.js":111,"../utils/fn.js":134,"./mute-toggle.js":71,"./volume-control/volume-bar.js":94,"global/document":1}],98:[function(_dereq_,module,exports){
+},{"../component.js":67,"../popup/popup-button.js":112,"../popup/popup.js":113,"../utils/fn.js":136,"./mute-toggle.js":71,"./volume-control/volume-bar.js":96}],100:[function(_dereq_,module,exports){
 /**
  * @file error-display.js
  */
@@ -7903,7 +8298,7 @@ _component2['default'].registerComponent('ErrorDisplay', ErrorDisplay);
 exports['default'] = ErrorDisplay;
 module.exports = exports['default'];
 
-},{"./component":67,"./modal-dialog":107,"./utils/dom":132,"./utils/merge-options":138}],99:[function(_dereq_,module,exports){
+},{"./component":67,"./modal-dialog":109,"./utils/dom":134,"./utils/merge-options":140}],101:[function(_dereq_,module,exports){
 /**
  * @file event-target.js
  */
@@ -7962,7 +8357,7 @@ EventTarget.prototype.dispatchEvent = EventTarget.prototype.trigger;
 exports['default'] = EventTarget;
 module.exports = exports['default'];
 
-},{"./utils/events.js":133}],100:[function(_dereq_,module,exports){
+},{"./utils/events.js":135}],102:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8053,7 +8448,7 @@ var extendFn = function extendFn(superClass) {
 exports['default'] = extendFn;
 module.exports = exports['default'];
 
-},{"./utils/log":137}],101:[function(_dereq_,module,exports){
+},{"./utils/log":139}],103:[function(_dereq_,module,exports){
 /**
  * @file fullscreen-api.js
  */
@@ -8110,7 +8505,7 @@ if (browserApi) {
 exports['default'] = FullscreenApi;
 module.exports = exports['default'];
 
-},{"global/document":1}],102:[function(_dereq_,module,exports){
+},{"global/document":1}],104:[function(_dereq_,module,exports){
 /**
  * @file loading-spinner.js
  */
@@ -8154,7 +8549,8 @@ var LoadingSpinner = (function (_Component) {
 
   LoadingSpinner.prototype.createEl = function createEl() {
     return _Component.prototype.createEl.call(this, 'div', {
-      className: 'vjs-loading-spinner'
+      className: 'vjs-loading-spinner',
+      dir: 'ltr'
     });
   };
 
@@ -8165,7 +8561,7 @@ _component2['default'].registerComponent('LoadingSpinner', LoadingSpinner);
 exports['default'] = LoadingSpinner;
 module.exports = exports['default'];
 
-},{"./component":67}],103:[function(_dereq_,module,exports){
+},{"./component":67}],105:[function(_dereq_,module,exports){
 /**
  * @file media-error.js
  */
@@ -8256,7 +8652,7 @@ for (var errNum = 0; errNum < MediaError.errorTypes.length; errNum++) {
 exports['default'] = MediaError;
 module.exports = exports['default'];
 
-},{"object.assign":45}],104:[function(_dereq_,module,exports){
+},{"object.assign":45}],106:[function(_dereq_,module,exports){
 /**
  * @file menu-button.js
  */
@@ -8317,7 +8713,9 @@ var MenuButton = (function (_ClickableComponent) {
 
     this.update();
 
-    this.el_.setAttribute('aria-haspopup', true);
+    this.enabled_ = true;
+
+    this.el_.setAttribute('aria-haspopup', 'true');
     this.el_.setAttribute('role', 'menuitem');
     this.on('keydown', this.handleSubmenuKeyPress);
   }
@@ -8345,7 +8743,7 @@ var MenuButton = (function (_ClickableComponent) {
      * @private
      */
     this.buttonPressed_ = false;
-    this.el_.setAttribute('aria-expanded', false);
+    this.el_.setAttribute('aria-expanded', 'false');
 
     if (this.items && this.items.length === 0) {
       this.hide();
@@ -8507,10 +8905,12 @@ var MenuButton = (function (_ClickableComponent) {
    */
 
   MenuButton.prototype.pressButton = function pressButton() {
-    this.buttonPressed_ = true;
-    this.menu.lockShowing();
-    this.el_.setAttribute('aria-expanded', true);
-    this.menu.focus(); // set the focus into the submenu
+    if (this.enabled_) {
+      this.buttonPressed_ = true;
+      this.menu.lockShowing();
+      this.el_.setAttribute('aria-expanded', 'true');
+      this.menu.focus(); // set the focus into the submenu
+    }
   };
 
   /**
@@ -8520,10 +8920,43 @@ var MenuButton = (function (_ClickableComponent) {
    */
 
   MenuButton.prototype.unpressButton = function unpressButton() {
+    if (this.enabled_) {
+      this.buttonPressed_ = false;
+      this.menu.unlockShowing();
+      this.el_.setAttribute('aria-expanded', 'false');
+      this.el_.focus(); // Set focus back to this menu button
+    }
+  };
+
+  /**
+   * Disable the menu button
+   *
+   * @return {Component}
+   * @method disable
+   */
+
+  MenuButton.prototype.disable = function disable() {
+    // Unpress, but don't force focus on this button
     this.buttonPressed_ = false;
     this.menu.unlockShowing();
-    this.el_.setAttribute('aria-expanded', false);
-    this.el_.focus(); // Set focus back to this menu button
+    this.el_.setAttribute('aria-expanded', 'false');
+
+    this.enabled_ = false;
+
+    return _ClickableComponent.prototype.disable.call(this);
+  };
+
+  /**
+   * Enable the menu button
+   *
+   * @return {Component}
+   * @method disable
+   */
+
+  MenuButton.prototype.enable = function enable() {
+    this.enabled_ = true;
+
+    return _ClickableComponent.prototype.enable.call(this);
   };
 
   return MenuButton;
@@ -8533,7 +8966,7 @@ _componentJs2['default'].registerComponent('MenuButton', MenuButton);
 exports['default'] = MenuButton;
 module.exports = exports['default'];
 
-},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":132,"../utils/fn.js":134,"../utils/to-title-case.js":141,"./menu.js":106}],105:[function(_dereq_,module,exports){
+},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":134,"../utils/fn.js":136,"../utils/to-title-case.js":143,"./menu.js":108}],107:[function(_dereq_,module,exports){
 /**
  * @file menu-item.js
  */
@@ -8627,13 +9060,13 @@ var MenuItem = (function (_ClickableComponent) {
     if (this.selectable) {
       if (_selected) {
         this.addClass('vjs-selected');
-        this.el_.setAttribute('aria-checked', true);
+        this.el_.setAttribute('aria-checked', 'true');
         // aria-checked isn't fully supported by browsers/screen readers,
         // so indicate selected state to screen reader in the control text.
         this.controlText(', selected');
       } else {
         this.removeClass('vjs-selected');
-        this.el_.setAttribute('aria-checked', false);
+        this.el_.setAttribute('aria-checked', 'false');
         // Indicate un-selected state to screen reader
         // Note that a space clears out the selected state text
         this.controlText(' ');
@@ -8648,7 +9081,7 @@ _componentJs2['default'].registerComponent('MenuItem', MenuItem);
 exports['default'] = MenuItem;
 module.exports = exports['default'];
 
-},{"../clickable-component.js":65,"../component.js":67,"object.assign":45}],106:[function(_dereq_,module,exports){
+},{"../clickable-component.js":65,"../component.js":67,"object.assign":45}],108:[function(_dereq_,module,exports){
 /**
  * @file menu.js
  */
@@ -8806,7 +9239,7 @@ var Menu = (function (_Component) {
     var item = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
 
     var children = this.children().slice();
-    var haveTitle = children[0].className && /vjs-menu-title/.test(children[0].className);
+    var haveTitle = children.length && children[0].className && /vjs-menu-title/.test(children[0].className);
 
     if (haveTitle) {
       children.shift();
@@ -8832,7 +9265,7 @@ _componentJs2['default'].registerComponent('Menu', Menu);
 exports['default'] = Menu;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/dom.js":132,"../utils/events.js":133,"../utils/fn.js":134}],107:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/dom.js":134,"../utils/events.js":135,"../utils/fn.js":136}],109:[function(_dereq_,module,exports){
 /**
  * @file modal-dialog.js
  */
@@ -8840,17 +9273,13 @@ module.exports = exports['default'];
 
 exports.__esModule = true;
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _globalDocument = _dereq_('global/document');
-
-var _globalDocument2 = _interopRequireDefault(_globalDocument);
 
 var _utilsDom = _dereq_('./utils/dom');
 
@@ -9055,7 +9484,7 @@ var ModalDialog = (function (_Component) {
       }
 
       if (this.closeable()) {
-        this.on(_globalDocument2['default'], 'keydown', Fn.bind(this, this.handleKeyPress));
+        this.on(this.el_.ownerDocument, 'keydown', Fn.bind(this, this.handleKeyPress));
       }
 
       player.controls(false);
@@ -9103,7 +9532,7 @@ var ModalDialog = (function (_Component) {
       }
 
       if (this.closeable()) {
-        this.off(_globalDocument2['default'], 'keydown', Fn.bind(this, this.handleKeyPress));
+        this.off(this.el_.ownerDocument, 'keydown', Fn.bind(this, this.handleKeyPress));
       }
 
       player.controls(true);
@@ -9255,7 +9684,7 @@ _component2['default'].registerComponent('ModalDialog', ModalDialog);
 exports['default'] = ModalDialog;
 module.exports = exports['default'];
 
-},{"./close-button":66,"./component":67,"./utils/dom":132,"./utils/fn":134,"./utils/log":137,"global/document":1}],108:[function(_dereq_,module,exports){
+},{"./close-button":66,"./component":67,"./utils/dom":134,"./utils/fn":136,"./utils/log":139}],110:[function(_dereq_,module,exports){
 /**
  * @file player.js
  */
@@ -9543,6 +9972,14 @@ var Player = (function (_Component) {
       this.addClass('vjs-controls-disabled');
     }
 
+    // Set ARIA label and region role depending on player type
+    this.el_.setAttribute('role', 'region');
+    if (this.isAudio()) {
+      this.el_.setAttribute('aria-label', 'audio player');
+    } else {
+      this.el_.setAttribute('aria-label', 'video player');
+    }
+
     if (this.isAudio()) {
       this.addClass('vjs-audio');
     }
@@ -9661,16 +10098,26 @@ var Player = (function (_Component) {
     // Add a style element in the player that we'll use to set the width/height
     // of the player in a way that's still overrideable by CSS, just like the
     // video element
-    this.styleEl_ = stylesheet.createStyleElement('vjs-styles-dimensions');
-    var defaultsStyleEl = Dom.$('.vjs-styles-defaults');
-    var head = Dom.$('head');
-    head.insertBefore(this.styleEl_, defaultsStyleEl ? defaultsStyleEl.nextSibling : head.firstChild);
+    if (_globalWindow2['default'].VIDEOJS_NO_DYNAMIC_STYLE !== true) {
+      this.styleEl_ = stylesheet.createStyleElement('vjs-styles-dimensions');
+      var defaultsStyleEl = Dom.$('.vjs-styles-defaults');
+      var head = Dom.$('head');
+      head.insertBefore(this.styleEl_, defaultsStyleEl ? defaultsStyleEl.nextSibling : head.firstChild);
+    }
 
     // Pass in the width/height/aspectRatio options which will update the style el
     this.width(this.options_.width);
     this.height(this.options_.height);
     this.fluid(this.options_.fluid);
     this.aspectRatio(this.options_.aspectRatio);
+
+    // Hide any links within the video/audio tag, because IE doesn't hide them completely.
+    var links = tag.getElementsByTagName('a');
+    for (var i = 0; i < links.length; i++) {
+      var linkEl = links.item(i);
+      Dom.addElClass(linkEl, 'vjs-hidden');
+      linkEl.setAttribute('hidden', 'hidden');
+    }
 
     // insertElFirst seems to cause the networkState to flicker from 3 to 2, so
     // keep track of the original for later so we can know if the source originally failed
@@ -9804,6 +10251,23 @@ var Player = (function (_Component) {
    */
 
   Player.prototype.updateStyleEl_ = function updateStyleEl_() {
+    if (_globalWindow2['default'].VIDEOJS_NO_DYNAMIC_STYLE === true) {
+      var _width = typeof this.width_ === 'number' ? this.width_ : this.options_.width;
+      var _height = typeof this.height_ === 'number' ? this.height_ : this.options_.height;
+      var techEl = this.tech_ && this.tech_.el();
+
+      if (techEl) {
+        if (_width >= 0) {
+          techEl.width = _width;
+        }
+        if (_height >= 0) {
+          techEl.height = _height;
+        }
+      }
+
+      return;
+    }
+
     var width = undefined;
     var height = undefined;
     var aspectRatio = undefined;
@@ -11943,13 +12407,13 @@ var Player = (function (_Component) {
     return this.techGet_('readyState');
   };
 
-  /*
-    * Text tracks are tracks of timed text events.
-    * Captions - text displayed over the video for the hearing impaired
-    * Subtitles - text displayed over the video for those who don't understand language in the video
-    * Chapters - text displayed in a menu allowing the user to jump to particular points (chapters) in the video
-    * Descriptions (not supported yet) - audio descriptions that are read back to the user by a screen reading device
-    */
+  /**
+   * Text tracks are tracks of timed text events.
+   * Captions - text displayed over the video for the hearing impaired
+   * Subtitles - text displayed over the video for those who don't understand language in the video
+   * Chapters - text displayed in a menu allowing the user to jump to particular points (chapters) in the video
+   * Descriptions - audio descriptions that are read back to the user by a screen reading device
+   */
 
   /**
    * Get an array of associated text tracks. captions, subtitles, chapters, descriptions
@@ -12243,7 +12707,7 @@ Player.prototype.options_ = {
   languages: {},
 
   // Default message to show when a video cannot be played.
-  notSupportedMessage: 'No compatible source was found for this video.'
+  notSupportedMessage: 'No compatible source was found for this media.'
 };
 
 /**
@@ -12317,7 +12781,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./big-play-button.js":63,"./component.js":67,"./control-bar/control-bar.js":68,"./error-display.js":98,"./fullscreen-api.js":101,"./loading-spinner.js":102,"./media-error.js":103,"./modal-dialog":107,"./poster-image.js":112,"./tech/html5.js":117,"./tech/loader.js":118,"./tech/tech.js":119,"./tracks/text-track-display.js":123,"./tracks/text-track-list-converter.js":125,"./tracks/text-track-settings.js":127,"./utils/browser.js":129,"./utils/buffer.js":130,"./utils/dom.js":132,"./utils/events.js":133,"./utils/fn.js":134,"./utils/guid.js":136,"./utils/log.js":137,"./utils/merge-options.js":138,"./utils/stylesheet.js":139,"./utils/time-ranges.js":140,"./utils/to-title-case.js":141,"global/document":1,"global/window":2,"object.assign":45,"safe-json-parse/tuple":54}],109:[function(_dereq_,module,exports){
+},{"./big-play-button.js":63,"./component.js":67,"./control-bar/control-bar.js":68,"./error-display.js":100,"./fullscreen-api.js":103,"./loading-spinner.js":104,"./media-error.js":105,"./modal-dialog":109,"./poster-image.js":114,"./tech/html5.js":119,"./tech/loader.js":120,"./tech/tech.js":121,"./tracks/text-track-display.js":125,"./tracks/text-track-list-converter.js":127,"./tracks/text-track-settings.js":129,"./utils/browser.js":131,"./utils/buffer.js":132,"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/guid.js":138,"./utils/log.js":139,"./utils/merge-options.js":140,"./utils/stylesheet.js":141,"./utils/time-ranges.js":142,"./utils/to-title-case.js":143,"global/document":1,"global/window":2,"object.assign":45,"safe-json-parse/tuple":54}],111:[function(_dereq_,module,exports){
 /**
  * @file plugins.js
  */
@@ -12345,7 +12809,7 @@ var plugin = function plugin(name, init) {
 exports['default'] = plugin;
 module.exports = exports['default'];
 
-},{"./player.js":108}],110:[function(_dereq_,module,exports){
+},{"./player.js":110}],112:[function(_dereq_,module,exports){
 /**
  * @file popup-button.js
  */
@@ -12479,7 +12943,7 @@ _componentJs2['default'].registerComponent('PopupButton', PopupButton);
 exports['default'] = PopupButton;
 module.exports = exports['default'];
 
-},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":132,"../utils/fn.js":134,"../utils/to-title-case.js":141,"./popup.js":111}],111:[function(_dereq_,module,exports){
+},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":134,"../utils/fn.js":136,"../utils/to-title-case.js":143,"./popup.js":113}],113:[function(_dereq_,module,exports){
 /**
  * @file popup.js
  */
@@ -12576,7 +13040,7 @@ _componentJs2['default'].registerComponent('Popup', Popup);
 exports['default'] = Popup;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/dom.js":132,"../utils/events.js":133,"../utils/fn.js":134}],112:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/dom.js":134,"../utils/events.js":135,"../utils/fn.js":136}],114:[function(_dereq_,module,exports){
 /**
  * @file poster-image.js
  */
@@ -12736,7 +13200,7 @@ _componentJs2['default'].registerComponent('PosterImage', PosterImage);
 exports['default'] = PosterImage;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":65,"./component.js":67,"./utils/browser.js":129,"./utils/dom.js":132,"./utils/fn.js":134}],113:[function(_dereq_,module,exports){
+},{"./clickable-component.js":65,"./component.js":67,"./utils/browser.js":131,"./utils/dom.js":134,"./utils/fn.js":136}],115:[function(_dereq_,module,exports){
 /**
  * @file setup.js
  *
@@ -12826,7 +13290,10 @@ var autoSetup = function autoSetup() {
 
 // Pause to let the DOM keep processing
 var autoSetupTimeout = function autoSetupTimeout(wait, vjs) {
-  videojs = vjs;
+  if (vjs) {
+    videojs = vjs;
+  }
+
   setTimeout(autoSetup, wait);
 };
 
@@ -12846,7 +13313,7 @@ exports.autoSetup = autoSetup;
 exports.autoSetupTimeout = autoSetupTimeout;
 exports.hasLoaded = hasLoaded;
 
-},{"./utils/events.js":133,"global/document":1,"global/window":2}],114:[function(_dereq_,module,exports){
+},{"./utils/events.js":135,"global/document":1,"global/window":2}],116:[function(_dereq_,module,exports){
 /**
  * @file slider.js
  */
@@ -12869,10 +13336,6 @@ var _componentJs2 = _interopRequireDefault(_componentJs);
 var _utilsDomJs = _dereq_('../utils/dom.js');
 
 var Dom = _interopRequireWildcard(_utilsDomJs);
-
-var _globalDocument = _dereq_('global/document');
-
-var _globalDocument2 = _interopRequireDefault(_globalDocument);
 
 var _objectAssign = _dereq_('object.assign');
 
@@ -12949,16 +13412,18 @@ var Slider = (function (_Component) {
    */
 
   Slider.prototype.handleMouseDown = function handleMouseDown(event) {
+    var doc = this.bar.el_.ownerDocument;
+
     event.preventDefault();
     Dom.blockTextSelection();
 
     this.addClass('vjs-sliding');
     this.trigger('slideractive');
 
-    this.on(_globalDocument2['default'], 'mousemove', this.handleMouseMove);
-    this.on(_globalDocument2['default'], 'mouseup', this.handleMouseUp);
-    this.on(_globalDocument2['default'], 'touchmove', this.handleMouseMove);
-    this.on(_globalDocument2['default'], 'touchend', this.handleMouseUp);
+    this.on(doc, 'mousemove', this.handleMouseMove);
+    this.on(doc, 'mouseup', this.handleMouseUp);
+    this.on(doc, 'touchmove', this.handleMouseMove);
+    this.on(doc, 'touchend', this.handleMouseUp);
 
     this.handleMouseMove(event);
   };
@@ -12978,15 +13443,17 @@ var Slider = (function (_Component) {
    */
 
   Slider.prototype.handleMouseUp = function handleMouseUp() {
+    var doc = this.bar.el_.ownerDocument;
+
     Dom.unblockTextSelection();
 
     this.removeClass('vjs-sliding');
     this.trigger('sliderinactive');
 
-    this.off(_globalDocument2['default'], 'mousemove', this.handleMouseMove);
-    this.off(_globalDocument2['default'], 'mouseup', this.handleMouseUp);
-    this.off(_globalDocument2['default'], 'touchmove', this.handleMouseMove);
-    this.off(_globalDocument2['default'], 'touchend', this.handleMouseUp);
+    this.off(doc, 'mousemove', this.handleMouseMove);
+    this.off(doc, 'mouseup', this.handleMouseUp);
+    this.off(doc, 'touchmove', this.handleMouseMove);
+    this.off(doc, 'touchend', this.handleMouseUp);
 
     this.update();
   };
@@ -13049,7 +13516,7 @@ var Slider = (function (_Component) {
    */
 
   Slider.prototype.handleFocus = function handleFocus() {
-    this.on(_globalDocument2['default'], 'keydown', this.handleKeyPress);
+    this.on(this.bar.el_.ownerDocument, 'keydown', this.handleKeyPress);
   };
 
   /**
@@ -13078,7 +13545,7 @@ var Slider = (function (_Component) {
    */
 
   Slider.prototype.handleBlur = function handleBlur() {
-    this.off(_globalDocument2['default'], 'keydown', this.handleKeyPress);
+    this.off(this.bar.el_.ownerDocument, 'keydown', this.handleKeyPress);
   };
 
   /**
@@ -13125,7 +13592,7 @@ _componentJs2['default'].registerComponent('Slider', Slider);
 exports['default'] = Slider;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/dom.js":132,"global/document":1,"object.assign":45}],115:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/dom.js":134,"object.assign":45}],117:[function(_dereq_,module,exports){
 /**
  * @file flash-rtmp.js
  */
@@ -13244,7 +13711,7 @@ function FlashRtmpDecorator(Flash) {
 exports['default'] = FlashRtmpDecorator;
 module.exports = exports['default'];
 
-},{}],116:[function(_dereq_,module,exports){
+},{}],118:[function(_dereq_,module,exports){
 /**
  * @file flash.js
  * VideoJS-SWF - Custom Flash Player with HTML5-ish API
@@ -13859,7 +14326,7 @@ _tech2['default'].registerTech('Flash', Flash);
 exports['default'] = Flash;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/dom.js":132,"../utils/time-ranges.js":140,"../utils/url.js":142,"./flash-rtmp":115,"./tech":119,"global/window":2,"object.assign":45}],117:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/dom.js":134,"../utils/time-ranges.js":142,"../utils/url.js":144,"./flash-rtmp":117,"./tech":121,"global/window":2,"object.assign":45}],119:[function(_dereq_,module,exports){
 /**
  * @file html5.js
  * HTML5 Media Controller - Wrapper for HTML5 Media API
@@ -14183,10 +14650,18 @@ var Html5 = (function (_Tech) {
   Html5.prototype.proxyNativeTextTracks_ = function proxyNativeTextTracks_() {
     var tt = this.el().textTracks;
 
-    if (tt && tt.addEventListener) {
-      tt.addEventListener('change', this.handleTextTrackChange_);
-      tt.addEventListener('addtrack', this.handleTextTrackAdd_);
-      tt.addEventListener('removetrack', this.handleTextTrackRemove_);
+    if (tt) {
+      // Add tracks - if player is initialised after DOM loaded, textTracks
+      // will not trigger addtrack
+      for (var i = 0; i < tt.length; i++) {
+        this.textTracks().addTrack_(tt[i]);
+      }
+
+      if (tt.addEventListener) {
+        tt.addEventListener('change', this.handleTextTrackChange_);
+        tt.addEventListener('addtrack', this.handleTextTrackAdd_);
+        tt.addEventListener('removetrack', this.handleTextTrackRemove_);
+      }
     }
   };
 
@@ -15154,7 +15629,7 @@ _techJs2['default'].registerTech('Html5', Html5);
 exports['default'] = Html5;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/browser.js":129,"../utils/dom.js":132,"../utils/fn.js":134,"../utils/log.js":137,"../utils/merge-options.js":138,"../utils/url.js":142,"./tech.js":119,"global/document":1,"global/window":2,"object.assign":45}],118:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/browser.js":131,"../utils/dom.js":134,"../utils/fn.js":136,"../utils/log.js":139,"../utils/merge-options.js":140,"../utils/url.js":144,"./tech.js":121,"global/document":1,"global/window":2,"object.assign":45}],120:[function(_dereq_,module,exports){
 /**
  * @file loader.js
  */
@@ -15238,7 +15713,7 @@ _componentJs2['default'].registerComponent('MediaLoader', MediaLoader);
 exports['default'] = MediaLoader;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/to-title-case.js":141,"./tech.js":119,"global/window":2}],119:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/to-title-case.js":143,"./tech.js":121,"global/window":2}],121:[function(_dereq_,module,exports){
 /**
  * @file tech.js
  * Media Technology Controller - Base class for media playback
@@ -16074,7 +16549,7 @@ Tech.registerTech('Tech', Tech);
 exports['default'] = Tech;
 module.exports = exports['default'];
 
-},{"../component":67,"../media-error.js":103,"../tracks/html-track-element":121,"../tracks/html-track-element-list":120,"../tracks/text-track":128,"../tracks/text-track-list":126,"../utils/buffer.js":130,"../utils/fn.js":134,"../utils/log.js":137,"../utils/merge-options.js":138,"../utils/time-ranges.js":140,"global/document":1,"global/window":2}],120:[function(_dereq_,module,exports){
+},{"../component":67,"../media-error.js":105,"../tracks/html-track-element":123,"../tracks/html-track-element-list":122,"../tracks/text-track":130,"../tracks/text-track-list":128,"../utils/buffer.js":132,"../utils/fn.js":136,"../utils/log.js":139,"../utils/merge-options.js":140,"../utils/time-ranges.js":142,"global/document":1,"global/window":2}],122:[function(_dereq_,module,exports){
 /**
  * @file html-track-element-list.js
  */
@@ -16166,7 +16641,7 @@ var HtmlTrackElementList = (function () {
 exports['default'] = HtmlTrackElementList;
 module.exports = exports['default'];
 
-},{"../utils/browser.js":129,"global/document":1}],121:[function(_dereq_,module,exports){
+},{"../utils/browser.js":131,"global/document":1}],123:[function(_dereq_,module,exports){
 /**
  * @file html-track-element.js
  */
@@ -16301,7 +16776,7 @@ HTMLTrackElement.ERROR = ERROR;
 exports['default'] = HTMLTrackElement;
 module.exports = exports['default'];
 
-},{"../event-target":99,"../tracks/text-track":128,"../utils/browser.js":129,"global/document":1}],122:[function(_dereq_,module,exports){
+},{"../event-target":101,"../tracks/text-track":130,"../utils/browser.js":131,"global/document":1}],124:[function(_dereq_,module,exports){
 /**
  * @file text-track-cue-list.js
  */
@@ -16430,7 +16905,7 @@ var TextTrackCueList = (function () {
 exports['default'] = TextTrackCueList;
 module.exports = exports['default'];
 
-},{"../utils/browser.js":129,"global/document":1}],123:[function(_dereq_,module,exports){
+},{"../utils/browser.js":131,"global/document":1}],125:[function(_dereq_,module,exports){
 /**
  * @file text-track-display.js
  */
@@ -16563,6 +17038,9 @@ var TextTrackDisplay = (function (_Component) {
   TextTrackDisplay.prototype.createEl = function createEl() {
     return _Component.prototype.createEl.call(this, 'div', {
       className: 'vjs-text-track-display'
+    }, {
+      'aria-live': 'assertive',
+      'aria-atomic': 'true'
     });
   };
 
@@ -16593,11 +17071,29 @@ var TextTrackDisplay = (function (_Component) {
       return;
     }
 
-    for (var i = 0; i < tracks.length; i++) {
+    // Track display prioritization model: if multiple tracks are 'showing',
+    //  display the first 'subtitles' or 'captions' track which is 'showing',
+    //  otherwise display the first 'descriptions' track which is 'showing'
+
+    var descriptionsTrack = null;
+    var captionsSubtitlesTrack = null;
+
+    var i = tracks.length;
+    while (i--) {
       var track = tracks[i];
       if (track['mode'] === 'showing') {
-        this.updateForTrack(track);
+        if (track['kind'] === 'descriptions') {
+          descriptionsTrack = track;
+        } else {
+          captionsSubtitlesTrack = track;
+        }
       }
+    }
+
+    if (captionsSubtitlesTrack) {
+      this.updateForTrack(captionsSubtitlesTrack);
+    } else if (descriptionsTrack) {
+      this.updateForTrack(descriptionsTrack);
     }
   };
 
@@ -16620,7 +17116,7 @@ var TextTrackDisplay = (function (_Component) {
       cues.push(track['activeCues'][_i]);
     }
 
-    _globalWindow2['default']['WebVTT']['processCues'](_globalWindow2['default'], track['activeCues'], this.el_);
+    _globalWindow2['default']['WebVTT']['processCues'](_globalWindow2['default'], cues, this.el_);
 
     var i = cues.length;
     while (i--) {
@@ -16706,7 +17202,7 @@ _component2['default'].registerComponent('TextTrackDisplay', TextTrackDisplay);
 exports['default'] = TextTrackDisplay;
 module.exports = exports['default'];
 
-},{"../component":67,"../menu/menu-button.js":104,"../menu/menu-item.js":105,"../menu/menu.js":106,"../utils/fn.js":134,"global/document":1,"global/window":2}],124:[function(_dereq_,module,exports){
+},{"../component":67,"../menu/menu-button.js":106,"../menu/menu-item.js":107,"../menu/menu.js":108,"../utils/fn.js":136,"global/document":1,"global/window":2}],126:[function(_dereq_,module,exports){
 /**
  * @file text-track-enums.js
  */
@@ -16752,7 +17248,7 @@ exports.TextTrackKind = TextTrackKind;
 
 /* jshint ignore:end */
 
-},{}],125:[function(_dereq_,module,exports){
+},{}],127:[function(_dereq_,module,exports){
 /**
  * Utilities for capturing text track state and re-creating tracks
  * based on a capture.
@@ -16843,7 +17339,7 @@ var jsonToTextTracks = function jsonToTextTracks(json, tech) {
 exports['default'] = { textTracksToJson: textTracksToJson, jsonToTextTracks: jsonToTextTracks, trackToJson_: trackToJson_ };
 module.exports = exports['default'];
 
-},{}],126:[function(_dereq_,module,exports){
+},{}],128:[function(_dereq_,module,exports){
 /**
  * @file text-track-list.js
  */
@@ -16960,12 +17456,15 @@ var TextTrackList = (function (_EventTarget) {
     track.addEventListener('modechange', Fn.bind(this, function () {
       this.trigger('change');
     }));
-    this.tracks_.push(track);
 
-    this.trigger({
-      track: track,
-      type: 'addtrack'
-    });
+    // Do not add duplicate tracks
+    if (this.tracks_.indexOf(track) === -1) {
+      this.tracks_.push(track);
+      this.trigger({
+        track: track,
+        type: 'addtrack'
+      });
+    }
   };
 
   /**
@@ -17044,7 +17543,7 @@ for (var _event in TextTrackList.prototype.allowedEvents_) {
 exports['default'] = TextTrackList;
 module.exports = exports['default'];
 
-},{"../event-target":99,"../utils/browser.js":129,"../utils/fn.js":134,"global/document":1}],127:[function(_dereq_,module,exports){
+},{"../event-target":101,"../utils/browser.js":131,"../utils/fn.js":136,"global/document":1}],129:[function(_dereq_,module,exports){
 /**
  * @file text-track-settings.js
  */
@@ -17341,7 +17840,7 @@ function captionOptionsMenuTemplate() {
 exports['default'] = TextTrackSettings;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/events.js":133,"../utils/fn.js":134,"../utils/log.js":137,"global/window":2,"safe-json-parse/tuple":54}],128:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/events.js":135,"../utils/fn.js":136,"../utils/log.js":139,"global/window":2,"safe-json-parse/tuple":54}],130:[function(_dereq_,module,exports){
 /**
  * @file text-track.js
  */
@@ -17725,7 +18224,7 @@ TextTrack.prototype.allowedEvents_ = {
 exports['default'] = TextTrack;
 module.exports = exports['default'];
 
-},{"../event-target":99,"../utils/browser.js":129,"../utils/fn.js":134,"../utils/guid.js":136,"../utils/log.js":137,"../utils/url.js":142,"./text-track-cue-list":122,"./text-track-enums":124,"global/document":1,"global/window":2,"xhr":56}],129:[function(_dereq_,module,exports){
+},{"../event-target":101,"../utils/browser.js":131,"../utils/fn.js":136,"../utils/guid.js":138,"../utils/log.js":139,"../utils/url.js":144,"./text-track-cue-list":124,"./text-track-enums":126,"global/document":1,"global/window":2,"xhr":56}],131:[function(_dereq_,module,exports){
 /**
  * @file browser.js
  */
@@ -17818,7 +18317,7 @@ exports.TOUCH_ENABLED = TOUCH_ENABLED;
 var BACKGROUND_SIZE_SUPPORTED = ('backgroundSize' in _globalDocument2['default'].createElement('video').style);
 exports.BACKGROUND_SIZE_SUPPORTED = BACKGROUND_SIZE_SUPPORTED;
 
-},{"global/document":1,"global/window":2}],130:[function(_dereq_,module,exports){
+},{"global/document":1,"global/window":2}],132:[function(_dereq_,module,exports){
 /**
  * @file buffer.js
  */
@@ -17867,7 +18366,7 @@ function bufferedPercent(buffered, duration) {
   return bufferedDuration / duration;
 }
 
-},{"./time-ranges.js":140}],131:[function(_dereq_,module,exports){
+},{"./time-ranges.js":142}],133:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17938,7 +18437,7 @@ exports['default'] = function (target) {
 
 module.exports = exports['default'];
 
-},{"./log.js":137}],132:[function(_dereq_,module,exports){
+},{"./log.js":139}],134:[function(_dereq_,module,exports){
 /**
  * @file dom.js
  */
@@ -18668,7 +19167,7 @@ exports.$ = $;
 var $$ = createQuerier('querySelectorAll');
 exports.$$ = $$;
 
-},{"./guid.js":136,"./log.js":137,"global/document":1,"global/window":2,"tsml":55}],133:[function(_dereq_,module,exports){
+},{"./guid.js":138,"./log.js":139,"global/document":1,"global/window":2,"tsml":55}],135:[function(_dereq_,module,exports){
 /**
  * @file events.js
  *
@@ -19076,7 +19575,7 @@ function _handleMultipleEvents(fn, elem, types, callback) {
   });
 }
 
-},{"./dom.js":132,"./guid.js":136,"global/document":1,"global/window":2}],134:[function(_dereq_,module,exports){
+},{"./dom.js":134,"./guid.js":138,"global/document":1,"global/window":2}],136:[function(_dereq_,module,exports){
 /**
  * @file fn.js
  */
@@ -19120,7 +19619,7 @@ var bind = function bind(context, fn, uid) {
 };
 exports.bind = bind;
 
-},{"./guid.js":136}],135:[function(_dereq_,module,exports){
+},{"./guid.js":138}],137:[function(_dereq_,module,exports){
 /**
  * @file format-time.js
  *
@@ -19171,7 +19670,7 @@ function formatTime(seconds) {
 exports['default'] = formatTime;
 module.exports = exports['default'];
 
-},{}],136:[function(_dereq_,module,exports){
+},{}],138:[function(_dereq_,module,exports){
 /**
  * @file guid.js
  *
@@ -19196,7 +19695,7 @@ function newGUID() {
   return _guid++;
 }
 
-},{}],137:[function(_dereq_,module,exports){
+},{}],139:[function(_dereq_,module,exports){
 /**
  * @file log.js
  */
@@ -19286,7 +19785,7 @@ function _logType(type, args) {
 exports['default'] = log;
 module.exports = exports['default'];
 
-},{"global/window":2}],138:[function(_dereq_,module,exports){
+},{"global/window":2}],140:[function(_dereq_,module,exports){
 /**
  * @file merge-options.js
  */
@@ -19357,7 +19856,7 @@ function mergeOptions() {
 
 module.exports = exports['default'];
 
-},{"lodash-compat/object/merge":40}],139:[function(_dereq_,module,exports){
+},{"lodash-compat/object/merge":40}],141:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19385,7 +19884,7 @@ var setTextContent = function setTextContent(el, content) {
 };
 exports.setTextContent = setTextContent;
 
-},{"global/document":1}],140:[function(_dereq_,module,exports){
+},{"global/document":1}],142:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19456,7 +19955,7 @@ function rangeCheck(fnName, index, maxIndex) {
   }
 }
 
-},{"./log.js":137}],141:[function(_dereq_,module,exports){
+},{"./log.js":139}],143:[function(_dereq_,module,exports){
 /**
  * @file to-title-case.js
  *
@@ -19477,7 +19976,7 @@ function toTitleCase(string) {
 exports["default"] = toTitleCase;
 module.exports = exports["default"];
 
-},{}],142:[function(_dereq_,module,exports){
+},{}],144:[function(_dereq_,module,exports){
 /**
  * @file url.js
  */
@@ -19613,7 +20112,7 @@ var isCrossOrigin = function isCrossOrigin(url) {
 };
 exports.isCrossOrigin = isCrossOrigin;
 
-},{"global/document":1,"global/window":2}],143:[function(_dereq_,module,exports){
+},{"global/document":1,"global/window":2}],145:[function(_dereq_,module,exports){
 /**
  * @file video.js
  */
@@ -19624,6 +20123,10 @@ exports.__esModule = true;
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _globalWindow = _dereq_('global/window');
+
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
 
 var _globalDocument = _dereq_('global/document');
 
@@ -19795,12 +20298,15 @@ var videojs = function videojs(id, options, ready) {
 };
 
 // Add default styles
-var style = Dom.$('.vjs-styles-defaults');
-if (!style) {
-  style = stylesheet.createStyleElement('vjs-styles-defaults');
-  var head = Dom.$('head');
-  head.insertBefore(style, head.firstChild);
-  stylesheet.setTextContent(style, '\n    .video-js {\n      width: 300px;\n      height: 150px;\n    }\n\n    .vjs-fluid {\n      padding-top: 56.25%\n    }\n  ');
+if (_globalWindow2['default'].VIDEOJS_NO_DYNAMIC_STYLE !== true) {
+  var style = Dom.$('.vjs-styles-defaults');
+
+  if (!style) {
+    style = stylesheet.createStyleElement('vjs-styles-defaults');
+    var head = Dom.$('head');
+    head.insertBefore(style, head.firstChild);
+    stylesheet.setTextContent(style, '\n      .video-js {\n        width: 300px;\n        height: 150px;\n      }\n\n      .vjs-fluid {\n        padding-top: 56.25%\n      }\n    ');
+  }
 }
 
 // Run Auto-load players
@@ -19812,7 +20318,7 @@ setup.autoSetupTimeout(1, videojs);
  *
  * @type {String}
  */
-videojs.VERSION = '5.8.6';
+videojs.VERSION = '5.9.0';
 
 /**
  * The global options object. These are the settings that take effect
@@ -20409,7 +20915,7 @@ if (typeof define === 'function' && define['amd']) {
 exports['default'] = videojs;
 module.exports = exports['default'];
 
-},{"../../src/js/utils/merge-options.js":138,"./component":67,"./event-target":99,"./extend.js":100,"./player":108,"./plugins.js":109,"./setup":113,"./tech/flash.js":116,"./tech/html5.js":117,"./tech/tech.js":119,"./tracks/text-track.js":128,"./utils/browser.js":129,"./utils/create-deprecation-proxy.js":131,"./utils/dom.js":132,"./utils/events.js":133,"./utils/fn.js":134,"./utils/format-time.js":135,"./utils/log.js":137,"./utils/stylesheet.js":139,"./utils/time-ranges.js":140,"./utils/url.js":142,"global/document":1,"lodash-compat/object/merge":40,"object.assign":45,"xhr":56}]},{},[143])(143)
+},{"../../src/js/utils/merge-options.js":140,"./component":67,"./event-target":101,"./extend.js":102,"./player":110,"./plugins.js":111,"./setup":115,"./tech/flash.js":118,"./tech/html5.js":119,"./tech/tech.js":121,"./tracks/text-track.js":130,"./utils/browser.js":131,"./utils/create-deprecation-proxy.js":133,"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/format-time.js":137,"./utils/log.js":139,"./utils/stylesheet.js":141,"./utils/time-ranges.js":142,"./utils/url.js":144,"global/document":1,"global/window":2,"lodash-compat/object/merge":40,"object.assign":45,"xhr":56}]},{},[145])(145)
 });
 
 

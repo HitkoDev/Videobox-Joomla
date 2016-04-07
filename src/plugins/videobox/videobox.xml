@@ -60,6 +60,10 @@
                 
                 <field name="color" type="color" default="#50bf82" label="PLG_SYSTEM_VIDEOBOX_COLOR" description="PLG_SYSTEM_VIDEOBOX_COLOR_DESC" />
                 
+                <field name="tColor" type="color" default="#005723" label="PLG_SYSTEM_VIDEOBOX_MAIN_COLOR" description="PLG_SYSTEM_VIDEOBOX_MAIN_COLOR_DESC" />
+                
+                <field name="hColor" type="color" default="#84d1a4" label="PLG_SYSTEM_VIDEOBOX_HOVER_COLOR" description="PLG_SYSTEM_VIDEOBOX_HOVER_COLOR_DESC" />
+                
                 <field name="delimiter" type="text" default=", " label="PLG_SYSTEM_VIDEOBOX_DELIMITER" description="PLG_SYSTEM_VIDEOBOX_DELIMITER_DESC" />
                 
             </fieldset>
