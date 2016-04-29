@@ -27,7 +27,7 @@ JLoader::discover('Videobox', JPATH_LIBRARIES . '/videobox');
 class plgVideoboxSoundCloud extends JPlugin {
 	
 	public function onLoadProcessors($config){
-        TwitchVideo::$pluginProps['scVisual'] = $this->params->get('scVisual', '1');
+        SoundCloudVideo::$pluginProps['scVisual'] = $this->params->get('scVisual', '1');
 		return 'SoundCloudVideo::getInstance';
 	}
 	

@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 5.9.0 <http://videojs.com/>
+ * Video.js 5.9.2 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -5400,9 +5400,10 @@ var PlaybackRateMenuButton = (function (_MenuButton) {
   };
 
   /**
-   * Get supported playback rates
+   * Get whether playback rates is supported by the tech
+   * and an array of playback rates exists
    *
-   * @return {Array} Supported playback rates
+   * @return {Boolean} Whether changing playback rate is supported
    * @method playbackRateSupported
    */
 
@@ -12483,8 +12484,15 @@ var Player = (function (_Component) {
    * @param {Object} track    Remote text track to remove
    * @method removeRemoteTextTrack
    */
+  // destructure the input into an object with a track argument, defaulting to arguments[0]
+  // default the whole argument to an empty object if nothing was passed in
 
-  Player.prototype.removeRemoteTextTrack = function removeRemoteTextTrack(track) {
+  Player.prototype.removeRemoteTextTrack = function removeRemoteTextTrack() {
+    var _ref3 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    var _ref3$track = _ref3.track;
+    var track = _ref3$track === undefined ? arguments[0] : _ref3$track;
+    // jshint ignore:line
     this.tech_ && this.tech_['removeRemoteTextTrack'](track);
   };
 
@@ -15437,9 +15445,14 @@ Html5.canControlVolume = function () {
 /*
  * Check if playbackRate is supported in this browser/device.
  *
- * @return {Number} [description]
+ * @return {Boolean}
  */
 Html5.canControlPlaybackRate = function () {
+  // Playback rate API is implemented in Android Chrome, but doesn't do anything
+  // https://github.com/videojs/video.js/issues/3180
+  if (browser.IS_ANDROID && browser.IS_CHROME) {
+    return false;
+  }
   var playbackRate = Html5.TEST_VID.playbackRate;
   Html5.TEST_VID.playbackRate = playbackRate / 2 + 0.1;
   return playbackRate !== Html5.TEST_VID.playbackRate;
@@ -17002,6 +17015,34 @@ var TextTrackDisplay = (function (_Component) {
         var track = tracks[i];
         this.player_.addRemoteTextTrack(track);
       }
+
+      var modes = { 'captions': 1, 'subtitles': 1 };
+      var trackList = this.player_.textTracks();
+      var firstDesc = undefined;
+      var firstCaptions = undefined;
+
+      if (trackList) {
+        for (var i = 0; i < trackList.length; i++) {
+          var track = trackList[i];
+          if (track['default']) {
+            if (track.kind === 'descriptions' && !firstDesc) {
+              firstDesc = track;
+            } else if (track.kind in modes && !firstCaptions) {
+              firstCaptions = track;
+            }
+          }
+        }
+
+        // We want to show the first default track but captions and subtitles
+        // take precedence over descriptions.
+        // So, display the first default captions or subtitles track
+        // and otherwise the first default descriptions track.
+        if (firstCaptions) {
+          firstCaptions.mode = 'showing';
+        } else if (firstDesc) {
+          firstDesc.mode = 'showing';
+        }
+      }
     }));
   }
 
@@ -17906,13 +17947,14 @@ var _xhr2 = _interopRequireDefault(_xhr);
  */
 var parseCues = function parseCues(srcContent, track) {
   var parser = new _globalWindow2['default'].WebVTT.Parser(_globalWindow2['default'], _globalWindow2['default'].vttjs, _globalWindow2['default'].WebVTT.StringDecoder());
+  var errors = [];
 
   parser.oncue = function (cue) {
     track.addCue(cue);
   };
 
   parser.onparsingerror = function (error) {
-    _utilsLogJs2['default'].error(error);
+    errors.push(error);
   };
 
   parser.onflush = function () {
@@ -17923,6 +17965,18 @@ var parseCues = function parseCues(srcContent, track) {
   };
 
   parser.parse(srcContent);
+  if (errors.length > 0) {
+    if (console.groupCollapsed) {
+      console.groupCollapsed('Text Track parsing errors for ' + track.src);
+    }
+    errors.forEach(function (error) {
+      return _utilsLogJs2['default'].error(error);
+    });
+    if (console.groupEnd) {
+      console.groupEnd();
+    }
+  }
+
   parser.flush();
 };
 
@@ -18027,6 +18081,7 @@ var TextTrack = (function (_EventTarget) {
 
     var mode = TextTrackEnum.TextTrackMode[options.mode] || 'disabled';
     var kind = TextTrackEnum.TextTrackKind[options.kind] || 'subtitles';
+    var default_ = options['default'];
     var label = options.label || '';
     var language = options.language || options.srclang || '';
     var id = options.id || 'vjs_text_track_' + Guid.newGUID();
@@ -18077,6 +18132,13 @@ var TextTrack = (function (_EventTarget) {
     Object.defineProperty(tt, 'id', {
       get: function get() {
         return id;
+      },
+      set: function set() {}
+    });
+
+    Object.defineProperty(tt, 'default', {
+      get: function get() {
+        return default_;
       },
       set: function set() {}
     });
@@ -18307,7 +18369,9 @@ var IS_NATIVE_ANDROID = IS_ANDROID && ANDROID_VERSION < 5 && appleWebkitVersion 
 exports.IS_NATIVE_ANDROID = IS_NATIVE_ANDROID;
 var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
 exports.IS_FIREFOX = IS_FIREFOX;
-var IS_CHROME = /Chrome/i.test(USER_AGENT);
+var IS_EDGE = /Edge/i.test(USER_AGENT);
+exports.IS_EDGE = IS_EDGE;
+var IS_CHROME = !IS_EDGE && /Chrome/i.test(USER_AGENT);
 exports.IS_CHROME = IS_CHROME;
 var IS_IE8 = /MSIE\s8\.0/.test(USER_AGENT);
 
@@ -20318,7 +20382,7 @@ setup.autoSetupTimeout(1, videojs);
  *
  * @type {String}
  */
-videojs.VERSION = '5.9.0';
+videojs.VERSION = '5.9.2';
 
 /**
  * The global options object. These are the settings that take effect

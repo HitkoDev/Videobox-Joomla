@@ -32,7 +32,8 @@ gulp.task('build', [
     'youtube',
     'vimeo',
     'soundcloud',
-    'twitch'
+    'twitch',
+    'html5'
 ], function() {
 
     return merge([
@@ -118,7 +119,12 @@ gulp.task('install', [
 
         // install Twitch plugin
         gulp.src('./build/plugins/twitch/**')
-            .pipe(gulp.dest('../plugins/videobox/twitch'))
+            .pipe(gulp.dest('../plugins/videobox/twitch')),
+
+
+        // install HTML5 plugin
+        gulp.src('./build/plugins/html5/**')
+            .pipe(gulp.dest('../plugins/videobox/html5'))
 
     ]);
 
@@ -165,6 +171,12 @@ gulp.task('pack-parts', [
             .pipe(gulp.dest('./dist/packages')),
 
 
+        // pack HTML5 plugin
+        gulp.src('./build/plugins/html5/**')
+            .pipe(zip('plg_videobox_html5.zip'))
+            .pipe(gulp.dest('./dist/packages')),
+
+
         // copy package manifest
         gulp.src('./src/pkg_videobox.xml')
             .pipe(template(manifestData))
@@ -207,7 +219,8 @@ gulp.task('lib', function() {
 
         gulp.src([
             './src/libraries/videobox/**/*.php',
-            './src/libraries/videobox/**/*.xml'
+            './src/libraries/videobox/**/*.xml',
+            './src/libraries/videobox/**/*.sh'
         ])
             .pipe(gulp.dest('./build/libraries/videobox')),
 
@@ -259,4 +272,10 @@ gulp.task('twitch', function() {
 
     return gulp.src('./src/plugins/twitch/**')
         .pipe(gulp.dest('./build/plugins/twitch'));
+});
+
+gulp.task('html5', function() {
+
+    return gulp.src('./src/plugins/html5/**')
+        .pipe(gulp.dest('./build/plugins/html5'));
 });
