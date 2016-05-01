@@ -205,12 +205,12 @@ class VideoboxVideobox {
             
         }
 		if($target_info){
-			$ret = array($this->config['assets_url'] . 'cache/'.$hash.'.jpg', $target_info[0], $target_info[1]);
+			$ret = array(JHTML::image('libraries/videobox/cache/'.$hash.'.jpg', '', null, false, true), $target_info[0], $target_info[1]);
 			$this->setCache($img_hash, $ret);
 			return $ret;
 		}
 			
-        $tmpn = tempnam($this->config['assets_url'] . 'cache/', 'vb_');
+        $tmpn = tempnam($this->config['assets_path'] . 'cache/', 'vb_');
         copy($img[0], $tmpn);
 		
 		if(!extension_loaded('imagick')){
@@ -412,7 +412,7 @@ class VideoboxVideobox {
 			
 		}
 		rename($target.'__', $target);
-		$ret = array($this->config['assets_url'] . 'cache/'.$hash.'.jpg', $tWidth, $tHeight);
+		$ret = array(JHTML::image('libraries/videobox/cache/'.$hash.'.jpg', '', null, false, true), $tWidth, $tHeight);
 		$this->setCache($img_hash, $ret);
         unlink($tmpn);
 		return $ret;
