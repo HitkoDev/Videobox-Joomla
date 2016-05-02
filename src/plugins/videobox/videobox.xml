@@ -2,7 +2,7 @@
 <extension type="plugin" group="system" method="upgrade" version="<%= joomlaVersion %>" >
     <name>plg_system_videobox</name>
     <creationDate>August 2012</creationDate>
-    <description>Video plugin for Joomla!</description>
+    <description>PLG_SYSTEM_VIDEOBOX_XML_DESCRIPTION</description>
     
 	<license><%= license %></license>
     <author><%= author %></author>
@@ -73,7 +73,7 @@
                 <field name="boxTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_BOX_TPL" description="PLG_SYSTEM_VIDEOBOX_BOX_TPL_DESC" 
                 default="&lt;a href=&quot;[[+link]]&quot; rel=&quot;[[+rel]]&quot; title=&quot;[[+title]]&quot; data-videobox=&quot;[[+vbOptions]]&quot; data-target=&quot;img&quot; class=&quot;vb_video_cont vb_box [[+class]]&quot; style=&quot;[[+style]] max-width: [[+tWidth]]px;&quot; &gt;&#10;&#9;&lt;span class=&quot;vb_thub_wrap&quot;&gt;&lt;img src=&quot;[[++static_path]][[+thumb]]&quot; alt=&quot;[[+title]]&quot; width=&quot;[[+tWidth]]&quot; height=&quot;[[+tHeight]]&quot; /&gt;&lt;span class=&quot;vb-icon-play&quot;&gt;&lt;/span&gt;&lt;/span&gt;&#10;&#9;&lt;span class=&quot;vb_video_title&quot; &gt;[[+title]]&lt;/span&gt;&#10;&lt;/a&gt;" />
             
-                <field name="galleryItemTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_GALLERY_ITEM_TPL" description="PLG_SYSTEM_VIDEOBOX_GALLERY_ITEM_DESC" 
+                <field name="galleryItemTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_GALLERY_ITEM_TPL" description="PLG_SYSTEM_VIDEOBOX_GALLERY_ITEM_TPL_DESC" 
                 default="&lt;li class=&quot;vb_video_cont vb_gal&quot; style=&quot;flex: [[+ratio]] [[+ratio]] [[+basis]]px&quot;&gt;[[+content]]&lt;/li&gt;" />
             
                 <field name="galleryTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_GALLERY_TPL" description="PLG_SYSTEM_VIDEOBOX_GALLERY_TPL_DESC" 

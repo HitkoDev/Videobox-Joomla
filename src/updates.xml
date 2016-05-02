@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+    <update>
+        <name>Videobox package</name>
+        <description>Package containing standard Videobox plugins and libraries</description>
+        <element>pkg_videobox</element>
+        <type>package</type>
+        <version><%= version %></version>
+        <downloads>
+            <downloadurl type="full" format="zip">https://static.htk.io/files/files/videobox/<%= package %></downloadurl>
+        </downloads>
+        <tags>
+            <tag>rc</tag>
+        </tags>
+        <maintainer><%= author %></maintainer>
+        <maintainerurl><%= url %></maintainerurl>
+		<targetplatform name="joomla" version="3.[0123456789]"/>
+    </update>
+</updates>

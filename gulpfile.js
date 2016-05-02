@@ -190,9 +190,22 @@ gulp.task('pack-all', [
     'pack-parts'
 ], function() {
 
-    return gulp.src('./dist/packages/**')
-        .pipe(zip('pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip'))
-        .pipe(gulp.dest('./dist'));
+    var pkg = 'pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip';
+    manifestData['package'] = pkg;
+
+    return merge([
+        gulp.src('./dist/packages/**')
+            .pipe(zip(pkg))
+            .pipe(gulp.dest('./dist')),
+
+
+        // copy updates file
+        gulp.src('./src/updates.xml')
+            .pipe(template(manifestData))
+            .pipe(rename('pkg_videobox.xml'))
+            .pipe(gulp.dest('./dist')),
+
+    ]);
 
 });
 

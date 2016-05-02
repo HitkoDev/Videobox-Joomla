@@ -19,5 +19,9 @@
 		<file type="plugin" id="vimeo" group="videobox">plg_videobox_vimeo.zip</file>
 		<file type="plugin" id="soundcloud" group="videobox">plg_videobox_soundcloud.zip</file>
 		<file type="plugin" id="twitch" group="videobox">plg_videobox_twitch.zip</file>
+		<file type="plugin" id="html5" group="videobox">plg_videobox_html5.zip</file>
 	</files>
+    <updateservers>
+        <server type="collection" name="pkg_videobox">https://static.htk.io/files/files/videobox/updates-joomla.xml</server>
+    </updateservers>
 </extension>

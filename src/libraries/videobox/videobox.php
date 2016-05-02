@@ -100,7 +100,7 @@ class VideoboxVideobox {
 		JHtml::script('libraries/videobox/js/web-animations.min.js');
 		JHtml::script('libraries/videobox/js/videobox.min.js');
         
-        $styleOverride = str_replace(array('#005723', '#84d1a4'), array('#' . $this->config['tColor'], '#' . $this->config['hColor']), file_get_contents($this->config['assets_path'] . 'css' . DS . 'overrides.min.css'));
+        $styleOverride = str_replace(array('.vb-overrides-wrap', '#005723', '#84d1a4'), array('', '#' . $this->config['tColor'], '#' . $this->config['hColor']), file_get_contents($this->config['assets_path'] . 'css' . DS . 'overrides.min.css'));
         
         $document = JFactory::getDocument();
         $document->addStyleDeclaration($styleOverride);

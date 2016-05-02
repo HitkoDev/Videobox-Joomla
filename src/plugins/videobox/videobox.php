@@ -137,12 +137,6 @@ class plgSystemVideobox extends JPlugin {
         $scriptProperties['color'] = trim(str_replace('#', '', $scriptProperties['color']));
         if(strlen($scriptProperties['color']) != 6) $scriptProperties['color'] = '';
         if(!$scriptProperties['color']) $scriptProperties['color'] = '00a645';
-        $scriptProperties['tColor'] = trim(str_replace('#', '', $scriptProperties['tColor']));
-        if(strlen($scriptProperties['tColor']) != 6) $scriptProperties['tColor'] = '';
-        if(!$scriptProperties['tColor']) $scriptProperties['tColor'] = '005723';
-        $scriptProperties['hColor'] = trim(str_replace('#', '', $scriptProperties['hColor']));
-        if(strlen($scriptProperties['hColor']) != 6) $scriptProperties['hColor'] = '';
-        if(!$scriptProperties['hColor']) $scriptProperties['hColor'] = '84d1a4';
 
         $videobox->setConfig($scriptProperties);
 

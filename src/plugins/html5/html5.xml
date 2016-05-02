@@ -12,7 +12,7 @@
     <version><%= version %></version>
     
     <files>
-        <filename plugin="html5">youtube.php</filename>
+        <filename plugin="html5">html5.php</filename>
         <filename plugin="html5">index.html</filename>
     </files>
     <config>
