@@ -1,7 +1,7 @@
 {
   "license": "GPL-3.0",
   "readme": "README.md",
-  "version": "5.0.0-rc1",
+  "version": "5.0.0-rc2",
   "name": "Videobox-Joomla",
   "copyright": "Hitko",
   "homepage": "https://hitko.eu/videobox/",
@@ -12,15 +12,16 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-compass": "^2.1.0",
-    "gulp-cssnano": "^2.1.1",
+    "gulp-cssnano": "^2.1.2",
     "gulp-recursive-folder": "git+https://github.com/HitkoDev/gulp-recursive-folder.git",
     "gulp-rename": "^1.2.2",
-    "gulp-template": "^3.1.0",
-    "gulp-typescript": "^2.12.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-template": "^4.0.0",
+    "gulp-typescript": "^2.13.4",
     "gulp-uglify": "^1.5.3",
     "gulp-zip": "^3.2.0",
-    "merge2": "^1.0.1",
-    "video.js": "^5.8.6",
+    "merge2": "^1.0.2",
+    "video.js": "^5.9.2",
     "videobox": "git+https://github.com/HitkoDev/Videobox.git"
   }
 }

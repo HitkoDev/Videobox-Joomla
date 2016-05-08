@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 5.9.2 <http://videojs.com/>
+ * Video.js 5.10.1 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -2851,7 +2851,7 @@ _component2['default'].registerComponent('Button', Button);
 exports['default'] = Button;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":65,"./component":67,"./utils/events.js":135,"./utils/fn.js":136,"./utils/log.js":139,"global/document":1,"object.assign":45}],65:[function(_dereq_,module,exports){
+},{"./clickable-component.js":65,"./component":67,"./utils/events.js":144,"./utils/fn.js":145,"./utils/log.js":148,"global/document":1,"object.assign":45}],65:[function(_dereq_,module,exports){
 /**
  * @file button.js
  */
@@ -3107,7 +3107,7 @@ _component2['default'].registerComponent('ClickableComponent', ClickableComponen
 exports['default'] = ClickableComponent;
 module.exports = exports['default'];
 
-},{"./component":67,"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/log.js":139,"global/document":1,"object.assign":45}],66:[function(_dereq_,module,exports){
+},{"./component":67,"./utils/dom.js":143,"./utils/events.js":144,"./utils/fn.js":145,"./utils/log.js":148,"global/document":1,"object.assign":45}],66:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4729,7 +4729,217 @@ Component.registerComponent('Component', Component);
 exports['default'] = Component;
 module.exports = exports['default'];
 
-},{"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/guid.js":138,"./utils/log.js":139,"./utils/merge-options.js":140,"./utils/to-title-case.js":143,"global/window":2,"object.assign":45}],68:[function(_dereq_,module,exports){
+},{"./utils/dom.js":143,"./utils/events.js":144,"./utils/fn.js":145,"./utils/guid.js":147,"./utils/log.js":148,"./utils/merge-options.js":149,"./utils/to-title-case.js":152,"global/window":2,"object.assign":45}],68:[function(_dereq_,module,exports){
+/**
+ * @file audio-track-button.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _trackButtonJs = _dereq_('../track-button.js');
+
+var _trackButtonJs2 = _interopRequireDefault(_trackButtonJs);
+
+var _componentJs = _dereq_('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = _dereq_('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _audioTrackMenuItemJs = _dereq_('./audio-track-menu-item.js');
+
+var _audioTrackMenuItemJs2 = _interopRequireDefault(_audioTrackMenuItemJs);
+
+/**
+ * The base class for buttons that toggle specific text track types (e.g. subtitles)
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends TrackButton
+ * @class AudioTrackButton
+ */
+
+var AudioTrackButton = (function (_TrackButton) {
+  _inherits(AudioTrackButton, _TrackButton);
+
+  function AudioTrackButton(player) {
+    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+    _classCallCheck(this, AudioTrackButton);
+
+    options.tracks = player.audioTracks && player.audioTracks();
+
+    _TrackButton.call(this, player, options);
+
+    this.el_.setAttribute('aria-label', 'Audio Menu');
+  }
+
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+  AudioTrackButton.prototype.buildCSSClass = function buildCSSClass() {
+    return 'vjs-audio-button ' + _TrackButton.prototype.buildCSSClass.call(this);
+  };
+
+  /**
+   * Create a menu item for each audio track
+   *
+   * @return {Array} Array of menu items
+   * @method createItems
+   */
+
+  AudioTrackButton.prototype.createItems = function createItems() {
+    var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    var tracks = this.player_.audioTracks && this.player_.audioTracks();
+
+    if (!tracks) {
+      return items;
+    }
+
+    for (var i = 0; i < tracks.length; i++) {
+      var track = tracks[i];
+
+      items.push(new _audioTrackMenuItemJs2['default'](this.player_, {
+        // MenuItem is selectable
+        'selectable': true,
+        'track': track
+      }));
+    }
+
+    return items;
+  };
+
+  return AudioTrackButton;
+})(_trackButtonJs2['default']);
+
+_componentJs2['default'].registerComponent('AudioTrackButton', AudioTrackButton);
+exports['default'] = AudioTrackButton;
+module.exports = exports['default'];
+
+},{"../../component.js":67,"../../utils/fn.js":145,"../track-button.js":98,"./audio-track-menu-item.js":69}],69:[function(_dereq_,module,exports){
+/**
+ * @file audio-track-menu-item.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _menuMenuItemJs = _dereq_('../../menu/menu-item.js');
+
+var _menuMenuItemJs2 = _interopRequireDefault(_menuMenuItemJs);
+
+var _componentJs = _dereq_('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = _dereq_('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+/**
+ * The audio track menu item
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends MenuItem
+ * @class AudioTrackMenuItem
+ */
+
+var AudioTrackMenuItem = (function (_MenuItem) {
+  _inherits(AudioTrackMenuItem, _MenuItem);
+
+  function AudioTrackMenuItem(player, options) {
+    var _this = this;
+
+    _classCallCheck(this, AudioTrackMenuItem);
+
+    var track = options.track;
+    var tracks = player.audioTracks();
+
+    // Modify options for parent MenuItem class's init.
+    options.label = track.label || track.language || 'Unknown';
+    options.selected = track.enabled;
+
+    _MenuItem.call(this, player, options);
+
+    this.track = track;
+
+    if (tracks) {
+      (function () {
+        var changeHandler = Fn.bind(_this, _this.handleTracksChange);
+
+        tracks.addEventListener('change', changeHandler);
+        _this.on('dispose', function () {
+          tracks.removeEventListener('change', changeHandler);
+        });
+      })();
+    }
+  }
+
+  /**
+   * Handle click on audio track
+   *
+   * @method handleClick
+   */
+
+  AudioTrackMenuItem.prototype.handleClick = function handleClick(event) {
+    var tracks = this.player_.audioTracks();
+
+    _MenuItem.prototype.handleClick.call(this, event);
+
+    if (!tracks) return;
+
+    for (var i = 0; i < tracks.length; i++) {
+      var track = tracks[i];
+
+      if (track === this.track) {
+        track.enabled = true;
+      }
+    }
+  };
+
+  /**
+   * Handle audio track change
+   *
+   * @method handleTracksChange
+   */
+
+  AudioTrackMenuItem.prototype.handleTracksChange = function handleTracksChange(event) {
+    this.selected(this.track.enabled);
+  };
+
+  return AudioTrackMenuItem;
+})(_menuMenuItemJs2['default']);
+
+_componentJs2['default'].registerComponent('AudioTrackMenuItem', AudioTrackMenuItem);
+exports['default'] = AudioTrackMenuItem;
+module.exports = exports['default'];
+
+},{"../../component.js":67,"../../menu/menu-item.js":110,"../../utils/fn.js":145}],70:[function(_dereq_,module,exports){
 /**
  * @file control-bar.js
  */
@@ -4809,6 +5019,10 @@ var _textTrackControlsCaptionsButtonJs = _dereq_('./text-track-controls/captions
 
 var _textTrackControlsCaptionsButtonJs2 = _interopRequireDefault(_textTrackControlsCaptionsButtonJs);
 
+var _audioTrackControlsAudioTrackButtonJs = _dereq_('./audio-track-controls/audio-track-button.js');
+
+var _audioTrackControlsAudioTrackButtonJs2 = _interopRequireDefault(_audioTrackControlsAudioTrackButtonJs);
+
 var _playbackRateMenuPlaybackRateMenuButtonJs = _dereq_('./playback-rate-menu/playback-rate-menu-button.js');
 
 var _playbackRateMenuPlaybackRateMenuButtonJs2 = _interopRequireDefault(_playbackRateMenuPlaybackRateMenuButtonJs);
@@ -4854,14 +5068,14 @@ var ControlBar = (function (_Component) {
 
 ControlBar.prototype.options_ = {
   loadEvent: 'play',
-  children: ['playToggle', 'volumeMenuButton', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subtitlesButton', 'captionsButton', 'fullscreenToggle']
+  children: ['playToggle', 'volumeMenuButton', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subtitlesButton', 'captionsButton', 'audioTrackButton', 'fullscreenToggle']
 };
 
 _componentJs2['default'].registerComponent('ControlBar', ControlBar);
 exports['default'] = ControlBar;
 module.exports = exports['default'];
 
-},{"../component.js":67,"./fullscreen-toggle.js":69,"./live-display.js":70,"./mute-toggle.js":71,"./play-toggle.js":72,"./playback-rate-menu/playback-rate-menu-button.js":73,"./progress-control/progress-control.js":78,"./spacer-controls/custom-control-spacer.js":81,"./text-track-controls/captions-button.js":84,"./text-track-controls/chapters-button.js":85,"./text-track-controls/descriptions-button.js":87,"./text-track-controls/subtitles-button.js":89,"./time-controls/current-time-display.js":92,"./time-controls/duration-display.js":93,"./time-controls/remaining-time-display.js":94,"./time-controls/time-divider.js":95,"./volume-control/volume-control.js":97,"./volume-menu-button.js":99}],69:[function(_dereq_,module,exports){
+},{"../component.js":67,"./audio-track-controls/audio-track-button.js":68,"./fullscreen-toggle.js":71,"./live-display.js":72,"./mute-toggle.js":73,"./play-toggle.js":74,"./playback-rate-menu/playback-rate-menu-button.js":75,"./progress-control/progress-control.js":80,"./spacer-controls/custom-control-spacer.js":83,"./text-track-controls/captions-button.js":86,"./text-track-controls/chapters-button.js":87,"./text-track-controls/descriptions-button.js":89,"./text-track-controls/subtitles-button.js":91,"./time-controls/current-time-display.js":94,"./time-controls/duration-display.js":95,"./time-controls/remaining-time-display.js":96,"./time-controls/time-divider.js":97,"./volume-control/volume-control.js":100,"./volume-menu-button.js":102}],71:[function(_dereq_,module,exports){
 /**
  * @file fullscreen-toggle.js
  */
@@ -4935,7 +5149,7 @@ _componentJs2['default'].registerComponent('FullscreenToggle', FullscreenToggle)
 exports['default'] = FullscreenToggle;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":67}],70:[function(_dereq_,module,exports){
+},{"../button.js":64,"../component.js":67}],72:[function(_dereq_,module,exports){
 /**
  * @file live-display.js
  */
@@ -5017,7 +5231,7 @@ _component2['default'].registerComponent('LiveDisplay', LiveDisplay);
 exports['default'] = LiveDisplay;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/dom.js":134}],71:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/dom.js":143}],73:[function(_dereq_,module,exports){
 /**
  * @file mute-toggle.js
  */
@@ -5143,7 +5357,7 @@ _component2['default'].registerComponent('MuteToggle', MuteToggle);
 exports['default'] = MuteToggle;
 module.exports = exports['default'];
 
-},{"../button":64,"../component":67,"../utils/dom.js":134}],72:[function(_dereq_,module,exports){
+},{"../button":64,"../component":67,"../utils/dom.js":143}],74:[function(_dereq_,module,exports){
 /**
  * @file play-toggle.js
  */
@@ -5244,7 +5458,7 @@ _componentJs2['default'].registerComponent('PlayToggle', PlayToggle);
 exports['default'] = PlayToggle;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":67}],73:[function(_dereq_,module,exports){
+},{"../button.js":64,"../component.js":67}],75:[function(_dereq_,module,exports){
 /**
  * @file playback-rate-menu-button.js
  */
@@ -5446,7 +5660,7 @@ _componentJs2['default'].registerComponent('PlaybackRateMenuButton', PlaybackRat
 exports['default'] = PlaybackRateMenuButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-button.js":106,"../../menu/menu.js":108,"../../utils/dom.js":134,"./playback-rate-menu-item.js":74}],74:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-button.js":109,"../../menu/menu.js":111,"../../utils/dom.js":143,"./playback-rate-menu-item.js":76}],76:[function(_dereq_,module,exports){
 /**
  * @file playback-rate-menu-item.js
  */
@@ -5527,7 +5741,7 @@ _componentJs2['default'].registerComponent('PlaybackRateMenuItem', PlaybackRateM
 exports['default'] = PlaybackRateMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-item.js":107}],75:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-item.js":110}],77:[function(_dereq_,module,exports){
 /**
  * @file load-progress-bar.js
  */
@@ -5633,7 +5847,7 @@ _componentJs2['default'].registerComponent('LoadProgressBar', LoadProgressBar);
 exports['default'] = LoadProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134}],76:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143}],78:[function(_dereq_,module,exports){
 /**
  * @file mouse-time-display.js
  */
@@ -5789,7 +6003,7 @@ _componentJs2['default'].registerComponent('MouseTimeDisplay', MouseTimeDisplay)
 exports['default'] = MouseTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/format-time.js":137,"global/window":2,"lodash-compat/function/throttle":7}],77:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143,"../../utils/fn.js":145,"../../utils/format-time.js":146,"global/window":2,"lodash-compat/function/throttle":7}],79:[function(_dereq_,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -5876,7 +6090,7 @@ _componentJs2['default'].registerComponent('PlayProgressBar', PlayProgressBar);
 exports['default'] = PlayProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/format-time.js":137}],78:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143,"../../utils/fn.js":145,"../../utils/format-time.js":146}],80:[function(_dereq_,module,exports){
 /**
  * @file progress-control.js
  */
@@ -5945,7 +6159,7 @@ _componentJs2['default'].registerComponent('ProgressControl', ProgressControl);
 exports['default'] = ProgressControl;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./mouse-time-display.js":76,"./seek-bar.js":79}],79:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./mouse-time-display.js":78,"./seek-bar.js":81}],81:[function(_dereq_,module,exports){
 /**
  * @file seek-bar.js
  */
@@ -6164,7 +6378,7 @@ _componentJs2['default'].registerComponent('SeekBar', SeekBar);
 exports['default'] = SeekBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../slider/slider.js":116,"../../utils/fn.js":136,"../../utils/format-time.js":137,"./load-progress-bar.js":75,"./play-progress-bar.js":77,"./tooltip-progress-bar.js":80,"global/window":2,"object.assign":45}],80:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../slider/slider.js":119,"../../utils/fn.js":145,"../../utils/format-time.js":146,"./load-progress-bar.js":77,"./play-progress-bar.js":79,"./tooltip-progress-bar.js":82,"global/window":2,"object.assign":45}],82:[function(_dereq_,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -6249,7 +6463,7 @@ _componentJs2['default'].registerComponent('TooltipProgressBar', TooltipProgress
 exports['default'] = TooltipProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/format-time.js":137}],81:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143,"../../utils/fn.js":145,"../../utils/format-time.js":146}],83:[function(_dereq_,module,exports){
 /**
  * @file custom-control-spacer.js
  */
@@ -6323,7 +6537,7 @@ _componentJs2['default'].registerComponent('CustomControlSpacer', CustomControlS
 exports['default'] = CustomControlSpacer;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./spacer.js":82}],82:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./spacer.js":84}],84:[function(_dereq_,module,exports){
 /**
  * @file spacer.js
  */
@@ -6390,7 +6604,7 @@ _componentJs2['default'].registerComponent('Spacer', Spacer);
 exports['default'] = Spacer;
 module.exports = exports['default'];
 
-},{"../../component.js":67}],83:[function(_dereq_,module,exports){
+},{"../../component.js":67}],85:[function(_dereq_,module,exports){
 /**
  * @file caption-settings-menu-item.js
  */
@@ -6462,7 +6676,7 @@ _componentJs2['default'].registerComponent('CaptionSettingsMenuItem', CaptionSet
 exports['default'] = CaptionSettingsMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./text-track-menu-item.js":91}],84:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./text-track-menu-item.js":93}],86:[function(_dereq_,module,exports){
 /**
  * @file captions-button.js
  */
@@ -6568,7 +6782,7 @@ _componentJs2['default'].registerComponent('CaptionsButton', CaptionsButton);
 exports['default'] = CaptionsButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./caption-settings-menu-item.js":83,"./text-track-button.js":90}],85:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./caption-settings-menu-item.js":85,"./text-track-button.js":92}],87:[function(_dereq_,module,exports){
 /**
  * @file chapters-button.js
  */
@@ -6766,7 +6980,7 @@ _componentJs2['default'].registerComponent('ChaptersButton', ChaptersButton);
 exports['default'] = ChaptersButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu.js":108,"../../utils/dom.js":134,"../../utils/fn.js":136,"../../utils/to-title-case.js":143,"./chapters-track-menu-item.js":86,"./text-track-button.js":90,"./text-track-menu-item.js":91,"global/window":2}],86:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu.js":111,"../../utils/dom.js":143,"../../utils/fn.js":145,"../../utils/to-title-case.js":152,"./chapters-track-menu-item.js":88,"./text-track-button.js":92,"./text-track-menu-item.js":93,"global/window":2}],88:[function(_dereq_,module,exports){
 /**
  * @file chapters-track-menu-item.js
  */
@@ -6856,7 +7070,7 @@ _componentJs2['default'].registerComponent('ChaptersTrackMenuItem', ChaptersTrac
 exports['default'] = ChaptersTrackMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-item.js":107,"../../utils/fn.js":136}],87:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-item.js":110,"../../utils/fn.js":145}],89:[function(_dereq_,module,exports){
 /**
  * @file descriptions-button.js
  */
@@ -6967,7 +7181,7 @@ _componentJs2['default'].registerComponent('DescriptionsButton', DescriptionsBut
 exports['default'] = DescriptionsButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/fn.js":136,"./text-track-button.js":90}],88:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/fn.js":145,"./text-track-button.js":92}],90:[function(_dereq_,module,exports){
 /**
  * @file off-text-track-menu-item.js
  */
@@ -7050,7 +7264,7 @@ _componentJs2['default'].registerComponent('OffTextTrackMenuItem', OffTextTrackM
 exports['default'] = OffTextTrackMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./text-track-menu-item.js":91}],89:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./text-track-menu-item.js":93}],91:[function(_dereq_,module,exports){
 /**
  * @file subtitles-button.js
  */
@@ -7113,7 +7327,7 @@ _componentJs2['default'].registerComponent('SubtitlesButton', SubtitlesButton);
 exports['default'] = SubtitlesButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./text-track-button.js":90}],90:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./text-track-button.js":92}],92:[function(_dereq_,module,exports){
 /**
  * @file text-track-button.js
  */
@@ -7129,9 +7343,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _menuMenuButtonJs = _dereq_('../../menu/menu-button.js');
+var _trackButtonJs = _dereq_('../track-button.js');
 
-var _menuMenuButtonJs2 = _interopRequireDefault(_menuMenuButtonJs);
+var _trackButtonJs2 = _interopRequireDefault(_trackButtonJs);
 
 var _componentJs = _dereq_('../../component.js');
 
@@ -7158,35 +7372,25 @@ var _offTextTrackMenuItemJs2 = _interopRequireDefault(_offTextTrackMenuItemJs);
  * @class TextTrackButton
  */
 
-var TextTrackButton = (function (_MenuButton) {
-  _inherits(TextTrackButton, _MenuButton);
+var TextTrackButton = (function (_TrackButton) {
+  _inherits(TextTrackButton, _TrackButton);
 
-  function TextTrackButton(player, options) {
+  function TextTrackButton(player) {
+    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
     _classCallCheck(this, TextTrackButton);
 
-    _MenuButton.call(this, player, options);
+    options.tracks = player.textTracks();
 
-    var tracks = this.player_.textTracks();
-
-    if (this.items.length <= 1) {
-      this.hide();
-    }
-
-    if (!tracks) {
-      return;
-    }
-
-    var updateHandler = Fn.bind(this, this.update);
-    tracks.addEventListener('removetrack', updateHandler);
-    tracks.addEventListener('addtrack', updateHandler);
-
-    this.player_.on('dispose', function () {
-      tracks.removeEventListener('removetrack', updateHandler);
-      tracks.removeEventListener('addtrack', updateHandler);
-    });
+    _TrackButton.call(this, player, options);
   }
 
-  // Create a menu item for each text track
+  /**
+   * Create a menu item for each text track
+   *
+   * @return {Array} Array of menu items
+   * @method createItems
+   */
 
   TextTrackButton.prototype.createItems = function createItems() {
     var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
@@ -7217,13 +7421,13 @@ var TextTrackButton = (function (_MenuButton) {
   };
 
   return TextTrackButton;
-})(_menuMenuButtonJs2['default']);
+})(_trackButtonJs2['default']);
 
 _componentJs2['default'].registerComponent('TextTrackButton', TextTrackButton);
 exports['default'] = TextTrackButton;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-button.js":106,"../../utils/fn.js":136,"./off-text-track-menu-item.js":88,"./text-track-menu-item.js":91}],91:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/fn.js":145,"../track-button.js":98,"./off-text-track-menu-item.js":90,"./text-track-menu-item.js":93}],93:[function(_dereq_,module,exports){
 /**
  * @file text-track-menu-item.js
  */
@@ -7373,7 +7577,7 @@ _componentJs2['default'].registerComponent('TextTrackMenuItem', TextTrackMenuIte
 exports['default'] = TextTrackMenuItem;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../menu/menu-item.js":107,"../../utils/fn.js":136,"global/document":1,"global/window":2}],92:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../menu/menu-item.js":110,"../../utils/fn.js":145,"global/document":1,"global/window":2}],94:[function(_dereq_,module,exports){
 /**
  * @file current-time-display.js
  */
@@ -7470,7 +7674,7 @@ _componentJs2['default'].registerComponent('CurrentTimeDisplay', CurrentTimeDisp
 exports['default'] = CurrentTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/format-time.js":137}],93:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143,"../../utils/format-time.js":146}],95:[function(_dereq_,module,exports){
 /**
  * @file duration-display.js
  */
@@ -7572,7 +7776,7 @@ _componentJs2['default'].registerComponent('DurationDisplay', DurationDisplay);
 exports['default'] = DurationDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/format-time.js":137}],94:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143,"../../utils/format-time.js":146}],96:[function(_dereq_,module,exports){
 /**
  * @file remaining-time-display.js
  */
@@ -7673,7 +7877,7 @@ _componentJs2['default'].registerComponent('RemainingTimeDisplay', RemainingTime
 exports['default'] = RemainingTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../utils/dom.js":134,"../../utils/format-time.js":137}],95:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../utils/dom.js":143,"../../utils/format-time.js":146}],97:[function(_dereq_,module,exports){
 /**
  * @file time-divider.js
  */
@@ -7731,7 +7935,79 @@ _componentJs2['default'].registerComponent('TimeDivider', TimeDivider);
 exports['default'] = TimeDivider;
 module.exports = exports['default'];
 
-},{"../../component.js":67}],96:[function(_dereq_,module,exports){
+},{"../../component.js":67}],98:[function(_dereq_,module,exports){
+/**
+ * @file track-button.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _menuMenuButtonJs = _dereq_('../menu/menu-button.js');
+
+var _menuMenuButtonJs2 = _interopRequireDefault(_menuMenuButtonJs);
+
+var _componentJs = _dereq_('../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = _dereq_('../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+/**
+ * The base class for buttons that toggle specific text track types (e.g. subtitles)
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends MenuButton
+ * @class TrackButton
+ */
+
+var TrackButton = (function (_MenuButton) {
+  _inherits(TrackButton, _MenuButton);
+
+  function TrackButton(player, options) {
+    _classCallCheck(this, TrackButton);
+
+    var tracks = options.tracks;
+
+    _MenuButton.call(this, player, options);
+
+    if (this.items.length <= 1) {
+      this.hide();
+    }
+
+    if (!tracks) {
+      return;
+    }
+
+    var updateHandler = Fn.bind(this, this.update);
+    tracks.addEventListener('removetrack', updateHandler);
+    tracks.addEventListener('addtrack', updateHandler);
+
+    this.player_.on('dispose', function () {
+      tracks.removeEventListener('removetrack', updateHandler);
+      tracks.removeEventListener('addtrack', updateHandler);
+    });
+  }
+
+  return TrackButton;
+})(_menuMenuButtonJs2['default']);
+
+_componentJs2['default'].registerComponent('TrackButton', TrackButton);
+exports['default'] = TrackButton;
+module.exports = exports['default'];
+
+},{"../component.js":67,"../menu/menu-button.js":109,"../utils/fn.js":145}],99:[function(_dereq_,module,exports){
 /**
  * @file volume-bar.js
  */
@@ -7881,7 +8157,7 @@ _componentJs2['default'].registerComponent('VolumeBar', VolumeBar);
 exports['default'] = VolumeBar;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"../../slider/slider.js":116,"../../utils/fn.js":136,"./volume-level.js":98}],97:[function(_dereq_,module,exports){
+},{"../../component.js":67,"../../slider/slider.js":119,"../../utils/fn.js":145,"./volume-level.js":101}],100:[function(_dereq_,module,exports){
 /**
  * @file volume-control.js
  */
@@ -7959,7 +8235,7 @@ _componentJs2['default'].registerComponent('VolumeControl', VolumeControl);
 exports['default'] = VolumeControl;
 module.exports = exports['default'];
 
-},{"../../component.js":67,"./volume-bar.js":96}],98:[function(_dereq_,module,exports){
+},{"../../component.js":67,"./volume-bar.js":99}],101:[function(_dereq_,module,exports){
 /**
  * @file volume-level.js
  */
@@ -8016,7 +8292,7 @@ _componentJs2['default'].registerComponent('VolumeLevel', VolumeLevel);
 exports['default'] = VolumeLevel;
 module.exports = exports['default'];
 
-},{"../../component.js":67}],99:[function(_dereq_,module,exports){
+},{"../../component.js":67}],102:[function(_dereq_,module,exports){
 /**
  * @file volume-menu-button.js
  */
@@ -8205,7 +8481,7 @@ _componentJs2['default'].registerComponent('VolumeMenuButton', VolumeMenuButton)
 exports['default'] = VolumeMenuButton;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../popup/popup-button.js":112,"../popup/popup.js":113,"../utils/fn.js":136,"./mute-toggle.js":71,"./volume-control/volume-bar.js":96}],100:[function(_dereq_,module,exports){
+},{"../component.js":67,"../popup/popup-button.js":115,"../popup/popup.js":116,"../utils/fn.js":145,"./mute-toggle.js":73,"./volume-control/volume-bar.js":99}],103:[function(_dereq_,module,exports){
 /**
  * @file error-display.js
  */
@@ -8299,7 +8575,7 @@ _component2['default'].registerComponent('ErrorDisplay', ErrorDisplay);
 exports['default'] = ErrorDisplay;
 module.exports = exports['default'];
 
-},{"./component":67,"./modal-dialog":109,"./utils/dom":134,"./utils/merge-options":140}],101:[function(_dereq_,module,exports){
+},{"./component":67,"./modal-dialog":112,"./utils/dom":143,"./utils/merge-options":149}],104:[function(_dereq_,module,exports){
 /**
  * @file event-target.js
  */
@@ -8321,7 +8597,7 @@ EventTarget.prototype.on = function (type, fn) {
   // Remove the addEventListener alias before calling Events.on
   // so we don't get into an infinite type loop
   var ael = this.addEventListener;
-  this.addEventListener = Function.prototype;
+  this.addEventListener = function () {};
   Events.on(this, type, fn);
   this.addEventListener = ael;
 };
@@ -8333,7 +8609,12 @@ EventTarget.prototype.off = function (type, fn) {
 EventTarget.prototype.removeEventListener = EventTarget.prototype.off;
 
 EventTarget.prototype.one = function (type, fn) {
+  // Remove the addEventListener alias before calling Events.on
+  // so we don't get into an infinite type loop
+  var ael = this.addEventListener;
+  this.addEventListener = function () {};
   Events.one(this, type, fn);
+  this.addEventListener = ael;
 };
 
 EventTarget.prototype.trigger = function (event) {
@@ -8358,7 +8639,7 @@ EventTarget.prototype.dispatchEvent = EventTarget.prototype.trigger;
 exports['default'] = EventTarget;
 module.exports = exports['default'];
 
-},{"./utils/events.js":135}],102:[function(_dereq_,module,exports){
+},{"./utils/events.js":144}],105:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8449,7 +8730,7 @@ var extendFn = function extendFn(superClass) {
 exports['default'] = extendFn;
 module.exports = exports['default'];
 
-},{"./utils/log":139}],103:[function(_dereq_,module,exports){
+},{"./utils/log":148}],106:[function(_dereq_,module,exports){
 /**
  * @file fullscreen-api.js
  */
@@ -8506,7 +8787,7 @@ if (browserApi) {
 exports['default'] = FullscreenApi;
 module.exports = exports['default'];
 
-},{"global/document":1}],104:[function(_dereq_,module,exports){
+},{"global/document":1}],107:[function(_dereq_,module,exports){
 /**
  * @file loading-spinner.js
  */
@@ -8562,7 +8843,7 @@ _component2['default'].registerComponent('LoadingSpinner', LoadingSpinner);
 exports['default'] = LoadingSpinner;
 module.exports = exports['default'];
 
-},{"./component":67}],105:[function(_dereq_,module,exports){
+},{"./component":67}],108:[function(_dereq_,module,exports){
 /**
  * @file media-error.js
  */
@@ -8653,7 +8934,7 @@ for (var errNum = 0; errNum < MediaError.errorTypes.length; errNum++) {
 exports['default'] = MediaError;
 module.exports = exports['default'];
 
-},{"object.assign":45}],106:[function(_dereq_,module,exports){
+},{"object.assign":45}],109:[function(_dereq_,module,exports){
 /**
  * @file menu-button.js
  */
@@ -8967,7 +9248,7 @@ _componentJs2['default'].registerComponent('MenuButton', MenuButton);
 exports['default'] = MenuButton;
 module.exports = exports['default'];
 
-},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":134,"../utils/fn.js":136,"../utils/to-title-case.js":143,"./menu.js":108}],107:[function(_dereq_,module,exports){
+},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":143,"../utils/fn.js":145,"../utils/to-title-case.js":152,"./menu.js":111}],110:[function(_dereq_,module,exports){
 /**
  * @file menu-item.js
  */
@@ -9082,7 +9363,7 @@ _componentJs2['default'].registerComponent('MenuItem', MenuItem);
 exports['default'] = MenuItem;
 module.exports = exports['default'];
 
-},{"../clickable-component.js":65,"../component.js":67,"object.assign":45}],108:[function(_dereq_,module,exports){
+},{"../clickable-component.js":65,"../component.js":67,"object.assign":45}],111:[function(_dereq_,module,exports){
 /**
  * @file menu.js
  */
@@ -9266,7 +9547,7 @@ _componentJs2['default'].registerComponent('Menu', Menu);
 exports['default'] = Menu;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/dom.js":134,"../utils/events.js":135,"../utils/fn.js":136}],109:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/dom.js":143,"../utils/events.js":144,"../utils/fn.js":145}],112:[function(_dereq_,module,exports){
 /**
  * @file modal-dialog.js
  */
@@ -9685,7 +9966,7 @@ _component2['default'].registerComponent('ModalDialog', ModalDialog);
 exports['default'] = ModalDialog;
 module.exports = exports['default'];
 
-},{"./close-button":66,"./component":67,"./utils/dom":134,"./utils/fn":136,"./utils/log":139}],110:[function(_dereq_,module,exports){
+},{"./close-button":66,"./component":67,"./utils/dom":143,"./utils/fn":145,"./utils/log":148}],113:[function(_dereq_,module,exports){
 /**
  * @file player.js
  */
@@ -9773,6 +10054,14 @@ var _utilsMergeOptionsJs2 = _interopRequireDefault(_utilsMergeOptionsJs);
 var _tracksTextTrackListConverterJs = _dereq_('./tracks/text-track-list-converter.js');
 
 var _tracksTextTrackListConverterJs2 = _interopRequireDefault(_tracksTextTrackListConverterJs);
+
+var _tracksAudioTrackListJs = _dereq_('./tracks/audio-track-list.js');
+
+var _tracksAudioTrackListJs2 = _interopRequireDefault(_tracksAudioTrackListJs);
+
+var _tracksVideoTrackListJs = _dereq_('./tracks/video-track-list.js');
+
+var _tracksVideoTrackListJs2 = _interopRequireDefault(_tracksVideoTrackListJs);
 
 // Include required child components (importing also registers them)
 
@@ -10358,7 +10647,9 @@ var Player = (function (_Component) {
       'source': source,
       'playerId': this.id(),
       'techId': this.id() + '_' + techName + '_api',
+      'videoTracks': this.videoTracks_,
       'textTracks': this.textTracks_,
+      'audioTracks': this.audioTracks_,
       'autoplay': this.options_.autoplay,
       'preload': this.options_.preload,
       'loop': this.options_.loop,
@@ -10452,7 +10743,9 @@ var Player = (function (_Component) {
 
   Player.prototype.unloadTech_ = function unloadTech_() {
     // Save the current text tracks so that we can reuse the same text tracks with the next tech
+    this.videoTracks_ = this.videoTracks();
     this.textTracks_ = this.textTracks();
+    this.audioTracks_ = this.audioTracks();
     this.textTracksJson_ = _tracksTextTrackListConverterJs2['default'].textTracksToJson(this.tech_);
 
     this.isReady_ = false;
@@ -12409,12 +12702,50 @@ var Player = (function (_Component) {
   };
 
   /**
-   * Text tracks are tracks of timed text events.
-   * Captions - text displayed over the video for the hearing impaired
-   * Subtitles - text displayed over the video for those who don't understand language in the video
-   * Chapters - text displayed in a menu allowing the user to jump to particular points (chapters) in the video
-   * Descriptions - audio descriptions that are read back to the user by a screen reading device
+   * Get a video track list
+   * @link https://html.spec.whatwg.org/multipage/embedded-content.html#videotracklist
+   *
+   * @return {VideoTrackList} thes current video track list
+   * @method videoTracks
    */
+
+  Player.prototype.videoTracks = function videoTracks() {
+    // if we have not yet loadTech_, we create videoTracks_
+    // these will be passed to the tech during loading
+    if (!this.tech_) {
+      this.videoTracks_ = this.videoTracks_ || new _tracksVideoTrackListJs2['default']();
+      return this.videoTracks_;
+    }
+
+    return this.tech_.videoTracks();
+  };
+
+  /**
+   * Get an audio track list
+   * @link https://html.spec.whatwg.org/multipage/embedded-content.html#audiotracklist
+   *
+   * @return {AudioTrackList} thes current audio track list
+   * @method audioTracks
+   */
+
+  Player.prototype.audioTracks = function audioTracks() {
+    // if we have not yet loadTech_, we create videoTracks_
+    // these will be passed to the tech during loading
+    if (!this.tech_) {
+      this.audioTracks_ = this.audioTracks_ || new _tracksAudioTrackListJs2['default']();
+      return this.audioTracks_;
+    }
+
+    return this.tech_.audioTracks();
+  };
+
+  /*
+    * Text tracks are tracks of timed text events.
+    * Captions - text displayed over the video for the hearing impaired
+    * Subtitles - text displayed over the video for those who don't understand language in the video
+    * Chapters - text displayed in a menu allowing the user to jump to particular points (chapters) in the video
+    * Descriptions (not supported yet) - audio descriptions that are read back to the user by a screen reading device
+    */
 
   /**
    * Get an array of associated text tracks. captions, subtitles, chapters, descriptions
@@ -12522,8 +12853,6 @@ var Player = (function (_Component) {
   // initialTime: function(){ return this.techCall_('initialTime'); },
   // startOffsetTime: function(){ return this.techCall_('startOffsetTime'); },
   // played: function(){ return this.techCall_('played'); },
-  // videoTracks: function(){ return this.techCall_('videoTracks'); },
-  // audioTracks: function(){ return this.techCall_('audioTracks'); },
   // defaultPlaybackRate: function(){ return this.techCall_('defaultPlaybackRate'); },
   // defaultMuted: function(){ return this.techCall_('defaultMuted'); }
 
@@ -12789,7 +13118,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./big-play-button.js":63,"./component.js":67,"./control-bar/control-bar.js":68,"./error-display.js":100,"./fullscreen-api.js":103,"./loading-spinner.js":104,"./media-error.js":105,"./modal-dialog":109,"./poster-image.js":114,"./tech/html5.js":119,"./tech/loader.js":120,"./tech/tech.js":121,"./tracks/text-track-display.js":125,"./tracks/text-track-list-converter.js":127,"./tracks/text-track-settings.js":129,"./utils/browser.js":131,"./utils/buffer.js":132,"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/guid.js":138,"./utils/log.js":139,"./utils/merge-options.js":140,"./utils/stylesheet.js":141,"./utils/time-ranges.js":142,"./utils/to-title-case.js":143,"global/document":1,"global/window":2,"object.assign":45,"safe-json-parse/tuple":54}],111:[function(_dereq_,module,exports){
+},{"./big-play-button.js":63,"./component.js":67,"./control-bar/control-bar.js":70,"./error-display.js":103,"./fullscreen-api.js":106,"./loading-spinner.js":107,"./media-error.js":108,"./modal-dialog":112,"./poster-image.js":117,"./tech/html5.js":122,"./tech/loader.js":123,"./tech/tech.js":124,"./tracks/audio-track-list.js":125,"./tracks/text-track-display.js":130,"./tracks/text-track-list-converter.js":131,"./tracks/text-track-settings.js":133,"./tracks/video-track-list.js":138,"./utils/browser.js":140,"./utils/buffer.js":141,"./utils/dom.js":143,"./utils/events.js":144,"./utils/fn.js":145,"./utils/guid.js":147,"./utils/log.js":148,"./utils/merge-options.js":149,"./utils/stylesheet.js":150,"./utils/time-ranges.js":151,"./utils/to-title-case.js":152,"global/document":1,"global/window":2,"object.assign":45,"safe-json-parse/tuple":54}],114:[function(_dereq_,module,exports){
 /**
  * @file plugins.js
  */
@@ -12817,7 +13146,7 @@ var plugin = function plugin(name, init) {
 exports['default'] = plugin;
 module.exports = exports['default'];
 
-},{"./player.js":110}],112:[function(_dereq_,module,exports){
+},{"./player.js":113}],115:[function(_dereq_,module,exports){
 /**
  * @file popup-button.js
  */
@@ -12951,7 +13280,7 @@ _componentJs2['default'].registerComponent('PopupButton', PopupButton);
 exports['default'] = PopupButton;
 module.exports = exports['default'];
 
-},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":134,"../utils/fn.js":136,"../utils/to-title-case.js":143,"./popup.js":113}],113:[function(_dereq_,module,exports){
+},{"../clickable-component.js":65,"../component.js":67,"../utils/dom.js":143,"../utils/fn.js":145,"../utils/to-title-case.js":152,"./popup.js":116}],116:[function(_dereq_,module,exports){
 /**
  * @file popup.js
  */
@@ -13048,7 +13377,7 @@ _componentJs2['default'].registerComponent('Popup', Popup);
 exports['default'] = Popup;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/dom.js":134,"../utils/events.js":135,"../utils/fn.js":136}],114:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/dom.js":143,"../utils/events.js":144,"../utils/fn.js":145}],117:[function(_dereq_,module,exports){
 /**
  * @file poster-image.js
  */
@@ -13208,7 +13537,7 @@ _componentJs2['default'].registerComponent('PosterImage', PosterImage);
 exports['default'] = PosterImage;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":65,"./component.js":67,"./utils/browser.js":131,"./utils/dom.js":134,"./utils/fn.js":136}],115:[function(_dereq_,module,exports){
+},{"./clickable-component.js":65,"./component.js":67,"./utils/browser.js":140,"./utils/dom.js":143,"./utils/fn.js":145}],118:[function(_dereq_,module,exports){
 /**
  * @file setup.js
  *
@@ -13321,7 +13650,7 @@ exports.autoSetup = autoSetup;
 exports.autoSetupTimeout = autoSetupTimeout;
 exports.hasLoaded = hasLoaded;
 
-},{"./utils/events.js":135,"global/document":1,"global/window":2}],116:[function(_dereq_,module,exports){
+},{"./utils/events.js":144,"global/document":1,"global/window":2}],119:[function(_dereq_,module,exports){
 /**
  * @file slider.js
  */
@@ -13600,7 +13929,7 @@ _componentJs2['default'].registerComponent('Slider', Slider);
 exports['default'] = Slider;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/dom.js":134,"object.assign":45}],117:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/dom.js":143,"object.assign":45}],120:[function(_dereq_,module,exports){
 /**
  * @file flash-rtmp.js
  */
@@ -13700,10 +14029,11 @@ function FlashRtmpDecorator(Flash) {
    * Pass the source to the flash object
    * Adaptive source handlers will have more complicated workflows before passing
    * video data to the video element
-   * @param  {Object} source    The source object
-   * @param  {Flash} tech   The instance of the Flash tech
+   * @param  {Object} source   The source object
+   * @param  {Flash}  tech     The instance of the Flash tech
+   * @param  {Object} options  The options to pass to the source
    */
-  Flash.rtmpSourceHandler.handleSource = function (source, tech) {
+  Flash.rtmpSourceHandler.handleSource = function (source, tech, options) {
     var srcParts = Flash.streamToParts(source.src);
 
     tech['setRtmpConnection'](srcParts.connection);
@@ -13719,7 +14049,7 @@ function FlashRtmpDecorator(Flash) {
 exports['default'] = FlashRtmpDecorator;
 module.exports = exports['default'];
 
-},{}],118:[function(_dereq_,module,exports){
+},{}],121:[function(_dereq_,module,exports){
 /**
  * @file flash.js
  * VideoJS-SWF - Custom Flash Player with HTML5-ish API
@@ -14090,7 +14420,7 @@ var Flash = (function (_Tech) {
 
 var _api = Flash.prototype;
 var _readWrite = 'rtmpConnection,rtmpStream,preload,defaultPlaybackRate,playbackRate,autoplay,loop,mediaGroup,controller,controls,volume,muted,defaultMuted'.split(',');
-var _readOnly = 'networkState,readyState,initialTime,duration,startOffsetTime,paused,ended,videoTracks,audioTracks,videoWidth,videoHeight'.split(',');
+var _readOnly = 'networkState,readyState,initialTime,duration,startOffsetTime,paused,ended,videoWidth,videoHeight'.split(',');
 
 function _createSetter(attr) {
   var attrUpper = attr.charAt(0).toUpperCase() + attr.slice(1);
@@ -14179,10 +14509,11 @@ Flash.nativeSourceHandler.canHandleSource = function (source) {
  * Adaptive source handlers will have more complicated workflows before passing
  * video data to the video element
  *
- * @param  {Object} source    The source object
- * @param  {Flash} tech   The instance of the Flash tech
+ * @param  {Object} source   The source object
+ * @param  {Flash}  tech     The instance of the Flash tech
+ * @param  {Object} options  The options to pass to the source
  */
-Flash.nativeSourceHandler.handleSource = function (source, tech) {
+Flash.nativeSourceHandler.handleSource = function (source, tech, options) {
   tech.setSrc(source.src);
 };
 
@@ -14334,7 +14665,7 @@ _tech2['default'].registerTech('Flash', Flash);
 exports['default'] = Flash;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/dom.js":134,"../utils/time-ranges.js":142,"../utils/url.js":144,"./flash-rtmp":117,"./tech":121,"global/window":2,"object.assign":45}],119:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/dom.js":143,"../utils/time-ranges.js":151,"../utils/url.js":153,"./flash-rtmp":120,"./tech":124,"global/window":2,"object.assign":45}],122:[function(_dereq_,module,exports){
 /**
  * @file html5.js
  * HTML5 Media Controller - Wrapper for HTML5 Media API
@@ -14344,6 +14675,8 @@ module.exports = exports['default'];
 
 exports.__esModule = true;
 
+var _templateObject = _taggedTemplateLiteralLoose(['Text Tracks are being loaded from another origin but the crossorigin attribute isn\'t used. \n            This may prevent text tracks from loading.'], ['Text Tracks are being loaded from another origin but the crossorigin attribute isn\'t used. \n            This may prevent text tracks from loading.']);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -14351,6 +14684,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _taggedTemplateLiteralLoose(strings, raw) { strings.raw = raw; return strings; }
 
 var _techJs = _dereq_('./tech.js');
 
@@ -14376,6 +14711,14 @@ var _utilsLogJs = _dereq_('../utils/log.js');
 
 var _utilsLogJs2 = _interopRequireDefault(_utilsLogJs);
 
+var _tsml = _dereq_('tsml');
+
+var _tsml2 = _interopRequireDefault(_tsml);
+
+var _srcJsTracksTextTrackJs = _dereq_('../../../src/js/tracks/text-track.js');
+
+var _srcJsTracksTextTrackJs2 = _interopRequireDefault(_srcJsTracksTextTrackJs);
+
 var _utilsBrowserJs = _dereq_('../utils/browser.js');
 
 var browser = _interopRequireWildcard(_utilsBrowserJs);
@@ -14396,6 +14739,10 @@ var _utilsMergeOptionsJs = _dereq_('../utils/merge-options.js');
 
 var _utilsMergeOptionsJs2 = _interopRequireDefault(_utilsMergeOptionsJs);
 
+var _utilsToTitleCaseJs = _dereq_('../utils/to-title-case.js');
+
+var _utilsToTitleCaseJs2 = _interopRequireDefault(_utilsToTitleCaseJs);
+
 /**
  * HTML5 Media Controller - Wrapper for HTML5 Media API
  *
@@ -14409,11 +14756,14 @@ var Html5 = (function (_Tech) {
   _inherits(Html5, _Tech);
 
   function Html5(options, ready) {
+    var _this = this;
+
     _classCallCheck(this, Html5);
 
     _Tech.call(this, options, ready);
 
     var source = options.source;
+    var crossoriginTracks = false;
 
     // Set the source if one is provided
     // 1) Check if the source is new (if not, we want to keep the original so playback isn't interrupted)
@@ -14446,6 +14796,9 @@ var Html5 = (function (_Tech) {
             // store HTMLTrackElement and TextTrack to remote list
             this.remoteTextTrackEls().addTrackElement_(node);
             this.remoteTextTracks().addTrack_(node.track);
+            if (!crossoriginTracks && !this.el_.hasAttribute('crossorigin') && Url.isCrossOrigin(node.src)) {
+              crossoriginTracks = true;
+            }
           }
         }
       }
@@ -14455,7 +14808,29 @@ var Html5 = (function (_Tech) {
       }
     }
 
+    var trackTypes = ['audio', 'video'];
+
+    // ProxyNativeTextTracks
+    trackTypes.forEach(function (type) {
+      var capitalType = _utilsToTitleCaseJs2['default'](type);
+
+      if (!_this['featuresNative' + capitalType + 'Tracks']) {
+        return;
+      }
+      var tl = _this.el()[type + 'Tracks'];
+
+      if (tl && tl.addEventListener) {
+        tl.addEventListener('change', Fn.bind(_this, _this['handle' + capitalType + 'TrackChange_']));
+        tl.addEventListener('addtrack', Fn.bind(_this, _this['handle' + capitalType + 'TrackAdd_']));
+        tl.addEventListener('removetrack', Fn.bind(_this, _this['handle' + capitalType + 'TrackRemove_']));
+      }
+    });
+
     if (this.featuresNativeTextTracks) {
+      if (crossoriginTracks) {
+        _utilsLogJs2['default'].warn(_tsml2['default'](_templateObject));
+      }
+
       this.handleTextTrackChange_ = Fn.bind(this, this.handleTextTrackChange);
       this.handleTextTrackAdd_ = Fn.bind(this, this.handleTextTrackAdd);
       this.handleTextTrackRemove_ = Fn.bind(this, this.handleTextTrackRemove);
@@ -14490,24 +14865,22 @@ var Html5 = (function (_Tech) {
    */
 
   Html5.prototype.dispose = function dispose() {
-    var tt = this.el().textTracks;
-    var emulatedTt = this.textTracks();
+    var _this2 = this;
 
-    // remove native event listeners
-    if (tt && tt.removeEventListener) {
-      tt.removeEventListener('change', this.handleTextTrackChange_);
-      tt.removeEventListener('addtrack', this.handleTextTrackAdd_);
-      tt.removeEventListener('removetrack', this.handleTextTrackRemove_);
-    }
+    // Un-ProxyNativeTracks
+    ['audio', 'video', 'text'].forEach(function (type) {
+      var capitalType = _utilsToTitleCaseJs2['default'](type);
+      var tl = _this2.el_[type + 'Tracks'];
 
-    // clearout the emulated text track list.
-    var i = emulatedTt.length;
-
-    while (i--) {
-      emulatedTt.removeTrack_(emulatedTt[i]);
-    }
+      if (tl && tl.removeEventListener) {
+        tl.removeEventListener('change', _this2['handle' + capitalType + 'TrackChange_']);
+        tl.removeEventListener('addtrack', _this2['handle' + capitalType + 'TrackAdd_']);
+        tl.removeEventListener('removetrack', _this2['handle' + capitalType + 'TrackRemove_']);
+      }
+    });
 
     Html5.disposeMediaElement(this.el_);
+    // tech will handle clearing of the emulated track list
     _Tech.prototype.dispose.call(this);
   };
 
@@ -14570,7 +14943,7 @@ var Html5 = (function (_Tech) {
   // rely on it.
 
   Html5.prototype.handleLateInit_ = function handleLateInit_(el) {
-    var _this = this;
+    var _this3 = this;
 
     if (el.networkState === 0 || el.networkState === 3) {
       // The video element hasn't started loading the source yet
@@ -14594,7 +14967,7 @@ var Html5 = (function (_Tech) {
         var setLoadstartFired = function setLoadstartFired() {
           loadstartFired = true;
         };
-        _this.on('loadstart', setLoadstartFired);
+        _this3.on('loadstart', setLoadstartFired);
 
         var triggerLoadstart = function triggerLoadstart() {
           // We did miss the original loadstart. Make sure the player
@@ -14603,9 +14976,9 @@ var Html5 = (function (_Tech) {
             this.trigger('loadstart');
           }
         };
-        _this.on('loadedmetadata', triggerLoadstart);
+        _this3.on('loadedmetadata', triggerLoadstart);
 
-        _this.ready(function () {
+        _this3.ready(function () {
           this.off('loadstart', setLoadstartFired);
           this.off('loadedmetadata', triggerLoadstart);
 
@@ -14689,6 +15062,42 @@ var Html5 = (function (_Tech) {
 
   Html5.prototype.handleTextTrackRemove = function handleTextTrackRemove(e) {
     this.textTracks().removeTrack_(e.track);
+  };
+
+  Html5.prototype.handleVideoTrackChange_ = function handleVideoTrackChange_(e) {
+    var vt = this.videoTracks();
+    this.videoTracks().trigger({
+      type: 'change',
+      target: vt,
+      currentTarget: vt,
+      srcElement: vt
+    });
+  };
+
+  Html5.prototype.handleVideoTrackAdd_ = function handleVideoTrackAdd_(e) {
+    this.videoTracks().addTrack_(e.track);
+  };
+
+  Html5.prototype.handleVideoTrackRemove_ = function handleVideoTrackRemove_(e) {
+    this.videoTracks().removeTrack_(e.track);
+  };
+
+  Html5.prototype.handleAudioTrackChange_ = function handleAudioTrackChange_(e) {
+    var audioTrackList = this.audioTracks();
+    this.audioTracks().trigger({
+      type: 'change',
+      target: audioTrackList,
+      currentTarget: audioTrackList,
+      srcElement: audioTrackList
+    });
+  };
+
+  Html5.prototype.handleAudioTrackAdd_ = function handleAudioTrackAdd_(e) {
+    this.audioTracks().addTrack_(e.track);
+  };
+
+  Html5.prototype.handleAudioTrackRemove_ = function handleAudioTrackRemove_(e) {
+    this.audioTracks().removeTrack_(e.track);
   };
 
   /**
@@ -15413,10 +15822,11 @@ Html5.nativeSourceHandler.canHandleSource = function (source) {
  * Adaptive source handlers will have more complicated workflows before passing
  * video data to the video element
  *
- * @param  {Object} source    The source object
- * @param  {Html5} tech   The instance of the Html5 tech
+ * @param  {Object} source   The source object
+ * @param  {Html5}  tech     The instance of the Html5 tech
+ * @param  {Object} options  The options to pass to the source
  */
-Html5.nativeSourceHandler.handleSource = function (source, tech) {
+Html5.nativeSourceHandler.handleSource = function (source, tech, options) {
   tech.setSrc(source.src);
 };
 
@@ -15485,6 +15895,26 @@ Html5.supportsNativeTextTracks = function () {
   return supportsTextTracks;
 };
 
+/*
+ * Check to see if native video tracks are supported by this browser/device
+ *
+ * @return {Boolean}
+ */
+Html5.supportsNativeVideoTracks = function () {
+  var supportsVideoTracks = !!Html5.TEST_VID.videoTracks;
+  return supportsVideoTracks;
+};
+
+/*
+ * Check to see if native audio tracks are supported by this browser/device
+ *
+ * @return {Boolean}
+ */
+Html5.supportsNativeAudioTracks = function () {
+  var supportsAudioTracks = !!Html5.TEST_VID.audioTracks;
+  return supportsAudioTracks;
+};
+
 /**
  * An array of events available on the Html5 tech.
  *
@@ -15534,6 +15964,20 @@ Html5.prototype['featuresProgressEvents'] = true;
  * @type {Boolean}
  */
 Html5.prototype['featuresNativeTextTracks'] = Html5.supportsNativeTextTracks();
+
+/**
+ * Sets the tech's status on native text track support
+ *
+ * @type {Boolean}
+ */
+Html5.prototype['featuresNativeVideoTracks'] = Html5.supportsNativeVideoTracks();
+
+/**
+ * Sets the tech's status on native audio track support
+ *
+ * @type {Boolean}
+ */
+Html5.prototype['featuresNativeAudioTracks'] = Html5.supportsNativeAudioTracks();
 
 // HTML5 Feature detection and Device Fixes --------------------------------- //
 var canPlayType = undefined;
@@ -15642,7 +16086,7 @@ _techJs2['default'].registerTech('Html5', Html5);
 exports['default'] = Html5;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/browser.js":131,"../utils/dom.js":134,"../utils/fn.js":136,"../utils/log.js":139,"../utils/merge-options.js":140,"../utils/url.js":144,"./tech.js":121,"global/document":1,"global/window":2,"object.assign":45}],120:[function(_dereq_,module,exports){
+},{"../../../src/js/tracks/text-track.js":134,"../component":67,"../utils/browser.js":140,"../utils/dom.js":143,"../utils/fn.js":145,"../utils/log.js":148,"../utils/merge-options.js":149,"../utils/to-title-case.js":152,"../utils/url.js":153,"./tech.js":124,"global/document":1,"global/window":2,"object.assign":45,"tsml":55}],123:[function(_dereq_,module,exports){
 /**
  * @file loader.js
  */
@@ -15726,7 +16170,7 @@ _componentJs2['default'].registerComponent('MediaLoader', MediaLoader);
 exports['default'] = MediaLoader;
 module.exports = exports['default'];
 
-},{"../component.js":67,"../utils/to-title-case.js":143,"./tech.js":121,"global/window":2}],121:[function(_dereq_,module,exports){
+},{"../component.js":67,"../utils/to-title-case.js":152,"./tech.js":124,"global/window":2}],124:[function(_dereq_,module,exports){
 /**
  * @file tech.js
  * Media Technology Controller - Base class for media playback
@@ -15768,6 +16212,22 @@ var _tracksTextTrack2 = _interopRequireDefault(_tracksTextTrack);
 var _tracksTextTrackList = _dereq_('../tracks/text-track-list');
 
 var _tracksTextTrackList2 = _interopRequireDefault(_tracksTextTrackList);
+
+var _tracksVideoTrack = _dereq_('../tracks/video-track');
+
+var _tracksVideoTrack2 = _interopRequireDefault(_tracksVideoTrack);
+
+var _tracksVideoTrackList = _dereq_('../tracks/video-track-list');
+
+var _tracksVideoTrackList2 = _interopRequireDefault(_tracksVideoTrackList);
+
+var _tracksAudioTrackList = _dereq_('../tracks/audio-track-list');
+
+var _tracksAudioTrackList2 = _interopRequireDefault(_tracksAudioTrackList);
+
+var _tracksAudioTrack = _dereq_('../tracks/audio-track');
+
+var _tracksAudioTrack2 = _interopRequireDefault(_tracksAudioTrack);
 
 var _utilsFnJs = _dereq_('../utils/fn.js');
 
@@ -15827,6 +16287,8 @@ var Tech = (function (_Component) {
     });
 
     this.textTracks_ = options.textTracks;
+    this.videoTracks_ = options.videoTracks;
+    this.audioTracks_ = options.audioTracks;
 
     // Manually track progress in cases where the browser/flash player doesn't report it.
     if (!this.featuresProgressEvents) {
@@ -15847,15 +16309,16 @@ var Tech = (function (_Component) {
     }
 
     this.initTextTrackListeners();
+    this.initTrackListeners();
 
     // Turn on component tap events
     this.emitTapEvents();
   }
 
-  /*
+  /**
    * List of associated text tracks
    *
-   * @type {Array}
+   * @type {TextTrackList}
    * @private
    */
 
@@ -16021,15 +16484,9 @@ var Tech = (function (_Component) {
    */
 
   Tech.prototype.dispose = function dispose() {
-    // clear out text tracks because we can't reuse them between techs
-    var textTracks = this.textTracks();
 
-    if (textTracks) {
-      var i = textTracks.length;
-      while (i--) {
-        this.removeRemoteTextTrack(textTracks[i]);
-      }
-    }
+    // clear out all tracks because we can't reuse them between techs
+    this.clearTracks(['audio', 'video', 'text']);
 
     // Turn off any manual progress or timeupdate tracking
     if (this.manualProgress) {
@@ -16041,6 +16498,36 @@ var Tech = (function (_Component) {
     }
 
     _Component.prototype.dispose.call(this);
+  };
+
+  /**
+   * clear out a track list, or multiple track lists
+   *
+   * Note: Techs without source handlers should call this between
+   * sources for video & audio tracks, as usually you don't want
+   * to use them between tracks and we have no automatic way to do
+   * it for you
+   *
+   * @method clearTracks
+   * @param {Array|String} types type(s) of track lists to empty
+   */
+
+  Tech.prototype.clearTracks = function clearTracks(types) {
+    var _this = this;
+
+    types = [].concat(types);
+    // clear out all tracks because we can't reuse them between techs
+    types.forEach(function (type) {
+      var list = _this[type + 'Tracks']() || [];
+      var i = list.length;
+      while (i--) {
+        var track = list[i];
+        if (type === 'text') {
+          _this.removeRemoteTextTrack(track);
+        }
+        list.removeTrack_(track);
+      }
+    });
   };
 
   /**
@@ -16128,13 +16615,41 @@ var Tech = (function (_Component) {
   };
 
   /**
+   * Initialize audio and video track listeners
+   *
+   * @method initTrackListeners
+   */
+
+  Tech.prototype.initTrackListeners = function initTrackListeners() {
+    var _this2 = this;
+
+    var trackTypes = ['video', 'audio'];
+
+    trackTypes.forEach(function (type) {
+      var trackListChanges = function trackListChanges() {
+        _this2.trigger(type + 'trackchange');
+      };
+
+      var tracks = _this2[type + 'Tracks']();
+
+      tracks.addEventListener('removetrack', trackListChanges);
+      tracks.addEventListener('addtrack', trackListChanges);
+
+      _this2.on('dispose', function () {
+        tracks.removeEventListener('removetrack', trackListChanges);
+        tracks.removeEventListener('addtrack', trackListChanges);
+      });
+    });
+  };
+
+  /**
    * Emulate texttracks
    *
    * @method emulateTextTracks
    */
 
   Tech.prototype.emulateTextTracks = function emulateTextTracks() {
-    var _this = this;
+    var _this3 = this;
 
     var tracks = this.textTracks();
     if (!tracks) {
@@ -16144,24 +16659,26 @@ var Tech = (function (_Component) {
     if (!_globalWindow2['default']['WebVTT'] && this.el().parentNode != null) {
       (function () {
         var script = _globalDocument2['default'].createElement('script');
-        script.src = _this.options_['vtt.js'] || 'https://cdn.rawgit.com/gkatsev/vtt.js/vjs-v0.12.1/dist/vtt.min.js';
+        script.src = _this3.options_['vtt.js'] || 'https://cdn.rawgit.com/gkatsev/vtt.js/vjs-v0.12.1/dist/vtt.min.js';
         script.onload = function () {
-          _this.trigger('vttjsloaded');
+          _this3.trigger('vttjsloaded');
         };
         script.onerror = function () {
-          _this.trigger('vttjserror');
+          _this3.trigger('vttjserror');
         };
-        _this.on('dispose', function () {
+        _this3.on('dispose', function () {
           script.onload = null;
           script.onerror = null;
         });
-        _this.el().parentNode.appendChild(script);
+        // but have not loaded yet and we set it to true before the inject so that
+        // we don't overwrite the injected window.WebVTT if it loads right away
         _globalWindow2['default']['WebVTT'] = true;
+        _this3.el().parentNode.appendChild(script);
       })();
     }
 
     var updateDisplay = function updateDisplay() {
-      return _this.trigger('texttrackchange');
+      return _this3.trigger('texttrackchange');
     };
     var textTracksChanges = function textTracksChanges() {
       updateDisplay();
@@ -16181,6 +16698,30 @@ var Tech = (function (_Component) {
     this.on('dispose', function () {
       tracks.removeEventListener('change', textTracksChanges);
     });
+  };
+
+  /**
+   * Get videotracks
+   *
+   * @returns {VideoTrackList}
+   * @method videoTracks
+   */
+
+  Tech.prototype.videoTracks = function videoTracks() {
+    this.videoTracks_ = this.videoTracks_ || new _tracksVideoTrackList2['default']();
+    return this.videoTracks_;
+  };
+
+  /**
+   * Get audiotracklist
+   *
+   * @returns {AudioTrackList}
+   * @method audioTracks
+   */
+
+  Tech.prototype.audioTracks = function audioTracks() {
+    this.audioTracks_ = this.audioTracks_ || new _tracksAudioTrackList2['default']();
+    return this.audioTracks_;
   };
 
   /*
@@ -16370,6 +16911,22 @@ var Tech = (function (_Component) {
 
 Tech.prototype.textTracks_;
 
+/**
+ * List of associated audio tracks
+ *
+ * @type {AudioTrackList}
+ * @private
+ */
+Tech.prototype.audioTracks_;
+
+/**
+ * List of associated video tracks
+ *
+ * @type {VideoTrackList}
+ * @private
+ */
+Tech.prototype.videoTracks_;
+
 var createTrackHelper = function createTrackHelper(self, kind, label, language) {
   var options = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
 
@@ -16538,11 +17095,40 @@ Tech.withSourceHandlers = function (_Tech) {
     this.disposeSourceHandler();
     this.off('dispose', this.disposeSourceHandler);
 
-    this.currentSource_ = source;
-    this.sourceHandler_ = sh.handleSource(source, this);
+    // if we have a source and get another one
+    // then we are loading something new
+    // than clear all of our current tracks
+    if (this.currentSource_) {
+      this.clearTracks(['audio', 'video']);
+    }
+
+    if (sh !== _Tech.nativeSourceHandler) {
+
+      this.currentSource_ = source;
+
+      // Catch if someone replaced the src without calling setSource.
+      // If they do, set currentSource_ to null and dispose our source handler.
+      this.off(this.el_, 'loadstart', _Tech.prototype.firstLoadStartListener_);
+      this.off(this.el_, 'loadstart', _Tech.prototype.successiveLoadStartListener_);
+      this.one(this.el_, 'loadstart', _Tech.prototype.firstLoadStartListener_);
+    }
+
+    this.sourceHandler_ = sh.handleSource(source, this, this.options_);
     this.on('dispose', this.disposeSourceHandler);
 
     return this;
+  };
+
+  // On the first loadstart after setSource
+  _Tech.prototype.firstLoadStartListener_ = function () {
+    this.one(this.el_, 'loadstart', _Tech.prototype.successiveLoadStartListener_);
+  };
+
+  // On successive loadstarts when setSource has not been called again
+  _Tech.prototype.successiveLoadStartListener_ = function () {
+    this.currentSource_ = null;
+    this.disposeSourceHandler();
+    this.one(this.el_, 'loadstart', _Tech.prototype.successiveLoadStartListener_);
   };
 
   /*
@@ -16550,6 +17136,8 @@ Tech.withSourceHandlers = function (_Tech) {
    */
   _Tech.prototype.disposeSourceHandler = function () {
     if (this.sourceHandler_ && this.sourceHandler_.dispose) {
+      this.off(this.el_, 'loadstart', _Tech.prototype.firstLoadStartListener_);
+      this.off(this.el_, 'loadstart', _Tech.prototype.successiveLoadStartListener_);
       this.sourceHandler_.dispose();
     }
   };
@@ -16562,7 +17150,251 @@ Tech.registerTech('Tech', Tech);
 exports['default'] = Tech;
 module.exports = exports['default'];
 
-},{"../component":67,"../media-error.js":105,"../tracks/html-track-element":123,"../tracks/html-track-element-list":122,"../tracks/text-track":130,"../tracks/text-track-list":128,"../utils/buffer.js":132,"../utils/fn.js":136,"../utils/log.js":139,"../utils/merge-options.js":140,"../utils/time-ranges.js":142,"global/document":1,"global/window":2}],122:[function(_dereq_,module,exports){
+},{"../component":67,"../media-error.js":108,"../tracks/audio-track":126,"../tracks/audio-track-list":125,"../tracks/html-track-element":128,"../tracks/html-track-element-list":127,"../tracks/text-track":134,"../tracks/text-track-list":132,"../tracks/video-track":139,"../tracks/video-track-list":138,"../utils/buffer.js":141,"../utils/fn.js":145,"../utils/log.js":148,"../utils/merge-options.js":149,"../utils/time-ranges.js":151,"global/document":1,"global/window":2}],125:[function(_dereq_,module,exports){
+/**
+ * @file audio-track-list.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _trackList = _dereq_('./track-list');
+
+var _trackList2 = _interopRequireDefault(_trackList);
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
+
+var _globalDocument = _dereq_('global/document');
+
+var _globalDocument2 = _interopRequireDefault(_globalDocument);
+
+/**
+ * anywhere we call this function we diverge from the spec
+ * as we only support one enabled audiotrack at a time
+ *
+ * @param {Array|AudioTrackList} list list to work on
+ * @param {AudioTrack} track the track to skip
+ */
+var disableOthers = function disableOthers(list, track) {
+  for (var i = 0; i < list.length; i++) {
+    if (track.id === list[i].id) {
+      continue;
+    }
+    // another audio track is enabled, disable it
+    list[i].enabled = false;
+  }
+};
+/**
+ * A list of possible audio tracks. All functionality is in the
+ * base class Tracklist and the spec for AudioTrackList is located at:
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html#audiotracklist
+ *
+ * interface AudioTrackList : EventTarget {
+ *   readonly attribute unsigned long length;
+ *   getter AudioTrack (unsigned long index);
+ *   AudioTrack? getTrackById(DOMString id);
+ *
+ *   attribute EventHandler onchange;
+ *   attribute EventHandler onaddtrack;
+ *   attribute EventHandler onremovetrack;
+ * };
+ *
+ * @param {AudioTrack[]} tracks a list of audio tracks to instantiate the list with
+ * @extends TrackList
+ * @class AudioTrackList
+ */
+
+var AudioTrackList = (function (_TrackList) {
+  _inherits(AudioTrackList, _TrackList);
+
+  function AudioTrackList() {
+    var tracks = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    _classCallCheck(this, AudioTrackList);
+
+    var list = undefined;
+
+    // make sure only 1 track is enabled
+    // sorted from last index to first index
+    for (var i = tracks.length - 1; i >= 0; i--) {
+      if (tracks[i].enabled) {
+        disableOthers(tracks, tracks[i]);
+        break;
+      }
+    }
+
+    // IE8 forces us to implement inheritance ourselves
+    // as it does not support Object.defineProperty properly
+    if (browser.IS_IE8) {
+      list = _globalDocument2['default'].createElement('custom');
+      for (var prop in _trackList2['default'].prototype) {
+        if (prop !== 'constructor') {
+          list[prop] = _trackList2['default'].prototype[prop];
+        }
+      }
+      for (var prop in AudioTrackList.prototype) {
+        if (prop !== 'constructor') {
+          list[prop] = AudioTrackList.prototype[prop];
+        }
+      }
+    }
+
+    list = _TrackList.call(this, tracks, list);
+    list.changing_ = false;
+
+    return list;
+  }
+
+  AudioTrackList.prototype.addTrack_ = function addTrack_(track) {
+    var _this = this;
+
+    if (track.enabled) {
+      disableOthers(this, track);
+    }
+
+    _TrackList.prototype.addTrack_.call(this, track);
+    // native tracks don't have this
+    if (!track.addEventListener) {
+      return;
+    }
+
+    track.addEventListener('enabledchange', function () {
+      // when we are disabling other tracks (since we don't support
+      // more than one track at a time) we will set changing_
+      // to true so that we don't trigger additional change events
+      if (_this.changing_) {
+        return;
+      }
+      _this.changing_ = true;
+      disableOthers(_this, track);
+      _this.changing_ = false;
+      _this.trigger('change');
+    });
+  };
+
+  AudioTrackList.prototype.addTrack = function addTrack(track) {
+    this.addTrack_(track);
+  };
+
+  AudioTrackList.prototype.removeTrack = function removeTrack(track) {
+    _TrackList.prototype.removeTrack_.call(this, track);
+  };
+
+  return AudioTrackList;
+})(_trackList2['default']);
+
+exports['default'] = AudioTrackList;
+module.exports = exports['default'];
+
+},{"../utils/browser.js":140,"./track-list":136,"global/document":1}],126:[function(_dereq_,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _trackEnums = _dereq_('./track-enums');
+
+var _track = _dereq_('./track');
+
+var _track2 = _interopRequireDefault(_track);
+
+var _utilsMergeOptions = _dereq_('../utils/merge-options');
+
+var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
+
+/**
+ * A single audio text track as defined in:
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html#audiotrack
+ *
+ * interface AudioTrack {
+ *   readonly attribute DOMString id;
+ *   readonly attribute DOMString kind;
+ *   readonly attribute DOMString label;
+ *   readonly attribute DOMString language;
+ *   attribute boolean enabled;
+ * };
+ *
+ * @param {Object=} options Object of option names and values
+ * @class AudioTrack
+ */
+
+var AudioTrack = (function (_Track) {
+  _inherits(AudioTrack, _Track);
+
+  function AudioTrack() {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    _classCallCheck(this, AudioTrack);
+
+    var settings = _utilsMergeOptions2['default'](options, {
+      kind: _trackEnums.AudioTrackKind[options.kind] || ''
+    });
+    // on IE8 this will be a document element
+    // for every other browser this will be a normal object
+    var track = _Track.call(this, settings);
+    var enabled = false;
+
+    if (browser.IS_IE8) {
+      for (var prop in AudioTrack.prototype) {
+        if (prop !== 'constructor') {
+          track[prop] = AudioTrack.prototype[prop];
+        }
+      }
+    }
+
+    Object.defineProperty(track, 'enabled', {
+      get: function get() {
+        return enabled;
+      },
+      set: function set(newEnabled) {
+        // an invalid or unchanged value
+        if (typeof newEnabled !== 'boolean' || newEnabled === enabled) {
+          return;
+        }
+        enabled = newEnabled;
+        this.trigger('enabledchange');
+      }
+    });
+
+    // if the user sets this track to selected then
+    // set selected to that true value otherwise
+    // we keep it false
+    if (settings.enabled) {
+      track.enabled = settings.enabled;
+    }
+    track.loaded_ = true;
+
+    return track;
+  }
+
+  return AudioTrack;
+})(_track2['default']);
+
+exports['default'] = AudioTrack;
+module.exports = exports['default'];
+
+},{"../utils/browser.js":140,"../utils/merge-options":149,"./track":137,"./track-enums":135}],127:[function(_dereq_,module,exports){
 /**
  * @file html-track-element-list.js
  */
@@ -16654,7 +17486,7 @@ var HtmlTrackElementList = (function () {
 exports['default'] = HtmlTrackElementList;
 module.exports = exports['default'];
 
-},{"../utils/browser.js":131,"global/document":1}],123:[function(_dereq_,module,exports){
+},{"../utils/browser.js":140,"global/document":1}],128:[function(_dereq_,module,exports){
 /**
  * @file html-track-element.js
  */
@@ -16789,7 +17621,7 @@ HTMLTrackElement.ERROR = ERROR;
 exports['default'] = HTMLTrackElement;
 module.exports = exports['default'];
 
-},{"../event-target":101,"../tracks/text-track":130,"../utils/browser.js":131,"global/document":1}],124:[function(_dereq_,module,exports){
+},{"../event-target":104,"../tracks/text-track":134,"../utils/browser.js":140,"global/document":1}],129:[function(_dereq_,module,exports){
 /**
  * @file text-track-cue-list.js
  */
@@ -16918,7 +17750,7 @@ var TextTrackCueList = (function () {
 exports['default'] = TextTrackCueList;
 module.exports = exports['default'];
 
-},{"../utils/browser.js":131,"global/document":1}],125:[function(_dereq_,module,exports){
+},{"../utils/browser.js":140,"global/document":1}],130:[function(_dereq_,module,exports){
 /**
  * @file text-track-display.js
  */
@@ -17243,53 +18075,7 @@ _component2['default'].registerComponent('TextTrackDisplay', TextTrackDisplay);
 exports['default'] = TextTrackDisplay;
 module.exports = exports['default'];
 
-},{"../component":67,"../menu/menu-button.js":106,"../menu/menu-item.js":107,"../menu/menu.js":108,"../utils/fn.js":136,"global/document":1,"global/window":2}],126:[function(_dereq_,module,exports){
-/**
- * @file text-track-enums.js
- */
-
-/**
- * https://html.spec.whatwg.org/multipage/embedded-content.html#texttrackmode
- *
- * enum TextTrackMode { "disabled",  "hidden",  "showing" };
- */
-'use strict';
-
-exports.__esModule = true;
-var TextTrackMode = {
-  disabled: 'disabled',
-  hidden: 'hidden',
-  showing: 'showing'
-};
-
-/**
- * https://html.spec.whatwg.org/multipage/embedded-content.html#texttrackkind
- *
- * enum TextTrackKind {
- *   "subtitles",
- *   "captions",
- *   "descriptions",
- *   "chapters",
- *   "metadata"
- * };
- */
-var TextTrackKind = {
-  subtitles: 'subtitles',
-  captions: 'captions',
-  descriptions: 'descriptions',
-  chapters: 'chapters',
-  metadata: 'metadata'
-};
-
-/* jshint ignore:start */
-// we ignore jshint here because it does not see
-// TextTrackMode or TextTrackKind as defined here somehow...
-exports.TextTrackMode = TextTrackMode;
-exports.TextTrackKind = TextTrackKind;
-
-/* jshint ignore:end */
-
-},{}],127:[function(_dereq_,module,exports){
+},{"../component":67,"../menu/menu-button.js":109,"../menu/menu-item.js":110,"../menu/menu.js":111,"../utils/fn.js":145,"global/document":1,"global/window":2}],131:[function(_dereq_,module,exports){
 /**
  * Utilities for capturing text track state and re-creating tracks
  * based on a capture.
@@ -17380,7 +18166,7 @@ var jsonToTextTracks = function jsonToTextTracks(json, tech) {
 exports['default'] = { textTracksToJson: textTracksToJson, jsonToTextTracks: jsonToTextTracks, trackToJson_: trackToJson_ };
 module.exports = exports['default'];
 
-},{}],128:[function(_dereq_,module,exports){
+},{}],132:[function(_dereq_,module,exports){
 /**
  * @file text-track-list.js
  */
@@ -17396,9 +18182,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _eventTarget = _dereq_('../event-target');
+var _trackList = _dereq_('./track-list');
 
-var _eventTarget2 = _interopRequireDefault(_eventTarget);
+var _trackList2 = _interopRequireDefault(_trackList);
 
 var _utilsFnJs = _dereq_('../utils/fn.js');
 
@@ -17413,8 +18199,9 @@ var _globalDocument = _dereq_('global/document');
 var _globalDocument2 = _interopRequireDefault(_globalDocument);
 
 /**
- * A text track list as defined in:
- * https://html.spec.whatwg.org/multipage/embedded-content.html#texttracklist
+ * A list of possible text tracks. All functionality is in the
+ * base class TrackList. The spec for TextTrackList is located at:
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html#texttracklist
  *
  * interface TextTrackList : EventTarget {
  *   readonly attribute unsigned long length;
@@ -17426,25 +18213,30 @@ var _globalDocument2 = _interopRequireDefault(_globalDocument);
  *   attribute EventHandler onremovetrack;
  * };
  *
- * @param {Track[]} tracks A list of tracks to initialize the list with
- * @extends EventTarget
+ * @param {TextTrack[]} tracks A list of tracks to initialize the list with
+ * @extends TrackList
  * @class TextTrackList
  */
 
-var TextTrackList = (function (_EventTarget) {
-  _inherits(TextTrackList, _EventTarget);
+var TextTrackList = (function (_TrackList) {
+  _inherits(TextTrackList, _TrackList);
 
   function TextTrackList() {
     var tracks = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
     _classCallCheck(this, TextTrackList);
 
-    _EventTarget.call(this);
-    var list = this;
+    var list = undefined;
 
+    // IE8 forces us to implement inheritance ourselves
+    // as it does not support Object.defineProperty properly
     if (browser.IS_IE8) {
       list = _globalDocument2['default'].createElement('custom');
-
+      for (var prop in _trackList2['default'].prototype) {
+        if (prop !== 'constructor') {
+          list[prop] = _trackList2['default'].prototype[prop];
+        }
+      }
       for (var prop in TextTrackList.prototype) {
         if (prop !== 'constructor') {
           list[prop] = TextTrackList.prototype[prop];
@@ -17452,60 +18244,15 @@ var TextTrackList = (function (_EventTarget) {
       }
     }
 
-    list.tracks_ = [];
-
-    Object.defineProperty(list, 'length', {
-      get: function get() {
-        return this.tracks_.length;
-      }
-    });
-
-    for (var i = 0; i < tracks.length; i++) {
-      list.addTrack_(tracks[i]);
-    }
-
-    if (browser.IS_IE8) {
-      return list;
-    }
+    list = _TrackList.call(this, tracks, list);
+    return list;
   }
 
-  /**
-   * change - One or more tracks in the track list have been enabled or disabled.
-   * addtrack - A track has been added to the track list.
-   * removetrack - A track has been removed from the track list.
-   */
-
-  /**
-   * Add TextTrack from TextTrackList
-   *
-   * @param {TextTrack} track
-   * @method addTrack_
-   * @private
-   */
-
   TextTrackList.prototype.addTrack_ = function addTrack_(track) {
-    var index = this.tracks_.length;
-
-    if (!('' + index in this)) {
-      Object.defineProperty(this, index, {
-        get: function get() {
-          return this.tracks_[index];
-        }
-      });
-    }
-
+    _TrackList.prototype.addTrack_.call(this, track);
     track.addEventListener('modechange', Fn.bind(this, function () {
       this.trigger('change');
     }));
-
-    // Do not add duplicate tracks
-    if (this.tracks_.indexOf(track) === -1) {
-      this.tracks_.push(track);
-      this.trigger({
-        track: track,
-        type: 'addtrack'
-      });
-    }
   };
 
   /**
@@ -17568,23 +18315,12 @@ var TextTrackList = (function (_EventTarget) {
   };
 
   return TextTrackList;
-})(_eventTarget2['default']);
-
-TextTrackList.prototype.allowedEvents_ = {
-  change: 'change',
-  addtrack: 'addtrack',
-  removetrack: 'removetrack'
-};
-
-// emulate attribute EventHandler support to allow for feature detection
-for (var _event in TextTrackList.prototype.allowedEvents_) {
-  TextTrackList.prototype['on' + _event] = null;
-}
+})(_trackList2['default']);
 
 exports['default'] = TextTrackList;
 module.exports = exports['default'];
 
-},{"../event-target":101,"../utils/browser.js":131,"../utils/fn.js":136,"global/document":1}],129:[function(_dereq_,module,exports){
+},{"../utils/browser.js":140,"../utils/fn.js":145,"./track-list":136,"global/document":1}],133:[function(_dereq_,module,exports){
 /**
  * @file text-track-settings.js
  */
@@ -17881,7 +18617,7 @@ function captionOptionsMenuTemplate() {
 exports['default'] = TextTrackSettings;
 module.exports = exports['default'];
 
-},{"../component":67,"../utils/events.js":135,"../utils/fn.js":136,"../utils/log.js":139,"global/window":2,"safe-json-parse/tuple":54}],130:[function(_dereq_,module,exports){
+},{"../component":67,"../utils/events.js":144,"../utils/fn.js":145,"../utils/log.js":148,"global/window":2,"safe-json-parse/tuple":54}],134:[function(_dereq_,module,exports){
 /**
  * @file text-track.js
  */
@@ -17905,25 +18641,11 @@ var _utilsFnJs = _dereq_('../utils/fn.js');
 
 var Fn = _interopRequireWildcard(_utilsFnJs);
 
-var _utilsGuidJs = _dereq_('../utils/guid.js');
-
-var Guid = _interopRequireWildcard(_utilsGuidJs);
-
-var _utilsBrowserJs = _dereq_('../utils/browser.js');
-
-var browser = _interopRequireWildcard(_utilsBrowserJs);
-
-var _textTrackEnums = _dereq_('./text-track-enums');
-
-var TextTrackEnum = _interopRequireWildcard(_textTrackEnums);
+var _trackEnums = _dereq_('./track-enums');
 
 var _utilsLogJs = _dereq_('../utils/log.js');
 
 var _utilsLogJs2 = _interopRequireDefault(_utilsLogJs);
-
-var _eventTarget = _dereq_('../event-target');
-
-var _eventTarget2 = _interopRequireDefault(_eventTarget);
 
 var _globalDocument = _dereq_('global/document');
 
@@ -17933,11 +18655,23 @@ var _globalWindow = _dereq_('global/window');
 
 var _globalWindow2 = _interopRequireDefault(_globalWindow);
 
+var _trackJs = _dereq_('./track.js');
+
+var _trackJs2 = _interopRequireDefault(_trackJs);
+
 var _utilsUrlJs = _dereq_('../utils/url.js');
 
 var _xhr = _dereq_('xhr');
 
 var _xhr2 = _interopRequireDefault(_xhr);
+
+var _utilsMergeOptions = _dereq_('../utils/merge-options');
+
+var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
 
 /**
  * takes a webvtt file contents and parses it into cues
@@ -18026,7 +18760,7 @@ var loadTrack = function loadTrack(src, track) {
 
 /**
  * A single text track as defined in:
- * https://html.spec.whatwg.org/multipage/embedded-content.html#texttrack
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html#texttrack
  *
  * interface TextTrack : EventTarget {
  *   readonly attribute TextTrackKind kind;
@@ -18048,46 +18782,43 @@ var loadTrack = function loadTrack(src, track) {
  * };
  *
  * @param {Object=} options Object of option names and values
- * @extends EventTarget
+ * @extends Track
  * @class TextTrack
  */
 
-var TextTrack = (function (_EventTarget) {
-  _inherits(TextTrack, _EventTarget);
+var TextTrack = (function (_Track) {
+  _inherits(TextTrack, _Track);
 
   function TextTrack() {
     var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
     _classCallCheck(this, TextTrack);
 
-    _EventTarget.call(this);
     if (!options.tech) {
       throw new Error('A tech was not provided.');
     }
 
-    var tt = this;
+    var settings = _utilsMergeOptions2['default'](options, {
+      kind: _trackEnums.TextTrackKind[options.kind] || 'subtitles',
+      language: options.language || options.srclang || ''
+    });
+    var mode = _trackEnums.TextTrackMode[settings.mode] || 'disabled';
+    var default_ = settings['default'];
+
+    if (settings.kind === 'metadata' || settings.kind === 'chapters') {
+      mode = 'hidden';
+    }
+    // on IE8 this will be a document element
+    // for every other browser this will be a normal object
+    var tt = _Track.call(this, settings);
+    tt.tech_ = settings.tech;
 
     if (browser.IS_IE8) {
-      tt = _globalDocument2['default'].createElement('custom');
-
       for (var prop in TextTrack.prototype) {
         if (prop !== 'constructor') {
           tt[prop] = TextTrack.prototype[prop];
         }
       }
-    }
-
-    tt.tech_ = options.tech;
-
-    var mode = TextTrackEnum.TextTrackMode[options.mode] || 'disabled';
-    var kind = TextTrackEnum.TextTrackKind[options.kind] || 'subtitles';
-    var default_ = options['default'];
-    var label = options.label || '';
-    var language = options.language || options.srclang || '';
-    var id = options.id || 'vjs_text_track_' + Guid.newGUID();
-
-    if (kind === 'metadata' || kind === 'chapters') {
-      mode = 'hidden';
     }
 
     tt.cues_ = [];
@@ -18108,34 +18839,6 @@ var TextTrack = (function (_EventTarget) {
       tt.tech_.on('timeupdate', timeupdateHandler);
     }
 
-    Object.defineProperty(tt, 'kind', {
-      get: function get() {
-        return kind;
-      },
-      set: function set() {}
-    });
-
-    Object.defineProperty(tt, 'label', {
-      get: function get() {
-        return label;
-      },
-      set: function set() {}
-    });
-
-    Object.defineProperty(tt, 'language', {
-      get: function get() {
-        return language;
-      },
-      set: function set() {}
-    });
-
-    Object.defineProperty(tt, 'id', {
-      get: function get() {
-        return id;
-      },
-      set: function set() {}
-    });
-
     Object.defineProperty(tt, 'default', {
       get: function get() {
         return default_;
@@ -18148,7 +18851,7 @@ var TextTrack = (function (_EventTarget) {
         return mode;
       },
       set: function set(newMode) {
-        if (!TextTrackEnum.TextTrackMode[newMode]) {
+        if (!_trackEnums.TextTrackMode[newMode]) {
           return;
         }
         mode = newMode;
@@ -18214,16 +18917,14 @@ var TextTrack = (function (_EventTarget) {
       set: function set() {}
     });
 
-    if (options.src) {
-      tt.src = options.src;
-      loadTrack(options.src, tt);
+    if (settings.src) {
+      tt.src = settings.src;
+      loadTrack(settings.src, tt);
     } else {
       tt.loaded_ = true;
     }
 
-    if (browser.IS_IE8) {
-      return tt;
-    }
+    return tt;
   }
 
   /**
@@ -18277,7 +18978,7 @@ var TextTrack = (function (_EventTarget) {
   };
 
   return TextTrack;
-})(_eventTarget2['default']);
+})(_trackJs2['default']);
 
 TextTrack.prototype.allowedEvents_ = {
   cuechange: 'cuechange'
@@ -18286,7 +18987,629 @@ TextTrack.prototype.allowedEvents_ = {
 exports['default'] = TextTrack;
 module.exports = exports['default'];
 
-},{"../event-target":101,"../utils/browser.js":131,"../utils/fn.js":136,"../utils/guid.js":138,"../utils/log.js":139,"../utils/url.js":144,"./text-track-cue-list":124,"./text-track-enums":126,"global/document":1,"global/window":2,"xhr":56}],131:[function(_dereq_,module,exports){
+},{"../utils/browser.js":140,"../utils/fn.js":145,"../utils/log.js":148,"../utils/merge-options":149,"../utils/url.js":153,"./text-track-cue-list":129,"./track-enums":135,"./track.js":137,"global/document":1,"global/window":2,"xhr":56}],135:[function(_dereq_,module,exports){
+/**
+ * @file track-kinds.js
+ */
+
+/**
+ * https://html.spec.whatwg.org/multipage/embedded-content.html#dom-videotrack-kind
+ *
+ * enum VideoTrackKind {
+ *   "alternative",
+ *   "captions",
+ *   "main",
+ *   "sign",
+ *   "subtitles",
+ *   "commentary",
+ *   "",
+ * };
+ */
+'use strict';
+
+exports.__esModule = true;
+var VideoTrackKind = {
+  alternative: 'alternative',
+  captions: 'captions',
+  main: 'main',
+  sign: 'sign',
+  subtitles: 'subtitles',
+  commentary: 'commentary'
+};
+
+/**
+ * https://html.spec.whatwg.org/multipage/embedded-content.html#dom-audiotrack-kind
+ *
+ * enum AudioTrackKind {
+ *   "alternative",
+ *   "descriptions",
+ *   "main",
+ *   "main-desc",
+ *   "translation",
+ *   "commentary",
+ *   "",
+ * };
+ */
+var AudioTrackKind = {
+  alternative: 'alternative',
+  descriptions: 'descriptions',
+  main: 'main',
+  'main-desc': 'main-desc',
+  translation: 'translation',
+  commentary: 'commentary'
+};
+
+/**
+ * https://html.spec.whatwg.org/multipage/embedded-content.html#texttrackkind
+ *
+ * enum TextTrackKind {
+ *   "subtitles",
+ *   "captions",
+ *   "descriptions",
+ *   "chapters",
+ *   "metadata"
+ * };
+ */
+var TextTrackKind = {
+  subtitles: 'subtitles',
+  captions: 'captions',
+  descriptions: 'descriptions',
+  chapters: 'chapters',
+  metadata: 'metadata'
+};
+
+/**
+ * https://html.spec.whatwg.org/multipage/embedded-content.html#texttrackmode
+ *
+ * enum TextTrackMode { "disabled",  "hidden",  "showing" };
+ */
+var TextTrackMode = {
+  disabled: 'disabled',
+  hidden: 'hidden',
+  showing: 'showing'
+};
+
+/* jshint ignore:start */
+// we ignore jshint here because it does not see
+// AudioTrackKind as defined here
+exports['default'] = { VideoTrackKind: VideoTrackKind, AudioTrackKind: AudioTrackKind, TextTrackKind: TextTrackKind, TextTrackMode: TextTrackMode };
+
+/* jshint ignore:end */
+module.exports = exports['default'];
+
+},{}],136:[function(_dereq_,module,exports){
+/**
+ * @file track-list.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _eventTarget = _dereq_('../event-target');
+
+var _eventTarget2 = _interopRequireDefault(_eventTarget);
+
+var _utilsFnJs = _dereq_('../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
+
+var _globalDocument = _dereq_('global/document');
+
+var _globalDocument2 = _interopRequireDefault(_globalDocument);
+
+/**
+ * Common functionaliy between Text, Audio, and Video TrackLists
+ * Interfaces defined in the following spec:
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html
+ *
+ * @param {Track[]} tracks A list of tracks to initialize the list with
+ * @param {Object} list the child object with inheritance done manually for ie8
+ * @extends EventTarget
+ * @class TrackList
+ */
+
+var TrackList = (function (_EventTarget) {
+  _inherits(TrackList, _EventTarget);
+
+  function TrackList() {
+    var tracks = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+    var list = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    _classCallCheck(this, TrackList);
+
+    _EventTarget.call(this);
+    if (!list) {
+      list = this;
+      if (browser.IS_IE8) {
+        list = _globalDocument2['default'].createElement('custom');
+        for (var prop in TrackList.prototype) {
+          if (prop !== 'constructor') {
+            list[prop] = TrackList.prototype[prop];
+          }
+        }
+      }
+    }
+
+    list.tracks_ = [];
+    Object.defineProperty(list, 'length', {
+      get: function get() {
+        return this.tracks_.length;
+      }
+    });
+
+    for (var i = 0; i < tracks.length; i++) {
+      list.addTrack_(tracks[i]);
+    }
+
+    return list;
+  }
+
+  /**
+   * change - One or more tracks in the track list have been enabled or disabled.
+   * addtrack - A track has been added to the track list.
+   * removetrack - A track has been removed from the track list.
+   */
+
+  /**
+   * Add a Track from TrackList
+   *
+   * @param {Mixed} track
+   * @method addTrack_
+   * @private
+   */
+
+  TrackList.prototype.addTrack_ = function addTrack_(track) {
+    var index = this.tracks_.length;
+
+    if (!('' + index in this)) {
+      Object.defineProperty(this, index, {
+        get: function get() {
+          return this.tracks_[index];
+        }
+      });
+    }
+
+    // Do not add duplicate tracks
+    if (this.tracks_.indexOf(track) === -1) {
+      this.tracks_.push(track);
+      this.trigger({
+        track: track,
+        type: 'addtrack'
+      });
+    }
+  };
+
+  /**
+   * Remove a Track from TrackList
+   *
+   * @param {Track} rtrack track to be removed
+   * @method removeTrack_
+   * @private
+   */
+
+  TrackList.prototype.removeTrack_ = function removeTrack_(rtrack) {
+    var track = undefined;
+
+    for (var i = 0, l = this.length; i < l; i++) {
+      if (this[i] === rtrack) {
+        track = this[i];
+        if (track.off) {
+          track.off();
+        }
+
+        this.tracks_.splice(i, 1);
+
+        break;
+      }
+    }
+
+    if (!track) {
+      return;
+    }
+
+    this.trigger({
+      track: track,
+      type: 'removetrack'
+    });
+  };
+
+  /**
+   * Get a Track from the TrackList by a tracks id
+   *
+   * @param {String} id - the id of the track to get
+   * @method getTrackById
+   * @return {Track}
+   * @private
+   */
+
+  TrackList.prototype.getTrackById = function getTrackById(id) {
+    var result = null;
+
+    for (var i = 0, l = this.length; i < l; i++) {
+      var track = this[i];
+      if (track.id === id) {
+        result = track;
+        break;
+      }
+    }
+
+    return result;
+  };
+
+  return TrackList;
+})(_eventTarget2['default']);
+
+TrackList.prototype.allowedEvents_ = {
+  change: 'change',
+  addtrack: 'addtrack',
+  removetrack: 'removetrack'
+};
+
+// emulate attribute EventHandler support to allow for feature detection
+for (var _event in TrackList.prototype.allowedEvents_) {
+  TrackList.prototype['on' + _event] = null;
+}
+
+exports['default'] = TrackList;
+module.exports = exports['default'];
+
+},{"../event-target":104,"../utils/browser.js":140,"../utils/fn.js":145,"global/document":1}],137:[function(_dereq_,module,exports){
+/**
+ * @file track.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
+
+var _globalDocument = _dereq_('global/document');
+
+var _globalDocument2 = _interopRequireDefault(_globalDocument);
+
+var _utilsGuidJs = _dereq_('../utils/guid.js');
+
+var Guid = _interopRequireWildcard(_utilsGuidJs);
+
+var _eventTarget = _dereq_('../event-target');
+
+var _eventTarget2 = _interopRequireDefault(_eventTarget);
+
+/**
+ * setup the common parts of an audio, video, or text track
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html
+ *
+ * @param {String} type The type of track we are dealing with audio|video|text
+ * @param {Object=} options Object of option names and values
+ * @extends EventTarget
+ * @class Track
+ */
+
+var Track = (function (_EventTarget) {
+  _inherits(Track, _EventTarget);
+
+  function Track() {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    _classCallCheck(this, Track);
+
+    _EventTarget.call(this);
+
+    var track = this;
+    if (browser.IS_IE8) {
+      track = _globalDocument2['default'].createElement('custom');
+      for (var prop in Track.prototype) {
+        if (prop !== 'constructor') {
+          track[prop] = Track.prototype[prop];
+        }
+      }
+    }
+
+    var trackProps = {
+      id: options.id || 'vjs_track_' + Guid.newGUID(),
+      kind: options.kind || '',
+      label: options.label || '',
+      language: options.language || ''
+    };
+
+    var _loop = function (key) {
+      Object.defineProperty(track, key, {
+        get: function get() {
+          return trackProps[key];
+        },
+        set: function set() {}
+      });
+    };
+
+    for (var key in trackProps) {
+      _loop(key);
+    }
+
+    return track;
+  }
+
+  return Track;
+})(_eventTarget2['default']);
+
+exports['default'] = Track;
+module.exports = exports['default'];
+
+},{"../event-target":104,"../utils/browser.js":140,"../utils/guid.js":147,"global/document":1}],138:[function(_dereq_,module,exports){
+/**
+ * @file video-track-list.js
+ */
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _trackList = _dereq_('./track-list');
+
+var _trackList2 = _interopRequireDefault(_trackList);
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
+
+var _globalDocument = _dereq_('global/document');
+
+var _globalDocument2 = _interopRequireDefault(_globalDocument);
+
+/**
+ * disable other video tracks before selecting the new one
+ *
+ * @param {Array|VideoTrackList} list list to work on
+ * @param {VideoTrack} track the track to skip
+ */
+var disableOthers = function disableOthers(list, track) {
+  for (var i = 0; i < list.length; i++) {
+    if (track.id === list[i].id) {
+      continue;
+    }
+    // another audio track is enabled, disable it
+    list[i].selected = false;
+  }
+};
+
+/**
+* A list of possiblee video tracks. Most functionality is in the
+ * base class Tracklist and the spec for VideoTrackList is located at:
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html#videotracklist
+ *
+ * interface VideoTrackList : EventTarget {
+ *   readonly attribute unsigned long length;
+ *   getter VideoTrack (unsigned long index);
+ *   VideoTrack? getTrackById(DOMString id);
+ *   readonly attribute long selectedIndex;
+ *
+ *   attribute EventHandler onchange;
+ *   attribute EventHandler onaddtrack;
+ *   attribute EventHandler onremovetrack;
+ * };
+ *
+ * @param {VideoTrack[]} tracks a list of video tracks to instantiate the list with
+ # @extends TrackList
+ * @class VideoTrackList
+ */
+
+var VideoTrackList = (function (_TrackList) {
+  _inherits(VideoTrackList, _TrackList);
+
+  function VideoTrackList() {
+    var tracks = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    _classCallCheck(this, VideoTrackList);
+
+    var list = undefined;
+
+    // make sure only 1 track is enabled
+    // sorted from last index to first index
+    for (var i = tracks.length - 1; i >= 0; i--) {
+      if (tracks[i].selected) {
+        disableOthers(tracks, tracks[i]);
+        break;
+      }
+    }
+
+    // IE8 forces us to implement inheritance ourselves
+    // as it does not support Object.defineProperty properly
+    if (browser.IS_IE8) {
+      list = _globalDocument2['default'].createElement('custom');
+      for (var prop in _trackList2['default'].prototype) {
+        if (prop !== 'constructor') {
+          list[prop] = _trackList2['default'].prototype[prop];
+        }
+      }
+      for (var prop in VideoTrackList.prototype) {
+        if (prop !== 'constructor') {
+          list[prop] = VideoTrackList.prototype[prop];
+        }
+      }
+    }
+
+    list = _TrackList.call(this, tracks, list);
+    list.changing_ = false;
+
+    Object.defineProperty(list, 'selectedIndex', {
+      get: function get() {
+        for (var i = 0; i < this.length; i++) {
+          if (this[i].selected) {
+            return i;
+          }
+        }
+        return -1;
+      },
+      set: function set() {}
+    });
+
+    return list;
+  }
+
+  VideoTrackList.prototype.addTrack_ = function addTrack_(track) {
+    var _this = this;
+
+    if (track.selected) {
+      disableOthers(this, track);
+    }
+
+    _TrackList.prototype.addTrack_.call(this, track);
+    // native tracks don't have this
+    if (!track.addEventListener) {
+      return;
+    }
+    track.addEventListener('selectedchange', function () {
+      if (_this.changing_) {
+        return;
+      }
+      _this.changing_ = true;
+      disableOthers(_this, track);
+      _this.changing_ = false;
+      _this.trigger('change');
+    });
+  };
+
+  VideoTrackList.prototype.addTrack = function addTrack(track) {
+    this.addTrack_(track);
+  };
+
+  VideoTrackList.prototype.removeTrack = function removeTrack(track) {
+    _TrackList.prototype.removeTrack_.call(this, track);
+  };
+
+  return VideoTrackList;
+})(_trackList2['default']);
+
+exports['default'] = VideoTrackList;
+module.exports = exports['default'];
+
+},{"../utils/browser.js":140,"./track-list":136,"global/document":1}],139:[function(_dereq_,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _trackEnums = _dereq_('./track-enums');
+
+var _track = _dereq_('./track');
+
+var _track2 = _interopRequireDefault(_track);
+
+var _utilsMergeOptions = _dereq_('../utils/merge-options');
+
+var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
+
+var _utilsBrowserJs = _dereq_('../utils/browser.js');
+
+var browser = _interopRequireWildcard(_utilsBrowserJs);
+
+/**
+ * A single video text track as defined in:
+ * @link https://html.spec.whatwg.org/multipage/embedded-content.html#videotrack
+ *
+ * interface VideoTrack {
+ *   readonly attribute DOMString id;
+ *   readonly attribute DOMString kind;
+ *   readonly attribute DOMString label;
+ *   readonly attribute DOMString language;
+ *   attribute boolean selected;
+ * };
+ *
+ * @param {Object=} options Object of option names and values
+ * @class VideoTrack
+ */
+
+var VideoTrack = (function (_Track) {
+  _inherits(VideoTrack, _Track);
+
+  function VideoTrack() {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    _classCallCheck(this, VideoTrack);
+
+    var settings = _utilsMergeOptions2['default'](options, {
+      kind: _trackEnums.VideoTrackKind[options.kind] || ''
+    });
+
+    // on IE8 this will be a document element
+    // for every other browser this will be a normal object
+    var track = _Track.call(this, settings);
+    var selected = false;
+
+    if (browser.IS_IE8) {
+      for (var prop in VideoTrack.prototype) {
+        if (prop !== 'constructor') {
+          track[prop] = VideoTrack.prototype[prop];
+        }
+      }
+    }
+
+    Object.defineProperty(track, 'selected', {
+      get: function get() {
+        return selected;
+      },
+      set: function set(newSelected) {
+        // an invalid or unchanged value
+        if (typeof newSelected !== 'boolean' || newSelected === selected) {
+          return;
+        }
+        selected = newSelected;
+        this.trigger('selectedchange');
+      }
+    });
+
+    // if the user sets this track to selected then
+    // set selected to that true value otherwise
+    // we keep it false
+    if (settings.selected) {
+      track.selected = settings.selected;
+    }
+
+    return track;
+  }
+
+  return VideoTrack;
+})(_track2['default']);
+
+exports['default'] = VideoTrack;
+module.exports = exports['default'];
+
+},{"../utils/browser.js":140,"../utils/merge-options":149,"./track":137,"./track-enums":135}],140:[function(_dereq_,module,exports){
 /**
  * @file browser.js
  */
@@ -18381,7 +19704,7 @@ exports.TOUCH_ENABLED = TOUCH_ENABLED;
 var BACKGROUND_SIZE_SUPPORTED = ('backgroundSize' in _globalDocument2['default'].createElement('video').style);
 exports.BACKGROUND_SIZE_SUPPORTED = BACKGROUND_SIZE_SUPPORTED;
 
-},{"global/document":1,"global/window":2}],132:[function(_dereq_,module,exports){
+},{"global/document":1,"global/window":2}],141:[function(_dereq_,module,exports){
 /**
  * @file buffer.js
  */
@@ -18430,7 +19753,7 @@ function bufferedPercent(buffered, duration) {
   return bufferedDuration / duration;
 }
 
-},{"./time-ranges.js":142}],133:[function(_dereq_,module,exports){
+},{"./time-ranges.js":151}],142:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18501,7 +19824,7 @@ exports['default'] = function (target) {
 
 module.exports = exports['default'];
 
-},{"./log.js":139}],134:[function(_dereq_,module,exports){
+},{"./log.js":148}],143:[function(_dereq_,module,exports){
 /**
  * @file dom.js
  */
@@ -19231,7 +20554,7 @@ exports.$ = $;
 var $$ = createQuerier('querySelectorAll');
 exports.$$ = $$;
 
-},{"./guid.js":138,"./log.js":139,"global/document":1,"global/window":2,"tsml":55}],135:[function(_dereq_,module,exports){
+},{"./guid.js":147,"./log.js":148,"global/document":1,"global/window":2,"tsml":55}],144:[function(_dereq_,module,exports){
 /**
  * @file events.js
  *
@@ -19639,7 +20962,7 @@ function _handleMultipleEvents(fn, elem, types, callback) {
   });
 }
 
-},{"./dom.js":134,"./guid.js":138,"global/document":1,"global/window":2}],136:[function(_dereq_,module,exports){
+},{"./dom.js":143,"./guid.js":147,"global/document":1,"global/window":2}],145:[function(_dereq_,module,exports){
 /**
  * @file fn.js
  */
@@ -19683,7 +21006,7 @@ var bind = function bind(context, fn, uid) {
 };
 exports.bind = bind;
 
-},{"./guid.js":138}],137:[function(_dereq_,module,exports){
+},{"./guid.js":147}],146:[function(_dereq_,module,exports){
 /**
  * @file format-time.js
  *
@@ -19734,7 +21057,7 @@ function formatTime(seconds) {
 exports['default'] = formatTime;
 module.exports = exports['default'];
 
-},{}],138:[function(_dereq_,module,exports){
+},{}],147:[function(_dereq_,module,exports){
 /**
  * @file guid.js
  *
@@ -19759,7 +21082,7 @@ function newGUID() {
   return _guid++;
 }
 
-},{}],139:[function(_dereq_,module,exports){
+},{}],148:[function(_dereq_,module,exports){
 /**
  * @file log.js
  */
@@ -19849,7 +21172,7 @@ function _logType(type, args) {
 exports['default'] = log;
 module.exports = exports['default'];
 
-},{"global/window":2}],140:[function(_dereq_,module,exports){
+},{"global/window":2}],149:[function(_dereq_,module,exports){
 /**
  * @file merge-options.js
  */
@@ -19920,7 +21243,7 @@ function mergeOptions() {
 
 module.exports = exports['default'];
 
-},{"lodash-compat/object/merge":40}],141:[function(_dereq_,module,exports){
+},{"lodash-compat/object/merge":40}],150:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19948,7 +21271,7 @@ var setTextContent = function setTextContent(el, content) {
 };
 exports.setTextContent = setTextContent;
 
-},{"global/document":1}],142:[function(_dereq_,module,exports){
+},{"global/document":1}],151:[function(_dereq_,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20019,7 +21342,7 @@ function rangeCheck(fnName, index, maxIndex) {
   }
 }
 
-},{"./log.js":139}],143:[function(_dereq_,module,exports){
+},{"./log.js":148}],152:[function(_dereq_,module,exports){
 /**
  * @file to-title-case.js
  *
@@ -20040,7 +21363,7 @@ function toTitleCase(string) {
 exports["default"] = toTitleCase;
 module.exports = exports["default"];
 
-},{}],144:[function(_dereq_,module,exports){
+},{}],153:[function(_dereq_,module,exports){
 /**
  * @file url.js
  */
@@ -20176,7 +21499,7 @@ var isCrossOrigin = function isCrossOrigin(url) {
 };
 exports.isCrossOrigin = isCrossOrigin;
 
-},{"global/document":1,"global/window":2}],145:[function(_dereq_,module,exports){
+},{"global/document":1,"global/window":2}],154:[function(_dereq_,module,exports){
 /**
  * @file video.js
  */
@@ -20235,6 +21558,14 @@ var Fn = _interopRequireWildcard(_utilsFnJs);
 var _tracksTextTrackJs = _dereq_('./tracks/text-track.js');
 
 var _tracksTextTrackJs2 = _interopRequireDefault(_tracksTextTrackJs);
+
+var _tracksAudioTrackJs = _dereq_('./tracks/audio-track.js');
+
+var _tracksAudioTrackJs2 = _interopRequireDefault(_tracksAudioTrackJs);
+
+var _tracksVideoTrackJs = _dereq_('./tracks/video-track.js');
+
+var _tracksVideoTrackJs2 = _interopRequireDefault(_tracksVideoTrackJs);
 
 var _objectAssign = _dereq_('object.assign');
 
@@ -20382,7 +21713,7 @@ setup.autoSetupTimeout(1, videojs);
  *
  * @type {String}
  */
-videojs.VERSION = '5.9.2';
+videojs.VERSION = '5.10.1';
 
 /**
  * The global options object. These are the settings that take effect
@@ -20805,6 +22136,22 @@ videojs.xhr = _xhr2['default'];
 videojs.TextTrack = _tracksTextTrackJs2['default'];
 
 /**
+ * export the AudioTrack class so that source handlers can create
+ * AudioTracks and then add them to the players AudioTrackList
+ *
+ * @type {Function}
+ */
+videojs.AudioTrack = _tracksAudioTrackJs2['default'];
+
+/**
+ * export the VideoTrack class so that source handlers can create
+ * VideoTracks and then add them to the players VideoTrackList
+ *
+ * @type {Function}
+ */
+videojs.VideoTrack = _tracksVideoTrackJs2['default'];
+
+/**
  * Determines, via duck typing, whether or not a value is a DOM element.
  *
  * @method isEl
@@ -20979,7 +22326,7 @@ if (typeof define === 'function' && define['amd']) {
 exports['default'] = videojs;
 module.exports = exports['default'];
 
-},{"../../src/js/utils/merge-options.js":140,"./component":67,"./event-target":101,"./extend.js":102,"./player":110,"./plugins.js":111,"./setup":115,"./tech/flash.js":118,"./tech/html5.js":119,"./tech/tech.js":121,"./tracks/text-track.js":130,"./utils/browser.js":131,"./utils/create-deprecation-proxy.js":133,"./utils/dom.js":134,"./utils/events.js":135,"./utils/fn.js":136,"./utils/format-time.js":137,"./utils/log.js":139,"./utils/stylesheet.js":141,"./utils/time-ranges.js":142,"./utils/url.js":144,"global/document":1,"global/window":2,"lodash-compat/object/merge":40,"object.assign":45,"xhr":56}]},{},[145])(145)
+},{"../../src/js/utils/merge-options.js":149,"./component":67,"./event-target":104,"./extend.js":105,"./player":113,"./plugins.js":114,"./setup":118,"./tech/flash.js":121,"./tech/html5.js":122,"./tech/tech.js":124,"./tracks/audio-track.js":126,"./tracks/text-track.js":134,"./tracks/video-track.js":139,"./utils/browser.js":140,"./utils/create-deprecation-proxy.js":142,"./utils/dom.js":143,"./utils/events.js":144,"./utils/fn.js":145,"./utils/format-time.js":146,"./utils/log.js":148,"./utils/stylesheet.js":150,"./utils/time-ranges.js":151,"./utils/url.js":153,"global/document":1,"global/window":2,"lodash-compat/object/merge":40,"object.assign":45,"xhr":56}]},{},[154])(154)
 });
 
 

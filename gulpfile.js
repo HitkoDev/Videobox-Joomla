@@ -9,6 +9,7 @@ var merge = require('merge2');
 var template = require('gulp-template');
 var folders = require('gulp-recursive-folder');
 var fs = require('fs');
+var sourcemaps = require('gulp-sourcemaps');
 
 var package = JSON.parse(fs.readFileSync('./package.json'));
 
@@ -211,17 +212,19 @@ gulp.task('pack-all', [
 
 gulp.task('lib', function() {
     var tsResult = gulp.src('./src/libraries/videobox/**/*.ts')
+        .pipe(sourcemaps.init())
         .pipe(typescript({
             declaration: true,
             noExternalResolve: true,
-            target: 'ES5',
-            sourcemap: true
+            target: 'ES5'
         }));
 
     return merge([
 
         tsResult.dts.pipe(gulp.dest('./build/definitions')),
-        tsResult.js.pipe(gulp.dest('./build/libraries/videobox')),
+        tsResult.js
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest('./build/libraries/videobox')),
 
         gulp.src('./src/libraries/videobox/sass/*.scss')
             .pipe(compass({

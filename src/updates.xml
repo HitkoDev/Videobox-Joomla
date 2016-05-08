@@ -11,6 +11,6 @@
         </downloads>
         <maintainer><%= author %></maintainer>
         <maintainerurl><%= url %></maintainerurl>
-		<targetplatform name="joomla" version="3.[0123456789]"/>
+        <targetplatform name="joomla" version="3.[0123456789]"/>
     </update>
 </updates>
