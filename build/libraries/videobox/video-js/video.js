@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 5.10.1 <http://videojs.com/>
+ * Video.js 5.10.6 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -10863,7 +10863,11 @@ var Player = (function (_Component) {
     // In Chrome (15), if you have autoplay + a poster + no controls, the video gets hidden (but audio plays)
     // This fixes both issues. Need to wait for API, so it updates displays correctly
     if (this.src() && this.tag && this.options_.autoplay && this.paused()) {
-      delete this.tag.poster; // Chrome Fix. Fixed in Chrome v16.
+      try {
+        delete this.tag.poster; // Chrome Fix. Fixed in Chrome v16.
+      } catch (e) {
+        _utilsLogJs2['default']('deleting tag.poster throws in some browsers', e);
+      }
       this.play();
     }
   };
@@ -17100,6 +17104,8 @@ Tech.withSourceHandlers = function (_Tech) {
     // than clear all of our current tracks
     if (this.currentSource_) {
       this.clearTracks(['audio', 'video']);
+
+      this.currentSource_ = null;
     }
 
     if (sh !== _Tech.nativeSourceHandler) {
@@ -17139,6 +17145,7 @@ Tech.withSourceHandlers = function (_Tech) {
       this.off(this.el_, 'loadstart', _Tech.prototype.firstLoadStartListener_);
       this.off(this.el_, 'loadstart', _Tech.prototype.successiveLoadStartListener_);
       this.sourceHandler_.dispose();
+      this.sourceHandler_ = null;
     }
   };
 };
@@ -21645,7 +21652,7 @@ if (typeof HTMLVideoElement === 'undefined') {
  * @mixes videojs
  * @method videojs
  */
-var videojs = function videojs(id, options, ready) {
+function videojs(id, options, ready) {
   var tag = undefined; // Element of ID
 
   // Allow for element or ID to be passed in
@@ -21690,7 +21697,7 @@ var videojs = function videojs(id, options, ready) {
   // Element may have a player attr referring to an already created player instance.
   // If not, set up a new player and return the instance.
   return tag['player'] || _player2['default'].players[tag.playerId] || new _player2['default'](tag, options, ready);
-};
+}
 
 // Add default styles
 if (_globalWindow2['default'].VIDEOJS_NO_DYNAMIC_STYLE !== true) {
@@ -21713,7 +21720,7 @@ setup.autoSetupTimeout(1, videojs);
  *
  * @type {String}
  */
-videojs.VERSION = '5.10.1';
+videojs.VERSION = '5.10.6';
 
 /**
  * The global options object. These are the settings that take effect

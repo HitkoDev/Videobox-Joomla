@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var typescript = require('gulp-typescript');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
-var compass = require('gulp-compass');
 var cssnano = require('gulp-cssnano');
 var zip = require('gulp-zip');
 var merge = require('merge2');
@@ -10,8 +9,10 @@ var template = require('gulp-template');
 var folders = require('gulp-recursive-folder');
 var fs = require('fs');
 var sourcemaps = require('gulp-sourcemaps');
+var bourbon = require('bourbon');
+var sass = require('gulp-sass');
 
-var package = JSON.parse(fs.readFileSync('./package.json'));
+var package = require('./package.json');
 
 var manifestData = {
     joomlaVersion: '3.0',
@@ -227,10 +228,14 @@ gulp.task('lib', function() {
             .pipe(gulp.dest('./build/libraries/videobox')),
 
         gulp.src('./src/libraries/videobox/sass/*.scss')
-            .pipe(compass({
-                css: 'src/libraries/videobox/css',
-                sass: 'src/libraries/videobox/sass'
+            .pipe(sourcemaps.init())
+            .pipe(sass({
+                includePaths: [
+                    bourbon.includePaths
+                ],
+                outputStyle: 'expanded'
             }))
+            .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('./build/libraries/videobox/css')),
 
         gulp.src([

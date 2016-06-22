@@ -16,7 +16,7 @@
         padding: 3px;
         padding-left: 12px;
         
-        @include display-flex(flex);
+        @include display(flex);
         @include align-items(center);
         @include justify-content(space-between);
         
