@@ -212,31 +212,7 @@ gulp.task('pack-all', [
 });
 
 gulp.task('lib', function() {
-    var tsResult = gulp.src('./src/libraries/videobox/**/*.ts')
-        .pipe(sourcemaps.init())
-        .pipe(typescript({
-            declaration: true,
-            noExternalResolve: true,
-            target: 'ES5'
-        }));
-
     return merge([
-
-        tsResult.dts.pipe(gulp.dest('./build/definitions')),
-        tsResult.js
-            .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest('./build/libraries/videobox')),
-
-        gulp.src('./src/libraries/videobox/sass/*.scss')
-            .pipe(sourcemaps.init())
-            .pipe(sass({
-                includePaths: [
-                    bourbon.includePaths
-                ],
-                outputStyle: 'expanded'
-            }))
-            .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest('./build/libraries/videobox/css')),
 
         gulp.src([
             './src/libraries/videobox/**/*.php',

@@ -30,17 +30,18 @@ class plgSystemVideobox extends JPlugin {
     
     private function getSets(){
         if($this->sets) return $this->sets;
-        
-        $sets = json_decode($this->params->get('property_sets', '{"default":{"property_set":"default"}}'), true);
+
+        $sets = json_decode(json_encode($this->params->get('property_sets', array())), true);
         
         $s2 = array();
-        foreach($sets as $set => $s){
-            if($set == '__keymap') continue;
-            $s2[$set] = array(); 
-            foreach($s as $key => $value) {
-                if(isset($sets['__keymap'][$key])) $s2[$set][ $sets['__keymap'][$key] ] = $value;
-            }
+        $def = false;
+        foreach($sets as $set){
+            $key = $set['key'];
+            unset($set['key']);
+            $s2[$key] = $set;
+            if(!$def || $key == 'default') $def = $set;
         }
+        $s2['default'] = $def ? $def : array();
         
         $this->sets = $s2;
         return $this->sets;
