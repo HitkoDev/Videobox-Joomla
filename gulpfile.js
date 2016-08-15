@@ -24,7 +24,7 @@ var manifestData = {
     version: package['version']
 };
 
-gulp.task('default', function() {
+gulp.task('default', function () {
 
 });
 
@@ -36,7 +36,7 @@ gulp.task('build', [
     'soundcloud',
     'twitch',
     'html5'
-], function() {
+], function () {
 
     return merge([
 
@@ -64,7 +64,7 @@ gulp.task('build', [
                 'definitions',
                 'language'
             ]
-        }, function(folder) {
+        }, function (folder) {
             return gulp.src('./src/index.html')
                 .pipe(gulp.dest('./build/' + folder.pathTarget));
         })(),
@@ -75,7 +75,7 @@ gulp.task('build', [
             exclude: [
                 'definitions'
             ]
-        }, function(folder) {
+        }, function (folder) {
             return gulp.src('./build/' + folder.pathTarget + '/' + folder.name + '.xml')
                 .pipe(template(manifestData))
                 .pipe(gulp.dest('./build/' + folder.pathTarget));
@@ -87,7 +87,7 @@ gulp.task('build', [
 
 gulp.task('install', [
     'build'
-], function() {
+], function () {
 
     return merge([
 
@@ -134,7 +134,7 @@ gulp.task('install', [
 
 gulp.task('pack-parts', [
     'build'
-], function() {
+], function () {
 
     return merge([
 
@@ -190,7 +190,7 @@ gulp.task('pack-parts', [
 
 gulp.task('pack-all', [
     'pack-parts'
-], function() {
+], function () {
 
     var pkg = 'pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip';
     manifestData['package'] = pkg;
@@ -211,7 +211,7 @@ gulp.task('pack-all', [
 
 });
 
-gulp.task('lib', function() {
+gulp.task('lib', function () {
     return merge([
 
         gulp.src([
@@ -221,57 +221,54 @@ gulp.task('lib', function() {
         ])
             .pipe(gulp.dest('./build/libraries/videobox')),
 
-        gulp.src(['./node_modules/videobox/dist/*.css'])
+        gulp.src(['./node_modules/videobox/*.min.css'])
             .pipe(gulp.dest('./build/libraries/videobox/css')),
 
         gulp.src([
-            './node_modules/videobox/dist/*.js',
+            './node_modules/videobox/*.min.js',
             './node_modules/web-animations-js/web-animations.min.js'
         ])
             .pipe(gulp.dest('./build/libraries/videobox/js')),
 
-        gulp.src([
-            './node_modules/video.js/dist/*.js',
-            './node_modules/video.js/dist/*.swf'
-        ])
+        gulp.src('./node_modules/video.js/dist/video.min.js')
             .pipe(gulp.dest('./build/libraries/videobox/video-js'))
 
     ]);
 
 });
 
-gulp.task('videobox', function() {
+gulp.task('videobox', function () {
 
     return gulp.src('./src/plugins/videobox/**')
         .pipe(gulp.dest('./build/plugins/videobox'));
 
 });
 
-gulp.task('youtube', function() {
+gulp.task('youtube', function () {
 
     return gulp.src('./src/plugins/youtube/**')
         .pipe(gulp.dest('./build/plugins/youtube'));
 });
 
-gulp.task('vimeo', function() {
+gulp.task('vimeo', function () {
 
     return gulp.src('./src/plugins/vimeo/**')
         .pipe(gulp.dest('./build/plugins/vimeo'));
 });
 
-gulp.task('soundcloud', function() {
+gulp.task('soundcloud', function () {
 
     return gulp.src('./src/plugins/soundcloud/**')
         .pipe(gulp.dest('./build/plugins/soundcloud'));
 });
 
-gulp.task('twitch', function() {
+gulp.task('twitch', function () {
 
     return gulp.src('./src/plugins/twitch/**')
         .pipe(gulp.dest('./build/plugins/twitch'));
 });
 
-gulp.task('html5', function() {
+gulp.task('html5', function () {
 
     return gulp.src('./src/plugins/html5/**')
         .pipe(gulp.dest('./build/plugins/html5'));

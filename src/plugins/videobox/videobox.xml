@@ -10,6 +10,8 @@
     <authorEmail><%= mail %></authorEmail>
     <authorUrl><%= url %></authorUrl>
     <version><%= version %></version>
+
+    <scriptfile>scripts.php</scriptfile>
     
     <files>
         <filename plugin="videobox">propset.xml</filename>
