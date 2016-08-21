@@ -3,21 +3,21 @@
     <name>Videobox - YouTube</name>
     <creationDate>April 2014</creationDate>
     <description>Video plugin for Joomla!</description>
-    
-	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
+
+    <license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
     <author>HitkoDev</author>
     <copyright>Copyright (C) 2016 HtikoDev</copyright>
     <authorEmail>development@hitko.si</authorEmail>
     <authorUrl>https://hitko.eu/videobox/</authorUrl>
-    <version>5.0.0-rc5</version>
-    
+    <version>5.0.0</version>
+
     <files>
         <filename plugin="youtube">youtube.php</filename>
         <filename plugin="youtube">index.html</filename>
     </files>
     <config>
         <fields name="params">
-		
+
         </fields>
     </config>
 </extension>

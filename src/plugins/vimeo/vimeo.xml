@@ -3,21 +3,21 @@
     <name>Videobox - Vimeo</name>
     <creationDate>April 2014</creationDate>
     <description>Video plugin for Joomla!</description>
-    
-	<license><%= license %></license>
+
+    <license><%= license %></license>
     <author><%= author %></author>
     <copyright><%= copyright %></copyright>
     <authorEmail><%= mail %></authorEmail>
     <authorUrl><%= url %></authorUrl>
     <version><%= version %></version>
-    
+
     <files>
         <filename plugin="vimeo">vimeo.php</filename>
         <filename plugin="vimeo">index.html</filename>
     </files>
     <config>
         <fields name="params">
-		
+
         </fields>
     </config>
 </extension>

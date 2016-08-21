@@ -23,19 +23,19 @@
 defined( '_JEXEC' ) or die( 'Restricted Access' );
 
 JLoader::discover('Videobox', JPATH_LIBRARIES . '/videobox');
- 
+
 class plgVideoboxVimeo extends JPlugin {
-	
+
 	public function onLoadProcessors($config){
 		return 'VimeoVideo::getInstance';
 	}
-	
+
 }
 
 class VimeoVideo extends VideoboxAdapter {
-	
+
 	public static function getInstance($scriptProperties = array()){
-		/*
+		/**
 		 *	$scriptProperties['id'] - one of the following:
 		 *		- numeric Vimeo video ID
 		 *		- link to the video (http://vimeo.com/4700344)
@@ -49,7 +49,7 @@ class VimeoVideo extends VideoboxAdapter {
 		}
 		return false;
 	}
-	
+
 	function getTitle($forced = false){
 		if($forced && $this->title==''){
 			return 'http://vimeo.com/' . $this->id;
@@ -57,7 +57,7 @@ class VimeoVideo extends VideoboxAdapter {
 			return $this->title; 
 		}
 	}
-	
+
 	function getThumb(){
 		$th = parent::getThumb();
 		if($th !== false) return $th;
@@ -67,7 +67,7 @@ class VimeoVideo extends VideoboxAdapter {
 		if($im !== false) return array($img, $im[2]);
 		return false;
 	}
-	
+
 	function getPlayerLink($autoplay = false){
 		$src = 'https://player.vimeo.com/video/' . $this->id . '?byline=0&portrait=0';
 		$src .= '&autoplay=' . ($autoplay ? '1' : '0');
@@ -75,5 +75,5 @@ class VimeoVideo extends VideoboxAdapter {
 		if($this->start != 0) $src .= '#t=' . $this->splitOffset($this->start);
 		return $src;
 	}
-	
+
 }

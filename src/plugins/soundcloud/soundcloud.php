@@ -23,32 +23,32 @@
 defined( '_JEXEC' ) or die( 'Restricted Access' );
 
 JLoader::discover('Videobox', JPATH_LIBRARIES . '/videobox');
- 
+
 class plgVideoboxSoundCloud extends JPlugin {
-	
+
 	public function onLoadProcessors($config){
-        SoundCloudVideo::$pluginProps['scVisual'] = $this->params->get('scVisual', '1');
+		SoundCloudVideo::$pluginProps['scVisual'] = $this->params->get('scVisual', '1');
 		return 'SoundCloudVideo::getInstance';
 	}
-	
+
 }
 
 class SoundCloudVideo extends VideoboxAdapter {
-	
+
 	public static $pluginProps = array();
-	
+
 	public static function getInstance($scriptProperties = array()){
-		/*
-         *	$scriptProperties['id'] - link to the song (https://soundcloud.com/alestorm/shipwrecked)
-         */
+		/**
+		 *	$scriptProperties['id'] - link to the song (https://soundcloud.com/alestorm/shipwrecked)
+		 */
 		if(strpos($scriptProperties['id'], 'soundcloud')!==false){
-            return new SoundCloudVideo(array_merge(self::$pluginProps, $scriptProperties));
-        }
-        return false;
+			return new SoundCloudVideo(array_merge(self::$pluginProps, $scriptProperties));
+		}
+		return false;
 	}
-    
-    public $type = 'a';
-	
+
+	public $type = 'a';
+
 	function getThumb(){
 		$data = json_decode(file_get_contents('http://soundcloud.com/oembed?format=json&url=' . rawurlencode($this->id)), true);
 		if($data){
@@ -59,7 +59,7 @@ class SoundCloudVideo extends VideoboxAdapter {
 		}
 		return false;
 	}
-	
+
 	function getPlayerLink($autoplay = false){
 		$src = 'https://w.soundcloud.com/player/?url=' . rawurlencode($this->id) . '&show_artwork=true';
 		if($autoplay) $src .= '&auto_play=true';
@@ -71,5 +71,5 @@ class SoundCloudVideo extends VideoboxAdapter {
 		}
 		return $src;
 	}
-	
+
 }

@@ -3,14 +3,14 @@
     <name>Videobox - SoundCloud</name>
     <creationDate>April 2014</creationDate>
     <description>Video plugin for Joomla!</description>
-    
-	<license><%= license %></license>
+
+    <license><%= license %></license>
     <author><%= author %></author>
     <copyright><%= copyright %></copyright>
     <authorEmail><%= mail %></authorEmail>
     <authorUrl><%= url %></authorUrl>
     <version><%= version %></version>
-    
+
     <files>
         <filename plugin="soundcloud">soundcloud.php</filename>
         <filename plugin="soundcloud">index.html</filename>
@@ -19,9 +19,9 @@
         <fields name="params">
             <fieldset name="basic">
                 <field name="scVisual" type="radio" default="1" size="5" label="Visual player" description="Turn visual player on (better for large players) or off (better for small players)" class="btn-group" >
-					<option value="1" >JON</option>
-					<option value="0" >JOFF</option>
-				</field>
+                    <option value="1" >JON</option>
+                    <option value="0" >JOFF</option>
+                </field>
             </fieldset>
         </fields>
     </config>

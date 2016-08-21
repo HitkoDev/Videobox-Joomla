@@ -23,16 +23,16 @@
 defined( '_JEXEC' ) or die( 'Restricted Access' );
 
 JLoader::discover('Videobox', JPATH_LIBRARIES . '/videobox');
- 
+
 class plgSystemVideobox extends JPlugin {
-    
+
     private $sets;
-    
+
     private function getSets(){
         if($this->sets) return $this->sets;
 
         $sets = json_decode(json_encode($this->params->get('property_sets', array())), true);
-        
+
         $s2 = array();
         $def = false;
         foreach($sets as $set){
@@ -42,98 +42,102 @@ class plgSystemVideobox extends JPlugin {
             if(!$def || $key == 'default') $def = $set;
         }
         $s2['default'] = $def ? $def : array();
-        
+
+        $s2['default']['color'] = $this->params->get('color', '');
+        $s2['default']['tColor'] = $this->params->get('tColor', '');
+        $s2['default']['hColor'] = $this->params->get('hColor', '');
+
         $this->sets = $s2;
         return $this->sets;
     }
-    
-    
-	public function onBeforeCompileHead(){
-		$app = JFactory::getApplication();
-		$document = JFactory::getDocument();
-		if($app->isSite() && method_exists($document, 'addCustomTag')){
+
+
+    public function onBeforeCompileHead(){
+        $app = JFactory::getApplication();
+        $document = JFactory::getDocument();
+        if($app->isSite() && method_exists($document, 'addCustomTag')){
             $videobox = new VideoboxVideobox();
             $sets = $this->getSets();
             $videobox->setConfig($sets['default']);
             $videobox->loadAssets();
         }   
     }
-    
+
     public function onBeforeRender(){
-		$app = JFactory::getApplication();
-		$document = JFactory::getDocument();
-		if($app->isSite() && method_exists($document, 'addCustomTag')){
+        $app = JFactory::getApplication();
+        $document = JFactory::getDocument();
+        if($app->isSite() && method_exists($document, 'addCustomTag')){
             $videobox = new VideoboxVideobox();
             $sets = $this->getSets();
             $videobox->setConfig($sets['default']);
-            
+
             JPluginHelper::importPlugin('videobox');
             $dispatcher = JEventDispatcher::getInstance();
             $players = $dispatcher->trigger('renderVbPlayer', array($videobox));
         }
     }
-	
-	public function onAfterRender(){
-		$app = JFactory::getApplication();
-		$document = JFactory::getDocument();
-            
+
+    public function onAfterRender(){
+        $app = JFactory::getApplication();
+        $document = JFactory::getDocument();
+
         $instances = array(
             'tags' => array(),
             'outputs' => array()
         );
-        
-		if($app->isSite() && method_exists($document, 'addCustomTag')){
+
+        if($app->isSite() && method_exists($document, 'addCustomTag')){
             $videobox = new VideoboxVideobox();
-            
+
             $content = JResponse::getBody();
             preg_match_all("/\{\s*videobox\s*([\@\?]?\s*[^`\}]*([^`\}]*`[^`]*?`)*)\s*\}(.*?){\s*\/\s*videobox\s*\}/ism", $content, $matches, PREG_SET_ORDER);
-            
+
             $sets = $this->getSets();
-            
+
             foreach($matches as $match){
-                
+
                 $open = trim(strip_tags(html_entity_decode($match[1])));
                 $videos = trim(strip_tags(html_entity_decode($match[ count($match) - 1 ])));
-                
+
                 $set = '';
                 $props = array();
-                
+
                 if($open){
                     $l = 0;
                     if($open{$l} == '@'){
                         $l++;   // skip the '@' character
-                        
+
                         preg_match('/[\s\?]/ism', $open, $m, PREG_OFFSET_CAPTURE, $l);  // whitespace or '?' character indicate the end of the property set key 
-                        
+
                         $r = count($m) > 0 ? $m[0][1] : strlen($open);  // if there's no white space or '?' character, set key ends at last character
-                        
+
                         $set = substr($open, $l, $r - $l);
-                        
+
                         $l = $r;    // skip property set name
                     }
                     if($l < strlen($open)){
                         preg_match('/\?\s*/ism', $open, $m, PREG_OFFSET_CAPTURE, $l); // properties start after the '?' character
-                        
+
                         if(count($m) > 0){
                             $l = strlen($m[0][0]) + $m[0][1];
-                            
+
                             preg_match_all("/\&\s*([^=`]*)\s*=\s*`([^`]*)`/ism", $open, $m, PREG_SET_ORDER, $l);    // extranct propertes (&key=`value`)
-                            
+
                             foreach($m as $prop) $props[ $prop[1] ] = $prop[2];
                         }
                     }
                 }
-                
+
                 $props['videos'] = $videos;
                 $instances['tags'][] = $match[0];
                 $instances['outputs'][] = $this->generateOutput($videobox, array_merge($sets['default'], isset($sets[$set]) ? $sets[$set] : array(), $props));
-                
+
             }
         }
-            
+
         if(count($instances['tags']) > 0) JResponse::setBody(str_replace($instances['tags'], $instances['outputs'], JResponse::getBody()));
-	}
-    
+    }
+
     private function generateOutput($videobox, $scriptProperties){
         $scriptProperties['color'] = trim(str_replace('#', '', $scriptProperties['color']));
         if(strlen($scriptProperties['color']) != 6) $scriptProperties['color'] = '';
@@ -172,10 +176,10 @@ class plgSystemVideobox extends JPlugin {
                 }
             }
             $prop = array_merge($scriptProperties, array('id' => $id, 'title' => $title, 'start' => $start, 'end' => $end));
-            
+
             $v = $videobox->getVideo(array('id' => $id, 'title' => $title, 'start' => $start, 'end' => $end));
             if($v) $vid[] = $v;
-            
+
         }
         $videos = $vid;
 
@@ -196,7 +200,7 @@ class plgSystemVideobox extends JPlugin {
             $tpl = $scriptProperties['display'] == 'links' ? $scriptProperties['linkTpl'] : $scriptProperties['thumbTpl'];
             $start = 0;
             $pagination = '';
-            
+
             if($scriptProperties['display'] == 'gallery'){
                 $videobox->gallery++;
                 $start = $videobox->getPage();
@@ -205,14 +209,14 @@ class plgSystemVideobox extends JPlugin {
                 $pagination = $videobox->pagination(count($videos), $start, $scriptProperties['perPage']);
                 $start = $start*$scriptProperties['perPage'];
             }
-            
+
             if($scriptProperties['player'] == 'vbinline' && ($scriptProperties['display'] == 'gallery' || $scriptProperties['display'] == 'slider')){
                 $scriptProperties['pWidth'] = $scriptProperties['tWidth'];
                 $scriptProperties['pHeight'] = $scriptProperties['tHeight'];
                 $vbOptions['width'] = (float)$scriptProperties['pWidth'];
                 $vbOptions['height'] = (float)$scriptProperties['pHeight'];
             }
-            
+
             ksort($scriptProperties);
             $propHash = 'Vb_gallery_' . md5(serialize($scriptProperties));
             $content = $videobox->getCache($propHash);
@@ -307,5 +311,5 @@ class plgSystemVideobox extends JPlugin {
             return $v;
         }
     }
-    
+
 }

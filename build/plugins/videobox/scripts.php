@@ -55,7 +55,7 @@ class plgsystemvideoboxInstallerScript {
 
             $data = $form->renderFieldset('basic');
             $html = new DOMDocument('1.0', 'UTF-8');
-		    $html->loadHTML('<!DOCTYPE html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">'.$data);
+            $html->loadHTML('<!DOCTYPE html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">'.$data);
             if($html){
                 $xpath = new DOMXpath($html);
                 $fields = $xpath->query("//*[starts-with(@name,'params')]");
@@ -117,7 +117,7 @@ class plgsystemvideoboxInstallerScript {
                 $conditions = array(
                     $db->quoteName('extension_id') . ' = ' . $result[0]
                 );
-                
+
                 $query->update($db->quoteName('#__extensions'))->set($fields)->where($conditions);
                 $db->setQuery($query);
                 $result = $db->execute();
@@ -180,9 +180,9 @@ class plgsystemvideoboxInstallerScript {
     }
 
     function uninstall($parent) {
-        
+
     }
- 
+
     function preflight($type, $parent) {
 
     }

@@ -3,14 +3,14 @@
     <name>Videobox - Twitch</name>
     <creationDate>March 2016</creationDate>
     <description>Video plugin for Joomla!</description>
-    
-	<license><%= license %></license>
+
+    <license><%= license %></license>
     <author><%= author %></author>
     <copyright><%= copyright %></copyright>
     <authorEmail><%= mail %></authorEmail>
     <authorUrl><%= url %></authorUrl>
     <version><%= version %></version>
-    
+
     <files>
         <filename plugin="twitch">twitch.php</filename>
         <filename plugin="twitch">index.html</filename>
@@ -23,7 +23,7 @@
                     <option value="video_banner">Video banner</option>
                     <option value="profile_banner">Profile banner</option>
                 </field>
-			</fieldset>
+            </fieldset>
         </fields>
     </config>
 </extension>

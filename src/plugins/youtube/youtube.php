@@ -23,19 +23,19 @@
 defined( '_JEXEC' ) or die( 'Restricted Access' );
 
 JLoader::discover('Videobox', JPATH_LIBRARIES . '/videobox');
- 
+
 class plgVideoboxYouTube extends JPlugin {
-	
+
 	public function onLoadProcessors($config){
 		return 'YouTubeVideo::getInstance';
 	}
-	
+
 }
 
 class YouTubeVideo extends VideoboxAdapter {
-	
+
 	public static function getInstance($scriptProperties = array()){
-		/*
+		/**
 		 *	$scriptProperties['id'] - one of the following:
 		 *		- 11 characters YouTube video ID
 		 *		- YouTube sharing link (http://youtu.be/KKWTdo5YW_I)
@@ -54,7 +54,7 @@ class YouTubeVideo extends VideoboxAdapter {
 		}
 		return false;
 	}
-	
+
 	function getTitle($forced = false){
 		if($forced && $this->title==''){
 			return 'http://youtu.be/' . $this->id;
@@ -62,14 +62,14 @@ class YouTubeVideo extends VideoboxAdapter {
 			return $this->title; 
 		}
 	}
-	
+
 	function getThumb(){
 		$th = parent::getThumb();
 		if($th !== false) return $th;
 		$img = 'http://i2.ytimg.com/vi/' . $this->id . '/hqdefault.jpg';
 		return array($img, IMAGETYPE_JPEG);
 	}
-	
+
 	function getPlayerLink($autoplay = false){
 		$src = 'https://www.youtube.com/embed/' . $this->id . '?wmode=transparent&rel=0&fs=1';
 		if($autoplay) $src .= '&autoplay=1';
@@ -77,5 +77,5 @@ class YouTubeVideo extends VideoboxAdapter {
 		if($this->end != 0) $src .= '&end=' . $this->end;
 		return $src;
 	}
-	
+
 }
