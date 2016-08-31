@@ -195,6 +195,7 @@ class plgSystemVideobox extends JPlugin {
         $vbOptions = array('width' => (float)$scriptProperties['pWidth'], 'height' => (float)$scriptProperties['pHeight']);
         if(isset($scriptProperties['style'])) $vbOptions['style'] = $scriptProperties['style'];
         if(isset($scriptProperties['class'])) $vbOptions['class'] = $scriptProperties['class'];
+        if(isset($scriptProperties['root'])) $vbOptions['root'] = $scriptProperties['root'];
 
         if(count($videos) > 1){
             $tpl = $scriptProperties['display'] == 'links' ? $scriptProperties['linkTpl'] : $scriptProperties['thumbTpl'];
