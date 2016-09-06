@@ -47,10 +47,10 @@
         default="&lt;ul class=&quot;vb_gallery [[+class]]&quot; style=&quot;[[+style]]&quot;&gt;[[+content]]&lt;/ul&gt;&#10;[[+pagination]]" />
 
         <field name="linkTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_LINK_TPL" description="PLG_SYSTEM_VIDEOBOX_LINK_TPL_DESC" 
-        default="&lt;a href=&quot;[[+link]]&quot; class=&quot;vb_link&quot; rel=&quot;[[+rel]]&quot; title=&quot;[[+title]]&quot; data-videowidth=&quot;[[+pWidth]]&quot; data-videoheight=&quot;[[+pHeight]]&quot;&gt;[[+linkText]]&lt;/a&gt;" />
+        default="&lt;a href=&quot;[[+link]]&quot; class=&quot;vb_link [[+class]]&quot; style=&quot;[[+style]]&quot; rel=&quot;[[+rel]]&quot; title=&quot;[[+title]]&quot; data-videowidth=&quot;[[+pWidth]]&quot; data-videoheight=&quot;[[+pHeight]]&quot;&gt;[[+linkText]]&lt;/a&gt;" />
 
         <field name="playerTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_PLAYER_TPL" description="PLG_SYSTEM_VIDEOBOX_PLAYER_TPL_DESC" 
-        default="&lt;div class=&quot;vb_video_frame&quot; style=&quot;max-width: [[+pWidth]]px;&quot;&gt;&lt;div class=&quot;vb_video_sizer&quot; style=&quot;padding-bottom: [[+ratio]]%;&quot;&gt;&lt;iframe src=&quot;[[+link]]&quot; frameborder=&quot;0&quot; allowfullscreen oallowfullscreen msallowfullscreen webkitallowfullscreen mozallowfullscreen &gt;&lt;/iframe&gt;&lt;/div&gt;&lt;span class=&quot;vb_video_title&quot; &gt;[[+title]]&lt;/span&gt;&lt;/div&gt;" />
+        default="&lt;div class=&quot;vb_video_frame [[+class]]&quot; style=&quot;max-width: [[+pWidth]]px; [[+style]]&quot;&gt;&lt;div class=&quot;vb_video_sizer&quot; style=&quot;padding-bottom: [[+ratio]]%;&quot;&gt;&lt;iframe src=&quot;[[+link]]&quot; frameborder=&quot;0&quot; allowfullscreen oallowfullscreen msallowfullscreen webkitallowfullscreen mozallowfullscreen &gt;&lt;/iframe&gt;&lt;/div&gt;&lt;span class=&quot;vb_video_title&quot; &gt;[[+title]]&lt;/span&gt;&lt;/div&gt;" />
 
         <field name="sliderItemTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_SLIDER_ITEM_TPL" description="PLG_SYSTEM_VIDEOBOX_SLIDER_ITEM_TPL_DESC" 
         default="&lt;li class=&quot;vb_video_cont vb_gal&quot; style=&quot;flex: [[+ratio]] [[+ratio]] [[+basis]]px&quot;&gt;[[+content]]&lt;/li&gt;" />

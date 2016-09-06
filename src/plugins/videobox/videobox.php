@@ -286,7 +286,7 @@ class plgSystemVideobox extends JPlugin {
                     return $videobox->parseTemplate($scriptProperties['galleryTpl'], array('content' => $content, 'pagination' => $pagination));
             }
         } else {
-            $autoPlay = isset($autoPlay) && $autoPlay && $scriptProperties['display'] == 'player' && (!isset($videobox->autoPlay) || !$videobox->autoPlay);
+            $autoPlay = isset($scriptProperties['autoPlay']) && $scriptProperties['autoPlay'] && $scriptProperties['display'] == 'player' && (!isset($videobox->autoPlay) || !$videobox->autoPlay);
             $scriptProperties['autoPlay'] = $autoPlay;
             if($autoPlay) $videobox->autoPlay = true;
             ksort($scriptProperties);
@@ -294,7 +294,7 @@ class plgSystemVideobox extends JPlugin {
             $data = $videobox->getCache($propHash);
             if($data) return $data;
             $video = $videos[0];
-            $props = array_merge(array('vbOptions' => htmlspecialchars(json_encode($vbOptions)), 'rel' => $scriptProperties['player'], 'pWidth' => $scriptProperties['pWidth'], 'pHeight' => $scriptProperties['pHeight'], 'tWidth' => $scriptProperties['tWidth'], 'tHeight' => $scriptProperties['tHeight']), array('title' => $video->getTitle(), 'link' => $video->getPlayerLink($scriptProperties['display'] != 'player' || $autoPlay), 'ratio' => (100*$scriptProperties['pHeight']/$scriptProperties['pWidth'])));
+            $props = array_merge(array('vbOptions' => htmlspecialchars(json_encode($vbOptions)), 'rel' => $scriptProperties['player'], 'pWidth' => $scriptProperties['pWidth'], 'pHeight' => $scriptProperties['pHeight'], 'tWidth' => $scriptProperties['tWidth'], 'tHeight' => $scriptProperties['tHeight']), array('title' => $video->getTitle(), 'link' => $video->getPlayerLink(in_array($scriptProperties['display'], array('box', 'link', 'links')) || $autoPlay), 'ratio' => (100*$scriptProperties['pHeight']/$scriptProperties['pWidth'])));
             switch($scriptProperties['display']){
                 case 'links':
                     $props['linkText'] = isset($linkText) ? trim($linkText) : $video->getTitle(true);
