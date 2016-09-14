@@ -184,6 +184,9 @@ gulp.task('pack-parts', [
             .pipe(template(manifestData))
             .pipe(gulp.dest('./dist/packages')),
 
+        gulp.src('./src/scripts.php')
+            .pipe(gulp.dest('./dist/packages')),
+
     ]);
 
 });

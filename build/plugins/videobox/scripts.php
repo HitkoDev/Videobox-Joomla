@@ -25,18 +25,19 @@ defined( '_JEXEC' ) or die( 'Restricted Access' );
 jimport('joomla.form.form');
 jimport('joomla.plugin.helper');
 jimport('joomla.registry.registry');
+jimport('joomla.version');
 
 class plgsystemvideoboxInstallerScript {
 
     function install($parent) {
-        $this->in_up($parent);
+        $this->in_up($parent, 'install');
     }
 
     function update($parent) {
-        $this->in_up($parent);
+        $this->in_up($parent, 'update');
     }
 
-    function in_up($parent) {
+    function in_up($parent, $type) {
 
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
@@ -55,7 +56,11 @@ class plgsystemvideoboxInstallerScript {
 
             $data = $form->renderFieldset('basic');
             $html = new DOMDocument('1.0', 'UTF-8');
-            $html->loadHTML('<!DOCTYPE html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">'.$data);
+            try {
+                $html->loadHTML('<!DOCTYPE html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">'.$data);
+            } catch (Exception $e) {
+                $html = false;
+            }
             if($html){
                 $xpath = new DOMXpath($html);
                 $fields = $xpath->query("//*[starts-with(@name,'params')]");
@@ -123,6 +128,8 @@ class plgsystemvideoboxInstallerScript {
                 $result = $db->execute();
             }
         }
+
+        echo JText::_('PLG_SYSTEM_VIDEOBOX_INSTALL_DESCRIPTION');
     }
 
     function innerHTML($element) { 
@@ -170,12 +177,10 @@ class plgsystemvideoboxInstallerScript {
         }
         $n = count($parts);
         for($i = 1; $i < $n; $i++){
-            var_dump($parts[$i], $parts[$i-1].'X');
             if($parts[$i] == $parts[$i-1].'X'){
                 return false;
             }
         }
-        var_dump($parts);
         return $parts;
     }
 
@@ -184,6 +189,14 @@ class plgsystemvideoboxInstallerScript {
     }
 
     function preflight($type, $parent) {
+
+        $jv = new JVersion();
+        if(!$jv->isCompatible('3.6')) {
+            $typing = 'installing';
+            if($type == 'update') $typing = 'updating';
+            Jerror::raiseWarning(null, 'Please update Joomla! to version 3.6 or later before ' . $typing . ' Videobox');
+            return false;
+        }
 
     }
 

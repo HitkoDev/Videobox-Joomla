@@ -12,6 +12,8 @@
     <authorUrl><%= url %></authorUrl>
     <version><%= version %></version>
 
+    <scriptfile>scripts.php</scriptfile>
+
     <files>
         <file type="library" id="videobox">lib_videobox.zip</file>
         <file type="plugin" id="videobox" group="system">plg_system_videobox.zip</file>
