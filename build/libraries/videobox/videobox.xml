@@ -10,7 +10,7 @@
     <copyright>Copyright (C) 2016 HtikoDev</copyright>
     <authorEmail>development@hitko.si</authorEmail>
     <authorUrl>https://hitko.eu/videobox/</authorUrl>
-    <version>5.0.4</version>
+    <version>6.0.0-rc1</version>
 
     <files>
         <filename>adapter.php</filename>

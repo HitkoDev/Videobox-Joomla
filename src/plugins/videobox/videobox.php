@@ -262,6 +262,7 @@ class plgSystemVideobox extends JPlugin {
                             $v = $videobox->parseTemplate($scriptProperties['sliderItemTpl'], array('content' => $v, 'ratio' => $r, 'basis' => $b));
                             break;
                         default:
+                            $scriptProperties['display'] = 'gallery';
                             $r = $video['thumb'][1]/($maxR*$video['thumb'][2]);
                             $b = 0.25*$r*$maxW*$minR;
                             $v = $videobox->parseTemplate($scriptProperties['galleryItemTpl'], array('content' => $v, 'ratio' => $r, 'basis' => $b));
@@ -271,7 +272,7 @@ class plgSystemVideobox extends JPlugin {
                     $content .= $v;
                 }
                 $b = 0.25*$maxW*$minR;
-                if($scriptProperties['display'] == 'gallery') for(; $n < $scriptProperties['perPage']; $n++){
+                if($scriptProperties['display'] == 'gallery') for($n = 0; $n < 10; $n++){
                     $v = $videobox->parseTemplate($scriptProperties['galleryItemTpl'], array('ratio' => 1, 'basis' => $b));
                     $content .= $v;
                 }

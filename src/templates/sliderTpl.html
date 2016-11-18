@@ -1,0 +1,1 @@
+<ul class="vb_gallery vb_slider [[+class]]" data-target="img" data-move="[[+move]]" data-width="[[+basis]]" style="[[+style]]">[[+content]]</ul>

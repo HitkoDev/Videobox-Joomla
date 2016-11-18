@@ -96,9 +96,7 @@ class VideoboxVideobox {
         if(!$this->config['hColor']) $this->config['hColor'] = '84d1a4';
 
         JHtml::stylesheet('libraries/videobox/css/videobox.min.css');
-        JHtml::_('jquery.framework');
-        JHtml::script('libraries/videobox/js/web-animations.min.js');
-        JHtml::script('libraries/videobox/js/videobox.min.js');
+        JHtml::script('libraries/videobox/js/videobox.bundle.js');
 
         $styleOverride = str_replace(array('.vb-overrides-wrap', '#005723', '#84d1a4'), array('', '#' . $this->config['tColor'], '#' . $this->config['hColor']), file_get_contents($this->config['assets_path'] . 'css' . DS . 'overrides.min.css'));
 
