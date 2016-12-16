@@ -324,6 +324,12 @@ gulp.task('lib', function () {
         ])
             .pipe(gulp.dest('./build/libraries/videobox/js')),
 
+        gulp.src([
+            './node_modules/videobox/dist/nobg_video.png',
+            './node_modules/videobox/dist/nobg_audio.png',
+        ])
+            .pipe(gulp.dest('./build/libraries/videobox/img')),
+
         gulp.src('./node_modules/video.js/dist/video.min.js')
             .pipe(gulp.dest('./build/libraries/videobox/video-js'))
 

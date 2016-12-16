@@ -179,13 +179,14 @@ class VideoboxVideobox {
 
         // If $video is a VideoboxAdapter object, get its data, otherwise get nobg data
         if($video instanceof VideoboxAdapter){
-            $nobg = 'nobg_' . $video->type;
+            $nobg = 'nobg_' . ($video->type == 'a' ? 'audio' : 'video');
             $hash = md5($video->id . $name);
             $img = $video->getThumb();
         } else {
+            // Video is a NOBG name
             $nobg = $video;
             $hash = md5($video . $name);
-            $img = array($this->config['assets_path'] . 'images'. DS . $nobg.'.png', IMAGETYPE_PNG);
+            $img = array($this->config['assets_path'] . 'img'. DS . $nobg.'.png', IMAGETYPE_PNG);
         }
 
         if(!is_dir($this->config['assets_path'] . 'cache')) mkdir($this->config['assets_path'] . 'cache');
@@ -226,13 +227,13 @@ class VideoboxVideobox {
                         break;
                     default:
                         unlink($tmpn);
-                        return $this->videoThumbnail($nobg, $tWidth, $tHeight, $no_border, $n + 1);
+                        return $this->videoThumbnail($nobg, $no_border, $n + 1);
                 }
             } catch (Exception $e) {
                 unlink($tmpn);
-                return $this->videoThumbnail($nobg, $tWidth, $tHeight, $no_border, $n + 1);
+                return $this->videoThumbnail($nobg, $no_border, $n + 1);
             }
-            if(!$src_img) return $this->videoThumbnail($nobg, $tWidth, $tHeight, $no_border, $n + 1);
+            if(!$src_img) return $this->videoThumbnail($nobg, $no_border, $n + 1);
 
             $imagedata = array(imagesx($src_img), imagesy($src_img));
 
@@ -278,7 +279,7 @@ class VideoboxVideobox {
 
             } else {
                 unlink($tmpn);
-                return $this->videoThumbnail($nobg, $tWidth, $tHeight, $no_border, $n + 1);
+                return $this->videoThumbnail($nobg,  $no_border, $n + 1);
             }
 
             $imagedata[0] -= $b_l + $b_r;
@@ -371,7 +372,7 @@ class VideoboxVideobox {
 
             } else {
                 unlink($tmpn);
-                return $this->videoThumbnail($nobg, $tWidth, $tHeight, $no_border, $n + 1);
+                return $this->videoThumbnail($nobg, $no_border, $n + 1);
             }
 
             $imagedata[0] -= $b_l + $b_r;
