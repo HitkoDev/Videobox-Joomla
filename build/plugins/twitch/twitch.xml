@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="plugin" group="videobox" method="upgrade" version="3.0" >
+<extension type="plugin" group="videobox" method="upgrade" version="3.0">
     <name>Videobox - Twitch</name>
     <creationDate>March 2016</creationDate>
     <description>Video plugin for Joomla!</description>
@@ -9,7 +9,7 @@
     <copyright>Copyright (C) 2016 HtikoDev</copyright>
     <authorEmail>development@hitko.si</authorEmail>
     <authorUrl>https://hitko.eu/videobox/</authorUrl>
-    <version>6.0.0-rc4</version>
+    <version>6.0.0-rc5</version>
 
     <files>
         <filename plugin="twitch">twitch.php</filename>
@@ -18,7 +18,7 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="channelImage" type="list" default="logo" label="Channel image" description="Image to be used as a thumbnail when linking to a Twitch channel" >
+                <field name="channelImage" type="list" default="logo" label="Channel image" description="Image to be used as a thumbnail when linking to a Twitch channel">
                     <option value="logo">Logo</option>
                     <option value="video_banner">Video banner</option>
                     <option value="profile_banner">Profile banner</option>

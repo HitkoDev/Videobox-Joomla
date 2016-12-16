@@ -192,10 +192,31 @@ class plgSystemVideobox extends JPlugin {
         unset($scriptProperties['multipleDisplay']);
         unset($scriptProperties['singleDisplay']);
 
-        $vbOptions = array('width' => (float)$scriptProperties['pWidth'], 'height' => (float)$scriptProperties['pHeight']);
+        $vbOptions = array();
+        foreach($scriptProperties as $k => $v){
+            if(substr($k, 0, 3) == "js.") {
+                $parts = array_filter(array_map('trim', explode('.', $k)));
+                $o = &$vbOptions;
+                $i = 0;
+                
+                if(is_numeric($v)) $v = floatval($v);
+                for($i = 1; $i < count($parts); $i++){
+                    $part = $parts[$i];
+                    if(is_numeric($part)) $part = floatval($part);
+                    
+                    if($i == count($parts) - 1){
+                        $o[$part] = $v;
+                    } else {
+                        if(!isset($o[$part])) $o[$part] = array();
+                        $o = &$o[$part];
+                    }
+                }
+            }
+        }
+        $vbOptions['width'] = (float)$scriptProperties['pWidth'];
+        $vbOptions['height'] = (float)$scriptProperties['pHeight'];
         if(isset($scriptProperties['style'])) $vbOptions['style'] = $scriptProperties['style'];
         if(isset($scriptProperties['class'])) $vbOptions['class'] = $scriptProperties['class'];
-        if(isset($scriptProperties['root'])) $vbOptions['root'] = $scriptProperties['root'];
 
         if(count($videos) > 1){
             $tpl = $scriptProperties['display'] == 'links' ? $scriptProperties['linkTpl'] : $scriptProperties['thumbTpl'];

@@ -14,7 +14,8 @@
 
 <body class="vb-html5-player">
 
-    <video id="vb-html5-video" class="video-js [[+type]] vjs-default-skin" controls="controls" preload="auto" poster="[[+poster]]" data-setup='{}'>
+    <video id="vb-html5-video" class="video-js [[+type]] vjs-default-skin" controls="controls" preload="auto" poster="[[+poster]]"
+        data-setup="{}">
         [[+sources]]
         <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/"
                 target="_blank">supports HTML5 video</a></p>
@@ -25,20 +26,20 @@
         var vid = videojs("vb-html5-video");
 
         var start = [[+start]];
-        vid.on('loadedmetadata', function(){
-            if(start > 0) vid.currentTime(start);
+        vid.on('loadedmetadata', function () {
+            if (start > 0) vid.currentTime(start);
             var auto = [[+auto]];
-            if(auto) vid.play();
+            if (auto) vid.play();
         });
 
         var end = [[+end]];
-        var onEnd = function(){
-            if(vid.currentTime() >= end) {
+        var onEnd = function () {
+            if (vid.currentTime() >= end) {
                 vid.pause();
                 vid.off('timeupdate', onEnd);
             }
         };
-        if(end > 0) vid.on('timeupdate', onEnd);
+        if (end > 0) vid.on('timeupdate', onEnd);
     </script>
 
 </body>

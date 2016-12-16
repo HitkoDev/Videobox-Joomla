@@ -1,25 +1,22 @@
-var gulp = require('gulp');
-var typescript = require('gulp-typescript');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var cssnano = require('gulp-cssnano');
-var zip = require('gulp-zip');
-var merge = require('merge2');
-var template = require('gulp-template');
-var folders = require('gulp-recursive-folder');
-var fs = require('fs');
-var sourcemaps = require('gulp-sourcemaps');
-var bourbon = require('bourbon');
-var sass = require('gulp-sass');
-var ftp = require('vinyl-ftp')
+const gulp = require('gulp')
+const zip = require('gulp-zip')
+const merge = require('merge2')
+const template = require('gulp-template')
+const folders = require('gulp-recursive-folder')
+const fs = require('fs')
+const ftp = require('vinyl-ftp')
+const rename = require('gulp-rename')
+const through = require('through2')
+const xmldom = require('xmldom')
+const xpath = require('xpath')
+const beautify = require('js-beautify').html
 
-var package = require('./package.json');
-var xmlescape = require('xml-escape');
+const package = require('./package.json')
 
 const config = require('./config.json')
 let ftpConnection = null
 
-var manifestData = {
+const manifestData = {
     joomlaVersion: '3.0',
     license: 'GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html',
     author: 'HitkoDev',
@@ -27,11 +24,11 @@ var manifestData = {
     mail: 'development@hitko.si',
     url: package['homepage'],
     version: package['version']
-};
+}
 
-gulp.task('default', function () {
+gulp.task('default', () => {
 
-});
+})
 
 gulp.task('deploy', [
     'build'
@@ -95,8 +92,58 @@ gulp.task('deploy', [
             .pipe(ftpConnection.newer(config.ftp.dir + '/plugins/videobox/html5'))
             .pipe(ftpConnection.dest(config.ftp.dir + '/plugins/videobox/html5'))
 
-    ]);
+    ])
 })
+
+var encodeTemplates = function (options) {
+
+    let tplDir = './src/templates'
+    let map = {}
+    fs.readdir(tplDir, (err, files) => {
+        files.forEach(file => {
+            if (file.endsWith('.html')) {
+                let fn = file.substr(0, file.length - 5)
+                file = tplDir + '/' + file
+                let content = fs.readFileSync(file, {
+                    encoding: 'utf-8'
+                })
+                map[fn] = beautify(content, {
+                    indent_size: 4,
+                    indent_char: ' ',
+                    eol: '\n',
+                    indent_level: 0,
+                    preserve_newlines: true,
+                    wrap_attributes: false,
+                }).replace(/[\n\r]+/igm, '&#10;')
+            }
+        })
+    })
+
+    function transform(file, encoding, callback) {
+        let doc = new xmldom.DOMParser().parseFromString(file.contents.toString())
+        let nodes = xpath.select('//*[@default]', doc)
+        for (let i = 0; i < nodes.length; i++) {
+            let defval = nodes[i].getAttribute('default')
+            if (defval in map)
+                nodes[i].setAttribute('default', map[defval])
+        }
+
+        let data = new xmldom.XMLSerializer().serializeToString(doc).replace(/&amp;#10;/igm, '&#10;')
+        file.contents = new Buffer(beautify(data, {
+            indent_size: 4,
+            indent_char: ' ',
+            eol: '\n',
+            indent_level: 0,
+            preserve_newlines: true,
+            wrap_attributes: false,
+        }))
+
+        this.push(file)
+        callback()
+    }
+
+    return through.obj(transform)
+}
 
 gulp.task('build', [
     'lib',
@@ -106,79 +153,34 @@ gulp.task('build', [
     'soundcloud',
     'twitch',
     'html5'
-], function () {
+], () => {
 
-    let streams = merge([
-
-        // compress JS and CSS
-        gulp.src(['./build/**/*.js', '!./build/**/*.min.js', '!./build/**/*.bundle.js'])
-            .pipe(uglify({
-                preserveComments: 'license'
-            }))
-            .pipe(rename({
-                suffix: '.min'
-            }))
-            .pipe(gulp.dest('./build')),
-
-        gulp.src(['./build/**/*.css', '!./build/**/*.min.css'])
-            .pipe(cssnano())
-            .pipe(rename({
-                suffix: '.min'
-            }))
-            .pipe(gulp.dest('./build')),
-
-        // put index.html inside the folders
-        folders({
-            base: './build',
-            exclude: [
-                'definitions',
-                'language'
-            ]
-        }, function (folder) {
-            return gulp.src('./src/index.html')
-                .pipe(gulp.dest('./build/' + folder.pathTarget));
-        })()
-
-    ]);
-
-    let tplDir = './src/templates'
-    fs.readdir(tplDir, (err, files) => {
-        files.forEach(file => {
-            if (file.endsWith('.html')) {
-                let fn = file.substr(0, file.length - 5)
-                file = tplDir + '/' + file
-                let content = fs.readFileSync(file, {
-                    encoding: 'utf-8'
-                })
-                manifestData[fn] = xmlescape(content).replace(/[\n\r]+/igm, '&#10;').replace(/[\t]+/igm, '&#9;')
-            }
-        });
-    })
+    // put index.html inside the folders
+    let streams = folders({
+        base: './build',
+        exclude: [
+            'definitions',
+            'language'
+        ]
+    }, (folder) => {
+        return gulp.src('./src/index.html')
+            .pipe(gulp.dest('./build/' + folder.pathTarget))
+    })()
 
     return merge([
         streams,
 
-        // put data into the manifest files
-        /*    folders({
-                base: './build',
-                exclude: [
-                    'definitions'
-                ]
-            }, function (folder) {
-                return gulp.src('./build/' + folder.pathTarget + '/' + folder.name + '.xml')
-                    .pipe(template(manifestData))
-                    .pipe(gulp.dest('./build/' + folder.pathTarget));
-            })(),*/
         gulp.src('./build/**/*.xml')
             .pipe(template(manifestData))
+            .pipe(encodeTemplates())
             .pipe(gulp.dest('./build'))
     ])
 
-});
+})
 
 gulp.task('install', [
     'build'
-], function () {
+], () => {
 
     return merge([
 
@@ -219,13 +221,13 @@ gulp.task('install', [
         gulp.src('./build/plugins/html5/**')
             .pipe(gulp.dest('../plugins/videobox/html5'))
 
-    ]);
+    ])
 
-});
+})
 
 gulp.task('pack-parts', [
     'build'
-], function () {
+], () => {
 
     return merge([
 
@@ -278,16 +280,16 @@ gulp.task('pack-parts', [
         gulp.src('./src/scripts.php')
             .pipe(gulp.dest('./dist/packages')),
 
-    ]);
+    ])
 
-});
+})
 
 gulp.task('pack-all', [
     'pack-parts'
-], function () {
+], () => {
 
-    var pkg = 'pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip';
-    manifestData['package'] = pkg;
+    let pkg = 'pkg_videobox-' + manifestData.version.replace(/\s+/, '_') + '.zip'
+    manifestData['package'] = pkg
 
     return merge([
         gulp.src('./dist/packages/**')
@@ -301,11 +303,11 @@ gulp.task('pack-all', [
             .pipe(rename('pkg_videobox.xml'))
             .pipe(gulp.dest('./dist')),
 
-    ]);
+    ])
 
-});
+})
 
-gulp.task('lib', function () {
+gulp.task('lib', () => {
     return merge([
 
         gulp.src([
@@ -317,6 +319,9 @@ gulp.task('lib', function () {
 
         gulp.src(['./node_modules/videobox/dist/*.min.css', './node_modules/videobox/dist/*.css.map'])
             .pipe(gulp.dest('./build/libraries/videobox/css')),
+
+        gulp.src('./node_modules/videobox/dist/*.png')
+            .pipe(gulp.dest('./build/libraries/videobox/img')),
 
         gulp.src([
             './node_modules/videobox/dist/videobox.bundle.js',
@@ -333,43 +338,43 @@ gulp.task('lib', function () {
         gulp.src('./node_modules/video.js/dist/video.min.js')
             .pipe(gulp.dest('./build/libraries/videobox/video-js'))
 
-    ]);
+    ])
 
-});
+})
 
-gulp.task('videobox', function () {
+gulp.task('videobox', () => {
 
     return gulp.src('./src/plugins/videobox/**')
-        .pipe(gulp.dest('./build/plugins/videobox'));
+        .pipe(gulp.dest('./build/plugins/videobox'))
 
-});
+})
 
-gulp.task('youtube', function () {
+gulp.task('youtube', () => {
 
     return gulp.src('./src/plugins/youtube/**')
-        .pipe(gulp.dest('./build/plugins/youtube'));
-});
+        .pipe(gulp.dest('./build/plugins/youtube'))
+})
 
-gulp.task('vimeo', function () {
+gulp.task('vimeo', () => {
 
     return gulp.src('./src/plugins/vimeo/**')
-        .pipe(gulp.dest('./build/plugins/vimeo'));
-});
+        .pipe(gulp.dest('./build/plugins/vimeo'))
+})
 
-gulp.task('soundcloud', function () {
+gulp.task('soundcloud', () => {
 
     return gulp.src('./src/plugins/soundcloud/**')
-        .pipe(gulp.dest('./build/plugins/soundcloud'));
-});
+        .pipe(gulp.dest('./build/plugins/soundcloud'))
+})
 
-gulp.task('twitch', function () {
+gulp.task('twitch', () => {
 
     return gulp.src('./src/plugins/twitch/**')
-        .pipe(gulp.dest('./build/plugins/twitch'));
-});
+        .pipe(gulp.dest('./build/plugins/twitch'))
+})
 
-gulp.task('html5', function () {
+gulp.task('html5', () => {
 
     return gulp.src('./src/plugins/html5/**')
-        .pipe(gulp.dest('./build/plugins/html5'));
-});
+        .pipe(gulp.dest('./build/plugins/html5'))
+})

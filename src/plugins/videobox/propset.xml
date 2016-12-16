@@ -38,28 +38,28 @@
     <fieldset name="vb_templates">
 
         <field name="boxTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_BOX_TPL" description="PLG_SYSTEM_VIDEOBOX_BOX_TPL_DESC" 
-        default="<%= boxTpl %>" />
+        default="boxTpl" />
 
         <field name="galleryItemTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_GALLERY_ITEM_TPL" description="PLG_SYSTEM_VIDEOBOX_GALLERY_ITEM_TPL_DESC" 
-        default="<%= galleryItemTpl %>" />
+        default="galleryItemTpl" />
 
         <field name="galleryTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_GALLERY_TPL" description="PLG_SYSTEM_VIDEOBOX_GALLERY_TPL_DESC" 
-        default="<%= galleryTpl %>" />
+        default="galleryTpl" />
 
         <field name="linkTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_LINK_TPL" description="PLG_SYSTEM_VIDEOBOX_LINK_TPL_DESC" 
-        default="<%= linkTpl %>" />
+        default="linkTpl" />
 
         <field name="playerTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_PLAYER_TPL" description="PLG_SYSTEM_VIDEOBOX_PLAYER_TPL_DESC" 
-        default="<%= playerTpl %>" />
+        default="playerTpl" />
 
         <field name="sliderItemTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_SLIDER_ITEM_TPL" description="PLG_SYSTEM_VIDEOBOX_SLIDER_ITEM_TPL_DESC" 
-        default="<%= galleryItemTpl %>" />
+        default="galleryItemTpl" />
 
         <field name="sliderTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_SLIDER_TPL" description="PLG_SYSTEM_VIDEOBOX_SLIDER_TPL_DESC" 
-        default="<%= sliderTpl %>" />
+        default="sliderTpl" />
 
         <field name="thumbTpl" type="textarea" rows="10" cols="75" filter="raw" class="vb-tpl" label="PLG_SYSTEM_VIDEOBOX_THUMBNAIL_TPL" description="PLG_SYSTEM_VIDEOBOX_THUMBNAIL_TPL_DESC" 
-        default="<%= thumbTpl %>" />
+        default="thumbTpl" />
 
     </fieldset>
 </form>
