@@ -34,6 +34,8 @@
 
                 <field name="hColor" type="color" default="#84d1a4" label="PLG_SYSTEM_VIDEOBOX_HOVER_COLOR" description="PLG_SYSTEM_VIDEOBOX_HOVER_COLOR_DESC" />
 
+                <field name="bgColor" type="color" default="#00a645" label="PLG_SYSTEM_VIDEOBOX_BACKGROUND_COLOR" description="PLG_SYSTEM_VIDEOBOX_BACKGROUND_COLOR_DESC" />
+
                 <field name="property_sets" type="subform" formsource="plugins/system/videobox/propset.xml" min="1" max="999999" multiple="true" layout="joomla.form.field.subform.repeatable" groupByFieldset="false" label="PLG_SYSTEM_VIDEOBOX_PROPERTY_SETS" description="PLG_SYSTEM_VIDEOBOX_PROPERTY_SETS_DESC" />
 
             </fieldset>

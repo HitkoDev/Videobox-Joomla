@@ -46,6 +46,7 @@ class plgSystemVideobox extends JPlugin {
         $s2['default']['color'] = $this->params->get('color', '');
         $s2['default']['tColor'] = $this->params->get('tColor', '');
         $s2['default']['hColor'] = $this->params->get('hColor', '');
+        $s2['default']['bgColor'] = $this->params->get('bgColor', '');
 
         $this->sets = $s2;
         return $this->sets;
@@ -139,11 +140,8 @@ class plgSystemVideobox extends JPlugin {
     }
 
     private function generateOutput($videobox, $scriptProperties){
-        $scriptProperties['color'] = trim(str_replace('#', '', $scriptProperties['color']));
-        if(strlen($scriptProperties['color']) != 6) $scriptProperties['color'] = '';
-        if(!$scriptProperties['color']) $scriptProperties['color'] = '00a645';
-
         $videobox->setConfig($scriptProperties);
+        $scriptProperties['color'] = $videobox->config['color'];
 
         $videos = explode('|,', $scriptProperties['videos']);
 

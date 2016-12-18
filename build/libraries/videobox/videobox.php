@@ -63,7 +63,18 @@ class VideoboxVideobox {
         if(!$this->cache) $this->cache = array();
         $this->cache = array_filter($this->cache, 'VideoboxVideobox::active');
 
+        $this->setColor('color', '00a645');
+        $this->setColor('tColor', '005723');
+        $this->setColor('hColor', '84d1a4');
+        $this->setColor('bgColor', '00a645');
+
         $this->processors = null;
+    }
+
+    function setColor($name, $default){
+        $this->config[$name] = trim(str_replace('#', '', $this->config[$name]));
+        if(strlen($this->config[$name]) != 6) $this->config[$name] = '';
+        if(!$this->config[$name]) $this->config[$name] = $default;
     }
 
     function getProcessors(){
@@ -86,15 +97,6 @@ class VideoboxVideobox {
     }
 
     function loadAssets(){
-
-        $this->config['tColor'] = trim(str_replace('#', '', $this->config['tColor']));
-        if(strlen($this->config['tColor']) != 6) $this->config['tColor'] = '';
-        if(!$this->config['tColor']) $this->config['tColor'] = '005723';
-
-        $this->config['hColor'] = trim(str_replace('#', '', $this->config['hColor']));
-        if(strlen($this->config['hColor']) != 6) $this->config['hColor'] = '';
-        if(!$this->config['hColor']) $this->config['hColor'] = '84d1a4';
-
         JHtml::stylesheet('libraries/videobox/css/videobox.min.css');
         JHtml::script('libraries/videobox/js/videobox.bundle.js');
 
@@ -102,7 +104,6 @@ class VideoboxVideobox {
 
         $document = JFactory::getDocument();
         $document->addStyleDeclaration($styleOverride);
-
     }
 
     function setCache($key, $data){
@@ -168,7 +169,7 @@ class VideoboxVideobox {
 
         $tWidth = $this->config['tWidth'];
         $tHeight = $this->config['tHeight'];
-
+        
         // Get name suffixes
         $name = '';
         if($no_border){
@@ -178,6 +179,7 @@ class VideoboxVideobox {
         }
 
         // If $video is a VideoboxAdapter object, get its data, otherwise get nobg data
+        $isNobg = false;
         if($video instanceof VideoboxAdapter){
             $nobg = 'nobg_' . ($video->type == 'a' ? 'audio' : 'video');
             $hash = md5($video->id . $name);
@@ -185,8 +187,9 @@ class VideoboxVideobox {
         } else {
             // Video is a NOBG name
             $nobg = $video;
-            $hash = md5($video . $name);
+            $hash = md5($video . $name . '-' . $this->config['bgColor']);
             $img = array($this->config['assets_path'] . 'img'. DS . $nobg.'.png', IMAGETYPE_PNG);
+            $isNobg = true;
         }
 
         if(!is_dir($this->config['assets_path'] . 'cache')) mkdir($this->config['assets_path'] . 'cache');
@@ -290,8 +293,13 @@ class VideoboxVideobox {
                 $tWidth = $imagedata[0];
                 $tHeight = $imagedata[1];
                 $newimg = imagecreatetruecolor($tWidth, $tHeight);
-                $black = imagecolorallocate($newimg, 0, 0, 0);
-                imagefilledrectangle($newimg, 0, 0, $tWidth, $tHeight, $black);
+                if($isNobg){
+                    list($r, $g, $b) = sscanf($this->config['bgColor'], "%02x%02x%02x");
+                    $bgColor = imagecolorallocate($newimg, $r, $g, $b);
+                } else {
+                    $bgColor = imagecolorallocate($newimg, 0, 0, 0);
+                }
+                imagefilledrectangle($newimg, 0, 0, $tWidth, $tHeight, $bgColor);
                 imagecopyresampled($newimg, $src_img, 0, 0, $b_l, $b_t, $tWidth, $tHeight, $tWidth, $tHeight);
             } else {
 
@@ -313,6 +321,11 @@ class VideoboxVideobox {
                 $newimg = imagecreatetruecolor($tWidth, $tHeight);
                 $black = imagecolorallocate($newimg, 0, 0, 0);
                 imagefilledrectangle($newimg, 0, 0, $tWidth, $tHeight, $black);
+                if($isNobg){
+                    list($r, $g, $b) = sscanf($this->config['bgColor'], "%02x%02x%02x");
+                    $bgColor = imagecolorallocate($newimg, $r, $g, $b);
+                    imagefilledrectangle($newimg, $off_w, $off_h, $new_w + $off_w, $new_h + $off_h, $bgColor);
+                }
                 imagecopyresampled($newimg, $src_img, $off_w, $off_h, $b_l, $b_t, $new_w, $new_h, $imagedata[0], $imagedata[1]);
             }
 
@@ -400,6 +413,11 @@ class VideoboxVideobox {
                 $off_w = (int)(($tWidth - $new_w)/2);
                 $off_h = (int)(($tHeight - $new_h)/2);
 
+                if($isNobg){
+                    $imgM->setImageBackgroundColor(new ImagickPixel('#'.$this->config['bgColor']));
+                    $imgM->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
+                    $imgM->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+                }
                 $imgM->setImageBackgroundColor(new ImagickPixel("rgb(0, 0, 0)"));
                 $imgM->resizeImage($new_w, $new_h, imagick::FILTER_CATROM, 1);
                 $imgM->extentImage($tWidth, $tHeight, -$off_w, -$off_h);
