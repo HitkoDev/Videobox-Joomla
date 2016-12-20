@@ -114,6 +114,7 @@ var encodeTemplates = function (options) {
                     indent_level: 0,
                     preserve_newlines: true,
                     wrap_attributes: false,
+                    unformatted: ['script']
                 }).replace(/[\n\r]+/igm, '&#10;')
             }
         })

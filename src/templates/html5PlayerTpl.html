@@ -7,15 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="[[+assets]]css/videobox.min.css" rel="stylesheet" type="text/css">
-    <style>
-        [[+style_override]]
-    </style>
+    <style>[[+style_override]]</style>
 </head>
 
 <body class="vb-html5-player">
 
-    <video id="vb-html5-video" class="video-js [[+type]] vjs-default-skin" controls="controls" preload="auto" poster="[[+poster]]"
-        data-setup="{}">
+    <video id="vb-html5-video" class="video-js [[+type]] vjs-default-skin" controls="controls" preload="auto" poster="[[+poster]]">
         [[+sources]]
         <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/"
                 target="_blank">supports HTML5 video</a></p>
@@ -23,13 +20,17 @@
 
     <script src="[[+assets]]video-js/video.min.js"></script>
     <script>
-        var vid = videojs("vb-html5-video");
+        var auto = !!([[+auto]]);
+        var vid = videojs(document.getElementById("vb-html5-video"), {
+            autoplay: auto,
+            poster: "[[+poster]]",
+            preload: "auto",
+            controls: true
+        });
 
         var start = [[+start]];
         vid.on('loadedmetadata', function () {
             if (start > 0) vid.currentTime(start);
-            var auto = [[+auto]];
-            if (auto) vid.play();
         });
 
         var end = [[+end]];
