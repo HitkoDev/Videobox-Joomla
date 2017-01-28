@@ -22,7 +22,7 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted Access' );
 
-define('DS', DIRECTORY_SEPARATOR);
+defined( 'DS' ) or define('DS', DIRECTORY_SEPARATOR);
 
 jimport('joomla.html.pagination'); 
 
@@ -72,7 +72,11 @@ class VideoboxVideobox {
     }
 
     function setColor($name, $default){
-        $this->config[$name] = trim(str_replace('#', '', $this->config[$name]));
+        if (array_key_exists($name, $this->config) ){
+            $this->config[$name] = trim(str_replace('#', '', $this->config[$name]));
+        } else {
+            $this->config[$name] = '';
+        }
         if(strlen($this->config[$name]) != 6) $this->config[$name] = '';
         if(!$this->config[$name]) $this->config[$name] = $default;
     }
